@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "140264094386",
+    "project_id": "speakflow-f5095",
+    "storage_bucket": "speakflow-f5095.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140264094386:android:1a1c228a45e653e877a7ab",
+        "android_client_info": {
+          "package_name": "com.app.speak"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "140264094386-0qp0vvvqs9tbmie8mgn8ui2m0bjgu447.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKBI9UDosPjqAB3z9LrGswBkeDjLj0MBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "140264094386-0qp0vvvqs9tbmie8mgn8ui2m0bjgu447.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

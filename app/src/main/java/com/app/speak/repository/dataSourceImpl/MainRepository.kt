@@ -1,14 +1,25 @@
-package com.app.speak.repository
+package com.app.speak.repository.dataSourceImpl
 
+import com.app.speak.Speak
+import com.app.speak.api.ApiService
 import com.app.speak.db.AppPrefManager
+import com.app.speak.repository.dataSource.MainRepositoryInterface
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import javax.inject.Inject
+import javax.inject.Named
 
-class MainRepository(val appPrefManager: AppPrefManager) {
+class MainRepository @Inject constructor(
+    val context: Speak,
+    val apiService: ApiService,
+    val appPrefManager: AppPrefManager,
+    @Named("device_id")
+    private val deviceID: String,
+) : MainRepositoryInterface {
     private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val db = Firebase.firestore
 

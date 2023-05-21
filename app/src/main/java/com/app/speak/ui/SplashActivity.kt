@@ -8,7 +8,6 @@ import android.os.Looper
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.app.speak.MainActivity
 import com.app.speak.R
 import com.app.speak.db.AppPrefManager
 import com.app.speak.ui.activity.AuthActivity

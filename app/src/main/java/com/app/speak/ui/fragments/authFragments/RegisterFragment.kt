@@ -11,10 +11,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.app.speak.MainActivity
 import com.app.speak.R
 import com.app.speak.databinding.FragmentRegisterBinding
 import com.app.speak.db.AppPrefManager
+import com.app.speak.ui.MainActivity
 import com.app.speak.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth

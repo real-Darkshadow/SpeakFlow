@@ -5,24 +5,99 @@ plugins {
 }
 
 android {
-    namespace 'com.app.speak'
     compileSdk 33
-
     defaultConfig {
         applicationId "com.app.speak"
-        minSdk 24
-        targetSdk 33
+        minSdkVersion 23
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
-
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        renderscriptTargetApi 33//must match target sdk and build tools
+        renderscriptSupportModeEnabled true
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
 
+
+//    signingConfigs {
+//        release {
+//            keyAlias keystoreProperties['keyAlias']
+//            keyPassword keystoreProperties['keyPassword']
+//            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+//            storePassword keystoreProperties['storePassword']
+//        }
+//    }
+
     buildTypes {
+        internationalDebug {
+            initWith debug
+            getProps('./app/config/dev-env.properties').each { p ->
+                buildConfigField 'String', p.key, p.value
+            }
+        }
+
+        debug {
+            getProps('./app/config/dev-env.properties').each { p ->
+                buildConfigField 'String', p.key, p.value
+            }
+        }
+
         release {
+            getProps('./app/config/prod-env.properties').each { p ->
+                buildConfigField 'String', p.key, p.value
+            }
+            shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+    }
+    android {
+        namespace 'com.app.speak'
+
+        configurations {
+            all*.exclude module: 'bcprov-jdk15on'
+        }
+
+        splits {
+            // Configures multiple APKs based on ABI.
+            abi {
+                // Enables building multiple APKs per ABI.
+                enable true
+
+                // By default all ABIs are included, so use reset() and include to specify that we only
+                // want APKs for x86, armeabi-v7a, and mips.
+                reset()
+
+                // Specifies a list of ABIs that Gradle should create APKs for.
+                include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
+
+                // Specifies that we want to also generate a universal APK that includes all ABIs.
+                universalApk true
+            }
+        }
+
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_11
+            targetCompatibility JavaVersion.VERSION_11
+        }
+        kotlinOptions {
+            jvmTarget = '11'
+        }
+        buildFeatures {
+            viewBinding true
+        }
+        packagingOptions {
+            resources {
+                excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            }
+        }
+    }
+    buildFeatures {
+        viewBinding true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -31,9 +106,17 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    buildFeatures {
-        viewBinding true
+}
+
+def getProps(String filePath) {
+    Properties props = new Properties()
+    File propsFile = file(filePath)
+    if (propsFile.exists()) {
+        propsFile.withInputStream {
+            props.load(it)
+        }
     }
+    return props
 }
 
 dependencies {
@@ -46,6 +129,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.2.2'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -60,4 +144,12 @@ dependencies {
     // Also add the dependency for the Google Play services library and specify its version
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
+
+    //retrofit
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
+
+    implementation "com.airbnb.android:lottie:6.0.0"
 }

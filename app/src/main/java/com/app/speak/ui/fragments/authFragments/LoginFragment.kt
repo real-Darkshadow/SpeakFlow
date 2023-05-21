@@ -21,8 +21,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,6 +34,7 @@ class LoginFragment : Fragment() {
     var _binding: FragmentLoginBinding? = null
     val appPrefManager by lazy { AppPrefManager(requireActivity()) }
     private val viewModel: AuthViewModel by activityViewModels()
+    val firebaseAnalytics = Firebase.analytics
 
     val binding get() = _binding!!
     lateinit var mGoogleSignInClient: GoogleSignInClient
@@ -82,6 +87,7 @@ class LoginFragment : Fragment() {
         viewModel.emailSignInResult.observe(viewLifecycleOwner, Observer { result ->
             if (result.isSuccess) {
                 val user = mAuth.currentUser
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
                 appPrefManager.setUserData(user?.uid.toString(), user?.email.toString())
                 startActivity(Intent(requireActivity(), MainActivity::class.java))
                 requireActivity().finish()
@@ -142,8 +148,8 @@ class LoginFragment : Fragment() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     val user = mAuth.currentUser
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
                     viewModel.storeDetailFireBase()
-                    Log.d("tag", user?.uid.toString())
                     appPrefManager.setUserData(user?.uid.toString(), user?.email.toString())
                     startActivity(Intent(requireActivity(), MainActivity::class.java))
                     requireActivity().finish()

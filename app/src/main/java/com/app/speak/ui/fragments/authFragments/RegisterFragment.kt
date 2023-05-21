@@ -17,7 +17,11 @@ import com.app.speak.db.AppPrefManager
 import com.app.speak.ui.MainActivity
 import com.app.speak.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 
 
 class RegisterFragment : Fragment() {
@@ -27,6 +31,7 @@ class RegisterFragment : Fragment() {
     val binding get() = _binding!!
     lateinit var gso: GoogleSignInOptions
     lateinit var mAuth: FirebaseAuth
+    val firebaseAnalytics = Firebase.analytics
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,6 +76,7 @@ class RegisterFragment : Fragment() {
             if (result.isSuccess) {
                 Log.d("TAG", "createUserWithEmail: success")
                 val user = mAuth.currentUser
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP) {}
                 viewModel.storeDetailFireBase()
                 appPrefManager.setUserData(user?.uid.toString(), user?.email.toString())
                 startActivity(Intent(requireActivity(), MainActivity::class.java))

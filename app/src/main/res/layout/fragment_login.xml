@@ -5,7 +5,7 @@
     android:padding="25dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.RegisterFragment">
+    tools:context=".ui.fragments.authFragments.RegisterFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/textView"
@@ -51,6 +51,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/user_email"
+            android:inputType="textEmailAddress"
             android:hint="email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -73,6 +74,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/user_password"
             android:hint="password"
+            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>

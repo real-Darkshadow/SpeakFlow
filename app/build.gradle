@@ -2,9 +2,12 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
+    namespace 'com.app.speak'
     compileSdk 33
     defaultConfig {
         applicationId "com.app.speak"
@@ -12,116 +15,39 @@ android {
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        renderscriptTargetApi 33//must match target sdk and build tools
-        renderscriptSupportModeEnabled true
-        vectorDrawables {
-            useSupportLibrary true
-        }
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
 
-
-//    signingConfigs {
-//        release {
-//            keyAlias keystoreProperties['keyAlias']
-//            keyPassword keystoreProperties['keyPassword']
-//            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-//            storePassword keystoreProperties['storePassword']
-//        }
-//    }
-
     buildTypes {
-        internationalDebug {
-            initWith debug
-            getProps('./app/config/dev-env.properties').each { p ->
-                buildConfigField 'String', p.key, p.value
-            }
-        }
-
         debug {
-            getProps('./app/config/dev-env.properties').each { p ->
-                buildConfigField 'String', p.key, p.value
-            }
+            // Properties for debug
         }
 
         release {
-            getProps('./app/config/prod-env.properties').each { p ->
-                buildConfigField 'String', p.key, p.value
-            }
-            shrinkResources false
+            // Properties for release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-
     }
-    android {
-        namespace 'com.app.speak'
 
-        configurations {
-            all*.exclude module: 'bcprov-jdk15on'
-        }
-
-        splits {
-            // Configures multiple APKs based on ABI.
-            abi {
-                // Enables building multiple APKs per ABI.
-                enable true
-
-                // By default all ABIs are included, so use reset() and include to specify that we only
-                // want APKs for x86, armeabi-v7a, and mips.
-                reset()
-
-                // Specifies a list of ABIs that Gradle should create APKs for.
-                include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
-
-                // Specifies that we want to also generate a universal APK that includes all ABIs.
-                universalApk true
-            }
-        }
-
-        compileOptions {
-            sourceCompatibility JavaVersion.VERSION_11
-            targetCompatibility JavaVersion.VERSION_11
-        }
-        kotlinOptions {
-            jvmTarget = '11'
-        }
-        buildFeatures {
-            viewBinding true
-        }
-        packagingOptions {
-            resources {
-                excludes += '/META-INF/{AL2.0,LGPL2.1}'
-            }
-        }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
     buildFeatures {
         viewBinding true
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-}
-
-def getProps(String filePath) {
-    Properties props = new Properties()
-    File propsFile = file(filePath)
-    if (propsFile.exists()) {
-        propsFile.withInputStream {
-            props.load(it)
-        }
-    }
-    return props
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -130,6 +56,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     implementation 'com.google.firebase:firebase-analytics-ktx:21.2.2'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.6.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -146,10 +73,16 @@ dependencies {
 
 
     //retrofit
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
 
     implementation "com.airbnb.android:lottie:6.0.0"
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+
+    //hilt
+    implementation 'com.google.dagger:hilt-android:2.46.1'
+    kapt 'com.google.dagger:hilt-compiler:2.46.1'
 }

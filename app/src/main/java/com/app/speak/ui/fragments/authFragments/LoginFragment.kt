@@ -92,12 +92,9 @@ class LoginFragment : Fragment() {
             } else {
                 val exception = result.exceptionOrNull()
                 val errorMessage = exception?.message ?: "Unknown error occurred"
-                Toast.makeText(
-                    requireContext(),
-                    errorMessage,
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
             }
+            Log.d("EventLogging", "Event logging executed.")
         })
     }
 

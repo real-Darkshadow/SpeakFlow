@@ -37,10 +37,10 @@ class LoginFragment : Fragment() {
     val firebaseAnalytics = Firebase.analytics
 
     val binding get() = _binding!!
-    lateinit var mGoogleSignInClient: GoogleSignInClient
     val RC_SIGN_IN: Int = 1
     lateinit var gso: GoogleSignInOptions
     lateinit var mAuth: FirebaseAuth
+    lateinit var mGoogleSignInClient: GoogleSignInClient
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -86,9 +86,7 @@ class LoginFragment : Fragment() {
     private fun setObservers() {
         viewModel.emailSignInResult.observe(viewLifecycleOwner, Observer { result ->
             if (result.isSuccess) {
-                val user = mAuth.currentUser
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
-                appPrefManager.setUserData(user?.uid.toString(), user?.email.toString())
                 startActivity(Intent(requireActivity(), MainActivity::class.java))
                 requireActivity().finish()
             } else {
@@ -148,9 +146,11 @@ class LoginFragment : Fragment() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     val user = mAuth.currentUser
+                    val name = user?.displayName.toString()
+                    val email = user?.email.toString()
+                    val uid = user?.uid.toString()
                     firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
-                    viewModel.storeDetailFireBase()
-                    appPrefManager.setUserData(user?.uid.toString(), user?.email.toString())
+                    viewModel.storeDetailFireBase(name, uid, email)
                     startActivity(Intent(requireActivity(), MainActivity::class.java))
                     requireActivity().finish()
                 } else {

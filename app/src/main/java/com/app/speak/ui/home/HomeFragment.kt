@@ -1,7 +1,6 @@
 package com.app.speak.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import androidx.lifecycle.Observer
 import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.db.AppPrefManager
 import com.app.speak.models.Task
-import com.app.speak.ui.fragments.authFragments.RegisterFragment.Companion.TAG
 import com.app.speak.viewmodel.MainViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
@@ -27,9 +25,10 @@ class HomeFragment : Fragment() {
     val appPrefManager by lazy { AppPrefManager(requireActivity()) }
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
-    val mAuth = Firebase.auth
     val db = Firebase.firestore
-    val user = mAuth.currentUser
+    val user = Firebase.auth.currentUser
+    val uid = user?.uid.toString()
+    var tokens = 0
 
 
     override fun onCreateView(
@@ -38,8 +37,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,7 +57,9 @@ class HomeFragment : Fragment() {
                         userId = user?.uid.toString(),
                         promptText = "prompt",
                         status = "pending",
-                        createdAt = FieldValue.serverTimestamp()
+                        createdAt = FieldValue.serverTimestamp(),
+                        fileUrl = "",
+                        completedAt = "",
                     )
                     viewModel.addTask(task)
                 }
@@ -69,14 +69,12 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.fetchData(appPrefManager.user.uid)
+        viewModel.fetchData(uid)
     }
 
     private fun setObservers() {
         viewModel.data.observe(requireActivity(), Observer { document ->
-            val uid = document.getString("uid")
-            val tokens = document.getLong("tokens")
-            Log.d("tag", tokens.toString())
+            tokens = document.getLong("tokens")?.toInt() ?: 0
             binding.tokenValue.text = tokens.toString()
         })
         viewModel.lastTaskId.observe(requireActivity(), Observer { taskId ->
@@ -85,30 +83,8 @@ class HomeFragment : Fragment() {
             Toast.makeText(requireContext(), "Task $taskId added", Toast.LENGTH_SHORT).show()
         })
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun promptToVoice(prompt: String) {
-        val task = hashMapOf(
-            "userId" to user?.uid.toString(),
-            "promptText" to prompt,
-            "status" to "pending",
-            "createdAt" to FieldValue.serverTimestamp(),
-            "fileUrl" to "",
-            "completedAt" to ""
-            // other fields
-        )
-
-        db.collection("Tasks")
-            .add(task)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
     }
 }

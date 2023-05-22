@@ -47,15 +47,15 @@ class AuthViewModel @Inject constructor(
             }
     }
 
-    fun storeDetailFireBase() {
-        val user = auth.currentUser
+    fun storeDetailFireBase(name: String, uid: String, email: String) {
         val userMap = hashMapOf(
-            "uid" to user?.uid,
-            "email" to user?.email,
+            "uid" to uid,
+            "name" to name,
+            "email" to email,
             "tokens" to 100  // or however many tokens new users should start with
         )
         try {
-            firestore.collection("Users").document(user!!.uid)
+            firestore.collection("Users").document(uid)
                 .set(userMap)
                 .addOnSuccessListener {
                     Log.d("TAG", "User document successfully written!")

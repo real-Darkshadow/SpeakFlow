@@ -13,6 +13,7 @@ import com.app.speak.db.AppPrefManager
 import com.app.speak.ui.activity.AuthActivity
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class SplashActivity : AppCompatActivity() {
@@ -41,12 +42,11 @@ class SplashActivity : AppCompatActivity() {
 
 
     private fun checkWhereUserOnboardedOrNot() {
-        if (appPref.isUserLoggedIn) {
+        if (Firebase.auth.currentUser != null) {
             startActivity(Intent(this, MainActivity::class.java))
         } else {
             startActivity(Intent(this, AuthActivity::class.java))
         }
-
         finish()
     }
 

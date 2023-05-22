@@ -36,7 +36,7 @@ class MainRepository @Inject constructor(
         return mAuth.createUserWithEmailAndPassword(email, password)
     }
 
-    fun setUser(uid: String, email: String) {
-        appPrefManager.setUserData(uid, email)
+    fun setUser(uid: String, email: String, name: String) {
+        appPrefManager.setUserData(uid, email, name)
     }
 }

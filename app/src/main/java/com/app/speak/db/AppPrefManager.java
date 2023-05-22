@@ -61,9 +61,10 @@ public class AppPrefManager {
         return pref.getBoolean(PREF_REVIEWED, false);
     }
 
-    public void setUserData(String uid, String email) {
+    public void setUserData(String uid, String email, String name) {
         editor.putString("uid", uid);
         editor.putString("email", email);
+        editor.putString("email", name);
         editor.putBoolean(PREF_IS_USER_LOGGED_ID, true);
         editor.commit();
     }
@@ -71,7 +72,8 @@ public class AppPrefManager {
     public User getUser() {
         String uid = pref.getString("uid", null);
         String email = pref.getString("email", null);
-        return new User(uid, email);
+        String name = pref.getString("name", null);
+        return new User(uid, email, name);
     }
 
 

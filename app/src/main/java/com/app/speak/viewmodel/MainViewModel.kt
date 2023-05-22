@@ -42,8 +42,8 @@ class MainViewModel @Inject constructor(
             }
     }
 
-    fun setUser(uid: String, email: String) {
-        repository.setUser(uid, email)
+    fun setUser(uid: String, email: String, name: String) {
+        repository.setUser(uid, email, name)
     }
 
     fun fetchData(documentId: String) {
@@ -62,4 +62,5 @@ class MainViewModel @Inject constructor(
                 Log.d("TAG", "Error getting document: ${exception.message}")
             }
     }
+
 }

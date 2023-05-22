@@ -1,6 +1,6 @@
 package com.app.speak.models
 
-data class Learner(
-    var username: String,
+data class User(
+    var uid: String,
     var email: String
 )

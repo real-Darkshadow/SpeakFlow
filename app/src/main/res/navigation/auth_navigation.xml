@@ -12,7 +12,7 @@
         tools:layout="@layout/activity_auth" />
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.app.speak.ui.fragments.RegisterFragment"
+        android:name="com.app.speak.ui.fragments.authFragments.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register">
         <action
@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.app.speak.ui.fragments.LoginFragment"
+        android:name="com.app.speak.ui.fragments.authFragments.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <action

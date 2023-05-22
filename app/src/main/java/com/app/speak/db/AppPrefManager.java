@@ -3,7 +3,7 @@ package com.app.speak.db;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.app.speak.models.Learner;
+import com.app.speak.models.User;
 
 import org.jetbrains.annotations.NonNls;
 
@@ -61,17 +61,17 @@ public class AppPrefManager {
         return pref.getBoolean(PREF_REVIEWED, false);
     }
 
-    public void setUserData(String username, String email) {
-        editor.putString("username", username);
+    public void setUserData(String uid, String email) {
+        editor.putString("uid", uid);
         editor.putString("email", email);
         editor.putBoolean(PREF_IS_USER_LOGGED_ID, true);
         editor.commit();
     }
 
-    public Learner getUser() {
-        String username = pref.getString("username", null);
+    public User getUser() {
+        String uid = pref.getString("uid", null);
         String email = pref.getString("email", null);
-        return new Learner(username, email);
+        return new User(uid, email);
     }
 
 

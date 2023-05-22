@@ -1,4 +1,4 @@
-package com.app.speak.ui.fragments
+package com.app.speak.ui.fragments.authFragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,23 +8,34 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.app.speak.MainActivity
 import com.app.speak.R
 import com.app.speak.databinding.FragmentLoginBinding
 import com.app.speak.db.AppPrefManager
+import com.app.speak.ui.MainActivity
+import com.app.speak.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
     var _binding: FragmentLoginBinding? = null
     val appPrefManager by lazy { AppPrefManager(requireActivity()) }
+    private val viewModel: AuthViewModel by activityViewModels()
+    val firebaseAnalytics = Firebase.analytics
+
     val binding get() = _binding!!
     lateinit var mGoogleSignInClient: GoogleSignInClient
     val RC_SIGN_IN: Int = 1
@@ -45,6 +56,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
+        setObservers()
     }
 
     private fun setListeners() {
@@ -57,40 +69,40 @@ class LoginFragment : Fragment() {
                 findNavController().clearBackStack(R.id.registerFragment)
             }
             signinCard.setOnClickListener {
-                EmailSignIn()
+                emailSignIn()
             }
         }
 
     }
 
-    private fun EmailSignIn() {
+    private fun emailSignIn() {
         val email = binding.userEmail.text.toString()
         val password = binding.userPassword.text.toString()
-        try {
-            mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(requireActivity()) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d("TAG", "createUserWithEmail:success")
-                        val user = mAuth.currentUser
-                        appPrefManager.setUserData(user?.email.toString(), user?.email.toString())
-                        startActivity(Intent(requireActivity(), MainActivity::class.java))
-                        requireActivity().finish()
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w("TAG", "createUserWithEmail:failure", task.exception)
-                        Toast.makeText(
-                            requireContext(),
-                            "Authentication failed.",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    }
-                }
-        } catch (e: Exception) {
-            Log.e("Tag", e.toString())
-        }
-
+        if (email.isNullOrBlank() || password.isNullOrBlank()) {
+            Toast.makeText(requireContext(), "Enter credentials", Toast.LENGTH_LONG).show()
+        } else viewModel.emailSignIn(email, password)
     }
+
+    private fun setObservers() {
+        viewModel.emailSignInResult.observe(viewLifecycleOwner, Observer { result ->
+            if (result.isSuccess) {
+                val user = mAuth.currentUser
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
+                appPrefManager.setUserData(user?.uid.toString(), user?.email.toString())
+                startActivity(Intent(requireActivity(), MainActivity::class.java))
+                requireActivity().finish()
+            } else {
+                val exception = result.exceptionOrNull()
+                val errorMessage = exception?.message ?: "Unknown error occurred"
+                Toast.makeText(
+                    requireContext(),
+                    errorMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
+    }
+
 
     private fun createRequest() {
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -136,7 +148,9 @@ class LoginFragment : Fragment() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     val user = mAuth.currentUser
-                    appPrefManager.setUserData(user?.displayName.toString(), user?.email.toString())
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
+                    viewModel.storeDetailFireBase()
+                    appPrefManager.setUserData(user?.uid.toString(), user?.email.toString())
                     startActivity(Intent(requireActivity(), MainActivity::class.java))
                     requireActivity().finish()
                 } else {
@@ -146,4 +160,8 @@ class LoginFragment : Fragment() {
             }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

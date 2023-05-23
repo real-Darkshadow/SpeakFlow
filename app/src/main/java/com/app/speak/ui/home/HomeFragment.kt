@@ -49,7 +49,7 @@ class HomeFragment : Fragment() {
     private fun setListeners() {
         binding.apply {
             generateVoice.setOnClickListener {
-                val prompt = binding.promptEditText.text.toString()
+                val prompt = binding.promptText.text.toString()
                 if (prompt.isNullOrBlank()) {
                     Toast.makeText(requireContext(), "Enter Prompt", Toast.LENGTH_LONG).show()
                 } else {

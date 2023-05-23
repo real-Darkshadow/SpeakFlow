@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.blurView.setBlurEnabled(true).setBlurAutoUpdate(true).setBlurRadius(20f)
 
         val navView: BottomNavigationView = binding.navView
 

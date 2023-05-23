@@ -1,5 +1,7 @@
 package com.app.speak.ui.fragments.authFragments
 
+import ExtensionFunction.gone
+import ExtensionFunction.visible
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -76,10 +78,22 @@ class RegisterFragment : Fragment() {
         val password = binding.userPassword.text.toString()
         if (email.isBlank() || password.isBlank() || userName.isBlank()) {
             Toast.makeText(requireContext(), "Enter Full Details", Toast.LENGTH_LONG).show()
-        } else viewModel.emailSignUp(email, password)
+        } else {
+            binding.loading.visible()
+            viewModel.emailSignUp(email, password)
+        }
     }
 
     private fun setObserver() {
+        viewModel.documentWriteResult.observe(viewLifecycleOwner, Observer { isSuccess ->
+            if (isSuccess) {
+                startActivity(Intent(requireActivity(), MainActivity::class.java))
+                requireActivity().finish()
+            } else {
+                binding.loading.gone()
+                Toast.makeText(requireContext(), "Unknown Error Occurred", Toast.LENGTH_LONG).show()
+            }
+        })
         viewModel.emailSignUpResult.observe(viewLifecycleOwner, Observer { result ->
             if (result.isSuccess) {
                 Log.d("TAG", "createUserWithEmail: success")
@@ -89,9 +103,8 @@ class RegisterFragment : Fragment() {
                 val uid = user?.uid.toString()
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP) {}
                 viewModel.storeDetailFireBase(name, uid, email)
-                startActivity(Intent(requireActivity(), MainActivity::class.java))
-                requireActivity().finish()
             } else {
+                binding.loading.gone()
                 val exception = result.exceptionOrNull()
                 val errorMessage = exception?.message ?: "Unknown error occurred"
                 Toast.makeText(
@@ -128,10 +141,12 @@ class RegisterFragment : Fragment() {
                 )
             try {
                 // Google Sign In was successful, authenticate with Firebase
+                binding.loading.visible()
                 val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
+                binding.loading.gone()
                 Toast.makeText(
                     requireContext(),
                     "Login Failed: ${e.statusCode}",
@@ -159,6 +174,7 @@ class RegisterFragment : Fragment() {
                     startActivity(Intent(requireActivity(), MainActivity::class.java))
                     requireActivity().finish()
                 } else {
+                    binding.loading.gone()
                     // If sign in fails, display a message to the user.
                     Toast.makeText(requireActivity(), "Login Failed: ", Toast.LENGTH_SHORT).show()
                 }

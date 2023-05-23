@@ -36,6 +36,7 @@ allprojects {
         mavenCentral()
         maven {
             url 'https://jitpack.io'
+
         }
     }
 }

@@ -226,6 +226,7 @@ dependencies {
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
     implementation "androidx.navigation:navigation-compose:$nav_version"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+    implementation 'com.github.Dimezis:BlurView:version-2.0.3'
 
 }
 

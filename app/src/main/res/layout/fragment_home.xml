@@ -2,10 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/green_dark"
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:background="@color/teal_200"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -87,7 +87,6 @@
                 android:id="@+id/materialTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dark_Medium"
                 android:text="Transform Your Text\ninto Lifelike Speech!"
                 android:textSize="20sp"
                 android:fontFamily="@font/poppins_medium"
@@ -218,7 +217,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:cardBackgroundColor="@color/dark_Medium"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/voice_card_layout">
 
@@ -234,11 +232,13 @@
                         android:textColor="@color/white"
                         android:layout_gravity="center"
                         android:gravity="center"
+
                         android:text="Generate" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -248,7 +248,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="160dp">
+                    android:padding="90dp">
 
                 </LinearLayout>
 

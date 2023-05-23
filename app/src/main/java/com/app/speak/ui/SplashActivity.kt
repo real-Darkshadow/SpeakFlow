@@ -36,7 +36,7 @@ class SplashActivity : AppCompatActivity() {
 
         Handler(Looper.getMainLooper()).postDelayed({
             checkWhereUserOnboardedOrNot()
-        }, 2500)
+        }, 3500)
 
     }
 

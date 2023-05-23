@@ -23,16 +23,16 @@
             android:textColor="@color/yellow"
             android:textSize="32dp"
             app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/inter"
-        android:gravity="center"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/inter"
+            android:gravity="center"
         android:text="Welcome todsaaaaaasdasdasd our app \ntext to speech"
         android:textColor="@color/text_white"
         android:textFontWeight="400"
@@ -203,7 +203,6 @@
     </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <LinearLayout
         android:id="@+id/loading"
         android:visibility="gone"
@@ -211,7 +210,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#80000000">
-
         <com.airbnb.lottie.LottieAnimationView
             android:layout_width="200dp"
             android:layout_height="200dp"

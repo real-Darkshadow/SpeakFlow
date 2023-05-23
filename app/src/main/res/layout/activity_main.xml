@@ -14,26 +14,18 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/mobile_navigation" />
 
-    <eightbitlab.com.blurview.BlurView
-        android:id="@+id/blurView"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_gravity="bottom"
-
-        android:elevation="8dp"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
-        android:layout_marginBottom="16dp">
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/nav_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:itemIconTint="@color/green_dark"
-            app:labelVisibilityMode="unlabeled"
-            app:menu="@menu/bottom_nav_menu" />
-
-    </eightbitlab.com.blurview.BlurView>
-
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/navigation_background"
+        android:elevation="8dp"
+        app:itemIconTint="@color/green_dark"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/bottom_nav_menu" />
 
 </FrameLayout>

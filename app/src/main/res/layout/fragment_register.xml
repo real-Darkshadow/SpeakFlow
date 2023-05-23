@@ -224,7 +224,6 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <LinearLayout
         android:id="@+id/loading"
         android:visibility="gone"
@@ -232,7 +231,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#80000000">
-
         <com.airbnb.lottie.LottieAnimationView
             android:layout_width="200dp"
             android:layout_height="200dp"

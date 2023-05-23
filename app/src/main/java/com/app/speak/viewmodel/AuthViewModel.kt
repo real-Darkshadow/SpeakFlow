@@ -33,11 +33,11 @@ class AuthViewModel @Inject constructor(
         MainRepository.emailSignIn(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 _signInResult.value = Result.success(task.result)
-                } else {
-                    val errorMessage = task.exception?.message ?: "Unknown error occurred"
-                    _signInResult.value = Result.failure(Exception(errorMessage))
-                }
+            } else {
+                val errorMessage = task.exception?.message ?: "Unknown error occurred"
+                _signInResult.value = Result.failure(Exception(errorMessage))
             }
+        }
 
 
     }

@@ -28,6 +28,11 @@ class MainRepository @Inject constructor(
         return documentRef.get()
     }
 
+    fun getTask(taskId: String): Task<DocumentSnapshot> {
+        val documentRef = db.collection("Tasks").document(taskId)
+        return documentRef.get()
+    }
+
     fun emailSignIn(email: String, password: String): Task<AuthResult> {
         return mAuth.signInWithEmailAndPassword(email, password)
     }

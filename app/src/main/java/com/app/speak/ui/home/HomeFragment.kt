@@ -1,6 +1,8 @@
 package com.app.speak.ui.home
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +14,7 @@ import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.db.AppPrefManager
 import com.app.speak.models.Task
 import com.app.speak.viewmodel.MainViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
@@ -26,8 +29,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
     val db = Firebase.firestore
-    val user = Firebase.auth.currentUser
-    val uid = user?.uid.toString()
+    private lateinit var auth: FirebaseAuth
     var tokens = 0
 
 
@@ -36,17 +38,29 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        auth = Firebase.auth
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            Log.d("tag", "notSignin")
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val uid = auth.currentUser?.uid.toString()
+        viewModel.fetchData(uid)
         setObservers()
         setListeners()
     }
 
     private fun setListeners() {
+        val uid = auth.currentUser?.uid.toString()
         binding.apply {
             generateVoice.setOnClickListener {
                 val prompt = binding.promptText.text.toString()
@@ -54,7 +68,7 @@ class HomeFragment : Fragment() {
                     Toast.makeText(requireContext(), "Enter Prompt", Toast.LENGTH_LONG).show()
                 } else {
                     val task = Task(
-                        userId = user?.uid.toString(),
+                        userId = uid,
                         promptText = prompt,
                         status = "pending",
                         createdAt = FieldValue.serverTimestamp(),
@@ -62,25 +76,35 @@ class HomeFragment : Fragment() {
                         completedAt = "",
                     )
                     viewModel.addTask(task)
+                    shimmerViewContainer.startShimmer()
                 }
             }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.fetchData(uid)
-    }
 
+    @SuppressLint("SetTextI18n")
     private fun setObservers() {
+        viewModel.taskResult.observe(viewLifecycleOwner, Observer {
+            if (it == "success") {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
+        })
+        val user = auth.currentUser
         viewModel.data.observe(requireActivity(), Observer { document ->
-            tokens = document.getLong("tokens")?.toInt() ?: 0
+            tokens = document?.getLong("tokens")?.toInt() ?: 0
+            val name = document.getString("name") ?: user?.displayName
             binding.tokenValue.text = tokens.toString()
+            binding.userName.text = "Hello\n" + name + "."
+
         })
         viewModel.lastTaskId.observe(requireActivity(), Observer { taskId ->
             // Use taskId here.
             // For example, display a Toast message:
             Toast.makeText(requireContext(), "Task $taskId added", Toast.LENGTH_SHORT).show()
+        })
+        viewModel.taskResult.observe(viewLifecycleOwner, Observer {
+
         })
     }
     override fun onDestroyView() {

@@ -22,20 +22,17 @@ class MainViewModel @Inject constructor(
     private val _data = MutableLiveData<DocumentSnapshot>()
     val data: LiveData<DocumentSnapshot> = _data
 
-    private val _task = MutableLiveData<DocumentSnapshot>()
-    val taskResult: LiveData<DocumentSnapshot> = _data
+    private val _task = MutableLiveData<String>()
+    val taskResult: LiveData<String> = _task
     private val db = Firebase.firestore
-
     val lastTaskId = MutableLiveData<String>()
-
     fun addTask(task: Task) {
         db.collection("Tasks")
             .add(task)
             .addOnSuccessListener { documentReference ->
                 Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
-
-                // Update the LiveData with the new task ID.
                 lastTaskId.value = documentReference.id
+                taskListener()
             }
             .addOnFailureListener { e ->
                 Log.w("TAG", "Error adding document", e)
@@ -52,15 +49,37 @@ class MainViewModel @Inject constructor(
                 if (documentSnapshot.exists()) {
                     // Document exists, retrieve the data
                     _data.value = documentSnapshot
+                    Log.d("tag", "success")
                     // Process the data as needed
                 } else {
                     // Document does not exist
+                    Log.d("tag", "unsuccess")
                 }
             }
             .addOnFailureListener { exception ->
                 // Error occurred while retrieving the document
-                Log.d("TAG", "Error getting document: ${exception.message}")
+                Log.d("tag", "Error getting document: ${exception.message}")
             }
     }
+
+    fun taskListener() {
+        val docRef = db.collection("Tasks").document(lastTaskId.value.toString())
+        docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.w("tag", "Listen failed.", e)
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val data = snapshot.data
+                val status = data?.get("status") as? String // Assuming 'status' is a String field
+                _task.value = status.toString()
+                Log.d("tag", "Current data: ${snapshot.data}")
+            } else {
+                Log.d("tag", "Current data: null")
+            }
+        }
+    }
+
 
 }

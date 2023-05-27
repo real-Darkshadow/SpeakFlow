@@ -77,6 +77,7 @@ class HomeFragment : Fragment() {
                     )
                     viewModel.addTask(task)
                     shimmerViewContainer.startShimmer()
+
                 }
             }
         }
@@ -85,9 +86,14 @@ class HomeFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
-        viewModel.taskResult.observe(viewLifecycleOwner, Observer {
-            if (it == "success") {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        viewModel.taskResult.observe(viewLifecycleOwner, Observer { data ->
+            val status = data?.get("status") as? String
+            val userId = data?.get("userId").toString()
+            val prompt = data?.get("promptText").toString()
+            if (status == "success") {
+                Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()
+                viewModel.addPrompt(userId, prompt)
+                binding.shimmerViewContainer.stopShimmer()
             }
         })
         val user = auth.currentUser

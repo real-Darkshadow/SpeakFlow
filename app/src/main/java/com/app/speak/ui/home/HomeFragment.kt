@@ -83,6 +83,13 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        viewModel.taskResult.removeObservers(viewLifecycleOwner)
+        viewModel.data.removeObservers(viewLifecycleOwner)
+        viewModel.lastTaskId.removeObservers(viewLifecycleOwner)
+
+    }
 
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
@@ -97,20 +104,17 @@ class HomeFragment : Fragment() {
             }
         })
         val user = auth.currentUser
-        viewModel.data.observe(requireActivity(), Observer { document ->
+        viewModel.data.observe(viewLifecycleOwner, Observer { document ->
             tokens = document?.getLong("tokens")?.toInt() ?: 0
             val name = document.getString("name") ?: user?.displayName
             binding.tokenValue.text = tokens.toString()
             binding.userName.text = "Hello\n" + name + "."
 
         })
-        viewModel.lastTaskId.observe(requireActivity(), Observer { taskId ->
+        viewModel.lastTaskId.observe(viewLifecycleOwner, Observer { taskId ->
             // Use taskId here.
             // For example, display a Toast message:
             Toast.makeText(requireContext(), "Task $taskId added", Toast.LENGTH_SHORT).show()
-        })
-        viewModel.taskResult.observe(viewLifecycleOwner, Observer {
-
         })
     }
     override fun onDestroyView() {

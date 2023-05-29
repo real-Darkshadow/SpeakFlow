@@ -24,6 +24,8 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     private val _data = MutableLiveData<DocumentSnapshot>()
     val data: LiveData<DocumentSnapshot> = _data
+    val promptHistory = MutableLiveData<ArrayList<String>>()
+
 
     val taskResult = MutableLiveData<Map<String, Any>?>()
 
@@ -58,7 +60,7 @@ class MainViewModel @Inject constructor(
                         // Document exists, retrieve the data
                         _data.value = documentSnapshot
                         setUser(documentId)
-                        Log.d("tag", "success")
+                        promptHistory.value = documentSnapshot.get("prompts") as? ArrayList<String>
                         // Process the data as needed
                     } else {
                         // Document does not exist

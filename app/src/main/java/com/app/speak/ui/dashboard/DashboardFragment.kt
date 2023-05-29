@@ -11,11 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.speak.databinding.FragmentDashboardBinding
 import com.app.speak.db.AppPrefManager
 import com.app.speak.viewmodel.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
-    private val viewModel: MainViewModel by activityViewModels()
     private val binding get() = _binding!!
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,16 +31,17 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.fetchData(AppPrefManager(requireContext()).user.uid)
+        binding.promptHistoryRecycler.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         setObservers()
-
     }
 
+
     private fun setObservers() {
-        viewModel.data.observe(viewLifecycleOwner, Observer { data ->
-            val prompts = data?.get("prompts") as? ArrayList<String>
-            binding.promptHistoryRecycler.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            binding.promptHistoryRecycler.adapter = prompts?.let { PromptHistoryAdapter(it) }
+        viewModel.promptHistory.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                binding.promptHistoryRecycler.adapter = PromptHistoryAdapter(it)
+            }
         })
     }
 

@@ -1,13 +1,12 @@
 package com.app.speak.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.speak.models.Task
 import com.app.speak.repository.dataSourceImpl.MainRepository
-import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -22,8 +21,8 @@ class MainViewModel @Inject constructor(
     private val repository: MainRepository,
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
-    private val _data = MutableLiveData<DocumentSnapshot>()
-    val data: LiveData<DocumentSnapshot> = _data
+    //    private val _data = MutableLiveData<DocumentSnapshot?>()
+    val data = MutableLiveData<Map<String, Any>?>()
     val promptHistory = MutableLiveData<ArrayList<String>>()
 
 
@@ -58,9 +57,10 @@ class MainViewModel @Inject constructor(
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
                         // Document exists, retrieve the data
-                        _data.value = documentSnapshot
+                        data.value = documentSnapshot.data
                         setUser(documentId)
                         promptHistory.value = documentSnapshot.get("prompts") as? ArrayList<String>
+                        userListener()
                         // Process the data as needed
                     } else {
                         // Document does not exist
@@ -122,6 +122,24 @@ class MainViewModel @Inject constructor(
                 val data = snapshot.data
                 val status = data?.get("status") as? String // Assuming 'status' is a String field
                 taskResult.value = data
+                Log.d("tag", "Current data: ${snapshot.data}")
+            } else {
+                Log.d("tag", "Current data: null")
+            }
+        }
+    }
+
+    fun userListener() {
+        val auth = FirebaseAuth.getInstance()
+        val docRef = db.collection("Users").document(auth.uid.toString())
+        docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.w("tag", "Listen failed.", e)
+                return@addSnapshotListener
+            }
+            if (snapshot != null && snapshot.exists()) {
+                val datak = snapshot.data
+                data.value = datak
                 Log.d("tag", "Current data: ${snapshot.data}")
             } else {
                 Log.d("tag", "Current data: null")

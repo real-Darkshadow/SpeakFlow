@@ -168,7 +168,7 @@ class LoginFragment : Fragment() {
                 } else {
                     binding.loading.gone()
                     // If sign in fails, display a message to the user.
-                    Toast.makeText(requireActivity(), "Login Failedw", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), "Login Failed", Toast.LENGTH_SHORT).show()
                 }
             }
     }

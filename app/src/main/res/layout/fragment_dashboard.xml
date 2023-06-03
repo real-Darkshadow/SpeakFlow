@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/green_dark"
     android:layout_width="match_parent"
-    android:padding="25dp"
-
+    android:paddingHorizontal="25dp"
+    android:paddingBottom="25dp"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,13 +13,26 @@
         android:layout_height="match_parent"
         tools:context=".ui.notifications.DashboardFragment">
 
+        <TextView
+            android:id="@+id/history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_semibold"
+            android:text="History"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/text_white"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/prompt_history_recycler"
+            android:id="@+id/promptHistoryRecycler"
             android:layout_width="match_parent"
+            android:layout_marginTop="24dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/history" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

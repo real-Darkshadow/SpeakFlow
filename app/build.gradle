@@ -138,6 +138,7 @@ dependencies {
     implementation 'com.github.jpvs0101:Currencyfy:v1.0.2'
 
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
+    implementation 'com.google.android.gms:play-services-ads:22.1.0'
 
 
     //Exo Video Player

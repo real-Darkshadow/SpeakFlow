@@ -20,9 +20,10 @@
             android:textFontWeight="600"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Prompt" />
+            android:text="Recent Prompt" />
 
         <TextView
+            android:id="@+id/prompt"
             android:layout_marginTop="12dp"
             android:maxLines="4"
             android:fontFamily="@font/inter"

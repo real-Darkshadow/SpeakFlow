@@ -77,7 +77,7 @@ class HomeFragment : Fragment() {
         var adRequest = AdRequest.Builder().build()
         RewardedAd.load(
             requireContext(),
-            "ca-app-pub-3940256099942544/5224354917",
+            "ca-app-pub-2526931847493583/6336229825",
             adRequest,
             object : RewardedAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {

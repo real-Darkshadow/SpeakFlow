@@ -1,6 +1,5 @@
-package com.app.speak.ui.Profile
+package com.app.speak.ui.notifications
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +9,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.speak.databinding.FragmentNotificationsBinding
-import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel
 
 class NotificationsFragment : Fragment() {
@@ -27,6 +25,9 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val notificationsViewModel =
+            ViewModelProvider(this).get(NotificationsViewModel::class.java)
+
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
         return root
@@ -35,11 +36,7 @@ class NotificationsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.options.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
-        binding.options.adapter=profile_adapter(viewModel.profileOptionList){it ->
-            when(it){
-                2->startActivity(Intent(requireContext(),TokensActivity::class.java))
-            }
-        }
+        binding.options.adapter=profile_adapter(viewModel.profileOptionList)
         binding.options.isNestedScrollingEnabled = false;
 
     }

@@ -1,4 +1,4 @@
-package com.app.speak.ui.Profile
+package com.app.speak.ui.notifications
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.speak.R
 
-class profile_adapter(val profileOptionList: Map<Int, String>,val onclick: (Int) -> Unit,) : RecyclerView.Adapter<profile_adapter.vh>() {
+class profile_adapter(val profileOptionList: Map<Int, String>) : RecyclerView.Adapter<profile_adapter.vh>() {
     inner class vh(view: View):RecyclerView.ViewHolder(view){
         val text=view.findViewById<TextView>(R.id.option_name)
         val field=view.findViewById<LinearLayout>(R.id.option_id)
@@ -24,6 +24,5 @@ class profile_adapter(val profileOptionList: Map<Int, String>,val onclick: (Int)
 
     override fun onBindViewHolder(holder: vh, position: Int) {
         holder.text.text=profileOptionList[position]
-        holder.field.setOnClickListener{onclick(position)}
     }
 }

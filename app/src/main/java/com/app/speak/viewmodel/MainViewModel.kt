@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.speak.models.PromptModel
 import com.app.speak.models.Task
 import com.app.speak.repository.dataSourceImpl.MainRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -28,13 +27,13 @@ class MainViewModel @Inject constructor(
 
 
     val taskResult = MutableLiveData<Map<String, Any>?>()
-    val profileOptionList= mapOf(0 to "Your Transactions",1 to "Add Tokens",2 to "Spread the word",3 to "Terms of Use", 4 to "Privacy policy",5 to "More Apps",6 to "Delete Account")
+    val profileOptionList= mapOf(0 to "Your Transactions",1 to "Add Token",2 to "Spread the word",3 to "Terms of Use", 4 to "Privacy policy",5 to "More Apps",6 to "Delete Account")
 
     private val db = Firebase.firestore
     val lastTaskId = MutableLiveData<String>()
     fun addTask(task: Task) {
         viewModelScope.launch(Dispatchers.IO) {
-            db.collection("prompts")
+            db.collection("Tasks")
                 .add(task)
                 .addOnSuccessListener { documentReference ->
                     Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
@@ -60,6 +59,7 @@ class MainViewModel @Inject constructor(
                         // Document exists, retrieve the data
                         data.value = documentSnapshot.data
                         setUser(documentId)
+                        promptHistory.value = documentSnapshot.get("prompts") as? ArrayList<String>
                         userListener()
                         // Process the data as needed
                     } else {
@@ -74,27 +74,44 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    val prompts: MutableLiveData<List<PromptModel>> by lazy {
-        MutableLiveData<List<PromptModel>>()
-    }
+    fun addPrompt(documentId: String, prompt: String) {
+        val userRef = db.collection("Users").document(documentId)
 
-    val error: MutableLiveData<String> by lazy {
-        MutableLiveData<String>()
-    }
+        userRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val data = documentSnapshot.data
+                    val existingPrompts =
+                        data?.get("prompts") as? ArrayList<String> ?: arrayListOf()
+                    val existingTaskIds = data?.get("taskId") as? ArrayList<String> ?: arrayListOf()
 
-    fun fetchPrompts(userId: String) {
-        repository.getPromptsByUser(userId,
-            onSuccess = { promptsList ->
-                prompts.value = promptsList
-            },
-            onFailure = { exception ->
-                error.value = "Error fetching prompts: ${exception.message}"
+                    existingPrompts.add(prompt)
+                    existingTaskIds.add(lastTaskId.value.toString())
+
+                    val dataToUpdate: MutableMap<String, Any> = HashMap()
+                    dataToUpdate["prompts"] = existingPrompts
+                    dataToUpdate["taskId"] = existingTaskIds
+
+                    viewModelScope.launch {
+                        userRef.update(dataToUpdate)
+                            .addOnSuccessListener {
+                                println("Prompts and additional field updated successfully.")
+                            }
+                            .addOnFailureListener { exception ->
+                                println("Failed to update prompts and additional field: $exception")
+                            }
+                    }
+                } else {
+                    println("User document does not exist.")
+                }
             }
-        )
+            .addOnFailureListener { exception ->
+                println("Failed to retrieve document: $exception")
+            }
     }
 
     private fun taskListener() {
-        val docRef = db.collection("prompts").document(lastTaskId.value.toString())
+        val docRef = db.collection("Tasks").document(lastTaskId.value.toString())
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 Log.w("tag", "Listen failed.", e)
@@ -103,6 +120,7 @@ class MainViewModel @Inject constructor(
 
             if (snapshot != null && snapshot.exists()) {
                 val data = snapshot.data
+                val status = data?.get("status") as? String // Assuming 'status' is a String field
                 taskResult.value = data
                 Log.d("tag", "Current data: ${snapshot.data}")
             } else {
@@ -113,7 +131,7 @@ class MainViewModel @Inject constructor(
 
     fun userListener() {
         val auth = FirebaseAuth.getInstance()
-        val docRef = db.collection("users").document(auth.uid.toString())
+        val docRef = db.collection("Users").document(auth.uid.toString())
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 Log.w("tag", "Listen failed.", e)

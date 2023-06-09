@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_marginBottom="12dp"
+    android:id="@+id/option_id"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    android:background="@drawable/profile_options_background"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/option_image"
+        android:layout_width="wrap_content"
+        android:padding="16dp"
+        android:src="@drawable/btn_clear"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:textColor="@color/text_white"
+        android:id="@+id/option_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="16dp"
+        android:layout_marginStart="16dp"
+        android:text="Hello"
+        android:textSize="18sp"
+        android:fontFamily="@font/inter_semibold"/>
+</LinearLayout>

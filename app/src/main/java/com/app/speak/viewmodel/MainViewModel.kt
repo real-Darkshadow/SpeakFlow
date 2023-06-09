@@ -27,7 +27,7 @@ class MainViewModel @Inject constructor(
 
 
     val taskResult = MutableLiveData<Map<String, Any>?>()
-
+    val profileOptionList= mapOf(0 to "Your Transactions",1 to "Add Token",2 to "Spread the word",3 to "Terms of Use", 4 to "Privacy policy",5 to "More Apps",6 to "Delete Account")
 
     private val db = Firebase.firestore
     val lastTaskId = MutableLiveData<String>()

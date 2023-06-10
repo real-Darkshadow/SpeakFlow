@@ -56,13 +56,13 @@ class AuthViewModel @Inject constructor(
     fun storeDetailFireBase(name: String, uid: String, email: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val userMap = hashMapOf(
-                "uid" to uid,
+                "userId" to uid,
                 "name" to name,
                 "email" to email,
                 "tokens" to 100  // or however many tokens new users should start with
             )
             try {
-                firestore.collection("Users").document(uid)
+                firestore.collection("users").document(uid)
                     .set(userMap)
                     .addOnSuccessListener {
                         documentWriteResult.value = true

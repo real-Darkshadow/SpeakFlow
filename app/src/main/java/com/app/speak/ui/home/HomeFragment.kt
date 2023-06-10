@@ -128,7 +128,7 @@ class HomeFragment : Fragment() {
                 // Handle the reward.
                 val rewardAmount = rewardItem.amount
                 val rewardType = rewardItem.type
-                val db = db.collection("Users").document(auth.uid.toString())
+                val db = db.collection("users").document(auth.uid.toString())
                 db.update("tokens", rewardAmount)
                 Log.d(TAG, "User earned the reward.")
             })
@@ -172,6 +172,10 @@ class HomeFragment : Fragment() {
                             createdAt = FieldValue.serverTimestamp(),
                             fileUrl = "",
                             completedAt = "",
+                            deductionDate=FieldValue.serverTimestamp(),
+                            tokensDeducted=0,
+                            promptLength=prompt.length
+
                         )
                         viewModel.addTask(task)
                         shimmerViewContainer.startShimmer()
@@ -192,7 +196,6 @@ class HomeFragment : Fragment() {
             if (status == "success") {
                 binding.generateVoice.isClickable = true
                 Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()
-                viewModel.addPrompt(userId, prompt)
                 binding.shimmerViewContainer.stopShimmer()
             }
         })

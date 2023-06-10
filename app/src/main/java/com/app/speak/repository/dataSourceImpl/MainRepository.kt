@@ -3,6 +3,7 @@ package com.app.speak.repository.dataSourceImpl
 import com.app.speak.Speak
 import com.app.speak.api.ApiService
 import com.app.speak.db.AppPrefManager
+import com.app.speak.models.PromptModel
 import com.app.speak.repository.dataSource.MainRepositoryInterface
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -24,13 +25,26 @@ class MainRepository @Inject constructor(
     private val db = Firebase.firestore
 
     fun getDocument(documentId: String): Task<DocumentSnapshot> {
-        val documentRef = db.collection("Users").document(documentId)
+        val documentRef = db.collection("users").document(documentId)
         return documentRef.get()
     }
 
-    fun getTask(taskId: String): Task<DocumentSnapshot> {
-        val documentRef = db.collection("Tasks").document(taskId)
-        return documentRef.get()
+    fun getPromptsByUser(userId: String, onSuccess: (List<PromptModel>) -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection("prompts")
+            .whereEqualTo("userId", userId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val prompts = mutableListOf<PromptModel>()
+                for (document in querySnapshot) {
+                    val promptText = document.getString("promptText") ?: ""
+                    val prompt = PromptModel( promptText)
+                    prompts.add(prompt)
+                }
+                onSuccess(prompts)
+            }
+            .addOnFailureListener { e ->
+                onFailure(e)
+            }
     }
 
     fun emailSignIn(email: String, password: String): Task<AuthResult> {

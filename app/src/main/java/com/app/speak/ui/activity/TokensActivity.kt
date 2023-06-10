@@ -21,17 +21,16 @@ class TokensActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTokensBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel.getPrices()
         setListeners()
         setObservers()
     }
 
     private fun setObservers() {
-//
+        TODO("Not yet implemented")
     }
 
     private fun setListeners() {
-//
+        TODO("Not yet implemented")
     }
 
 

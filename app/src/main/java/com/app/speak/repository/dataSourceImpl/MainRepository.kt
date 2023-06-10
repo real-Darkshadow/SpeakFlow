@@ -4,7 +4,6 @@ import com.app.speak.Speak
 import com.app.speak.api.ApiService
 import com.app.speak.db.AppPrefManager
 import com.app.speak.models.PromptModel
-import com.app.speak.models.planPrices
 import com.app.speak.repository.dataSource.MainRepositoryInterface
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -29,17 +28,6 @@ class MainRepository @Inject constructor(
         val documentRef = db.collection("users").document(documentId)
         return documentRef.get()
     }
-    fun emailSignIn(email: String, password: String): Task<AuthResult> {
-        return mAuth.signInWithEmailAndPassword(email, password)
-    }
-
-    fun emailSignUp(email: String, password: String): Task<AuthResult> {
-        return mAuth.createUserWithEmailAndPassword(email, password)
-    }
-
-    fun setUser(uid: String) {
-        appPrefManager.setUserData(uid)
-    }
 
     fun getPromptsByUser(userId: String, onSuccess: (List<PromptModel>) -> Unit, onFailure: (Exception) -> Unit) {
         db.collection("prompts")
@@ -59,22 +47,15 @@ class MainRepository @Inject constructor(
             }
     }
 
+    fun emailSignIn(email: String, password: String): Task<AuthResult> {
+        return mAuth.signInWithEmailAndPassword(email, password)
+    }
 
+    fun emailSignUp(email: String, password: String): Task<AuthResult> {
+        return mAuth.createUserWithEmailAndPassword(email, password)
+    }
 
-    fun getPrices(onSuccess: (List<planPrices>) -> Unit, onFailure: (Exception) -> Unit) {
-        db.collection("plans").whereEqualTo("valid",true).get()
-            .addOnSuccessListener { querySnapshot ->
-            val plans = mutableListOf<planPrices>()
-            for (document in querySnapshot) {
-                val planName = document.getString("planName") ?: ""
-                val price = document.getString("price") ?: ""
-                val plan = planPrices( planName,price)
-                plans.add(plan)
-            }
-                onSuccess(plans)
-            }
-            .addOnFailureListener { e ->
-                onFailure(e)
-            }
+    fun setUser(uid: String) {
+        appPrefManager.setUserData(uid)
     }
 }

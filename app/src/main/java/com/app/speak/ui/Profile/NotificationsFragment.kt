@@ -1,4 +1,4 @@
-package com.app.speak.ui.notifications
+package com.app.speak.ui.Profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,9 +25,6 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
-
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
         return root

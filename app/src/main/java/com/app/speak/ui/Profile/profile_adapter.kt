@@ -1,4 +1,4 @@
-package com.app.speak.ui.notifications
+package com.app.speak.ui.Profile
 
 import android.view.LayoutInflater
 import android.view.View

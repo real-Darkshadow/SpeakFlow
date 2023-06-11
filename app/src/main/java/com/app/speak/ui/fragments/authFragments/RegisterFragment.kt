@@ -15,7 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.app.speak.R
 import com.app.speak.databinding.FragmentRegisterBinding
-import com.app.speak.ui.MainActivity
+import com.app.speak.ui.activity.MainActivity
 import com.app.speak.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient

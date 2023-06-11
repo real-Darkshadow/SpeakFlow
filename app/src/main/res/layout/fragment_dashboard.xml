@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/green_dark"
     android:layout_width="match_parent"
-    android:paddingHorizontal="25dp"
+    android:paddingHorizontal="16dp"
     android:paddingBottom="25dp"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.notifications.DashboardFragment">
+        tools:context=".ui.Profile.DashboardFragment">
 
         <TextView
             android:id="@+id/history"

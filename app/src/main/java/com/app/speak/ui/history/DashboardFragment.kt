@@ -1,4 +1,4 @@
-package com.app.speak.ui.dashboard
+package com.app.speak.ui.history
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -30,7 +30,7 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.fetchData(AppPrefManager(requireContext()).user.uid)
+        viewModel.fetchPrompts(AppPrefManager(requireContext()).user.uid)
         binding.promptHistoryRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         setObservers()
@@ -38,7 +38,7 @@ class DashboardFragment : Fragment() {
 
 
     private fun setObservers() {
-        viewModel.promptHistory.observe(viewLifecycleOwner, Observer {
+        viewModel.prompts.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 binding.promptHistoryRecycler.adapter = PromptHistoryAdapter(it)
             }

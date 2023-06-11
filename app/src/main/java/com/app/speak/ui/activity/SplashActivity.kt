@@ -1,4 +1,4 @@
-package com.app.speak.ui
+package com.app.speak.ui.activity
 
 import android.content.Intent
 import android.os.Build
@@ -10,7 +10,6 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.app.speak.R
 import com.app.speak.db.AppPrefManager
-import com.app.speak.ui.activity.AuthActivity
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.ktx.auth

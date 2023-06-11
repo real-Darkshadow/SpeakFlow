@@ -1,4 +1,4 @@
-package com.app.speak.ui
+package com.app.speak.ui.activity
 
 import android.os.Bundle
 import androidx.activity.viewModels

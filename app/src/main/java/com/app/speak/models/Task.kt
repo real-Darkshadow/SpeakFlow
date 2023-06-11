@@ -6,5 +6,8 @@ data class Task(
     val status: String,
     val createdAt: Any?,  // Any to support FieldValue.serverTimestamp() and Timestamp
     var fileUrl: String? = "",
-    var completedAt: String? = "",
+    var completedAt: Any? = "",
+    var deductionDate:Any?="",
+    var tokensDeducted:Int?,
+    var promptLength: Int,
 )

@@ -31,6 +31,7 @@ class AddTokenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.priceOptions.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
+        binding.priceOptions.isNestedScrollingEnabled = false;
         setObservers()
 
     }

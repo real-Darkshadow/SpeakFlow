@@ -5,13 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.app.speak.R
 
 class profile_adapter(val profileOptionList: Map<Int, String>,val onclick: (Int) -> Unit,) : RecyclerView.Adapter<profile_adapter.vh>() {
     inner class vh(view: View):RecyclerView.ViewHolder(view){
         val text=view.findViewById<TextView>(R.id.option_name)
-        val field=view.findViewById<LinearLayout>(R.id.option_id)
+        val field=view.findViewById<ConstraintLayout>(R.id.option_id)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): vh {

@@ -1,12 +1,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
+    android:paddingVertical="8dp"
+    android:layout_marginBottom="8dp"
+    android:paddingHorizontal="12dp"
+    android:background="@drawable/token_price_back"
     android:orientation="horizontal">
 
     <RadioButton
         android:id="@+id/radioButton"
         android:layout_width="wrap_content"
+        android:buttonTint="@color/black"
+
         android:layout_height="wrap_content"
         />
 
@@ -19,13 +26,18 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
-            android:textStyle="bold" />
+            tools:text="10k Tokens"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/inter_semibold" />
 
         <TextView
+            android:fontFamily="@font/inter"
+            android:textColor="@color/green_dark"
             android:id="@+id/des"
+            android:textFontWeight="400"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="" />
+            tools:text="only for $10 + no ads" />
     </LinearLayout>
 </LinearLayout>

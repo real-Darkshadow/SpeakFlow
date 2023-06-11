@@ -8,7 +8,7 @@ import com.app.speak.models.User;
 import org.jetbrains.annotations.NonNls;
 
 
-public class AppPrefManager {
+public class  AppPrefManager {
 
     @NonNls
     private static final String PREF_NAME = "deathnote-bookingapp-userapp";

@@ -67,7 +67,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val uid = auth.currentUser?.uid.toString()
-        viewModel.fetchData(uid)
+        viewModel.userDataListener(uid)
         initAd()
         setObservers()
         setListeners()
@@ -200,7 +200,7 @@ class HomeFragment : Fragment() {
             }
         })
         val user = auth.currentUser
-        viewModel.data.observe(viewLifecycleOwner, Observer { document ->
+        viewModel.userData.observe(viewLifecycleOwner, Observer { document ->
             tokens = document?.get("tokens") as? Long ?: 0L
             val name = document?.get("name") as? String ?: user?.displayName
             binding.tokenValue.text = tokens.toString()

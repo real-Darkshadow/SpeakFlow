@@ -131,5 +131,11 @@ class MainViewModel @Inject constructor(
 
     }
 
+    fun uerLogout() {
+        viewModelScope.launch {
+            repository.userLogout()
+        }
+    }
+
 
 }

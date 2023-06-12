@@ -74,7 +74,7 @@ class MainRepository @Inject constructor(
                     for (document in querySnapshot) {
                         val planName = document.getString("planName") ?: ""
                         val price = document.getString("price") ?: ""
-                        val plan = planPrices( planName,price)
+                        val plan = planPrices(planName, price)
                         plans.add(plan)
                     }
                     onSuccess(plans)
@@ -82,6 +82,12 @@ class MainRepository @Inject constructor(
                 .addOnFailureListener { e ->
                     onFailure(e)
                 }
+        }
+    }
+
+    suspend fun userLogout() {
+        withContext(Dispatchers.IO) {
+            mAuth.signOut()
         }
     }
 }

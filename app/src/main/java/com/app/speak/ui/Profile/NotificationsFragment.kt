@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.speak.databinding.FragmentNotificationsBinding
 import com.app.speak.db.AppPrefManager
+import com.app.speak.ui.activity.AuthActivity
 import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel
 
@@ -52,13 +53,19 @@ class NotificationsFragment : Fragment() {
 
     private fun setListeners() {
         binding.apply {
-            options.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
-            options.adapter=profile_adapter(viewModel.profileOptionList){it ->
-                when(it){
-                    1->startActivity(Intent(requireContext(),TokensActivity::class.java))
+            options.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            options.adapter = profile_adapter(viewModel.profileOptionList) { it ->
+                when (it) {
+                    1 -> startActivity(Intent(requireContext(), TokensActivity::class.java))
                 }
             }
             options.isNestedScrollingEnabled = false;
+            logoutUser.setOnClickListener {
+                viewModel.uerLogout()
+                requireActivity().finish()
+                startActivity(Intent(requireActivity(), AuthActivity::class.java))
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import com.app.speak.Speak
 import com.app.speak.api.ApiService
 import com.app.speak.db.AppPrefManager
 import com.app.speak.models.PromptModel
+import com.app.speak.models.TransactionHistory
 import com.app.speak.models.planPrices
 import com.app.speak.repository.dataSource.MainRepositoryInterface
 import com.google.android.gms.tasks.Task
@@ -78,6 +79,36 @@ class MainRepository @Inject constructor(
                         plans.add(plan)
                     }
                     onSuccess(plans)
+                }
+                .addOnFailureListener { e ->
+                    onFailure(e)
+                }
+        }
+    }
+
+    suspend fun getTransactions(
+        onSuccess: (List<TransactionHistory>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        withContext(Dispatchers.IO) {
+            db.collection("transactions").whereEqualTo("uid", mAuth.uid).get()
+                .addOnSuccessListener { querySnapshot ->
+                    val transactions = mutableListOf<TransactionHistory>()
+                    for (document in querySnapshot) {
+                        val transactionName = document.getString("transactionName") ?: ""
+                        val transactionDate = document.getString("transactionDate") ?: ""
+                        val transactionStatus = document.getString("transactionStatus") ?: ""
+                        val transactionId = document.getString("transactionId") ?: ""
+
+                        val trans = TransactionHistory(
+                            transactionName,
+                            transactionDate,
+                            transactionStatus,
+                            transactionId
+                        )
+                        transactions.add(trans)
+                    }
+                    onSuccess(transactions)
                 }
                 .addOnFailureListener { e ->
                     onFailure(e)

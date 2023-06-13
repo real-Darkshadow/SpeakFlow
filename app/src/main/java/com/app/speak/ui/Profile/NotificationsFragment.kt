@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.app.speak.R
 import com.app.speak.databinding.FragmentNotificationsBinding
 import com.app.speak.db.AppPrefManager
 import com.app.speak.ui.activity.AuthActivity
@@ -57,6 +59,7 @@ class NotificationsFragment : Fragment() {
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             options.adapter = profile_adapter(viewModel.profileOptionList) { it ->
                 when (it) {
+                    0 -> findNavController().navigate(R.id.transactionsFragment)
                     1 -> startActivity(Intent(requireContext(), TokensActivity::class.java))
                 }
             }

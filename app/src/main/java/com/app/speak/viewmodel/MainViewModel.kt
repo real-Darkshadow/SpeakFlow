@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.speak.models.PromptModel
 import com.app.speak.models.Task
+import com.app.speak.models.TransactionHistory
 import com.app.speak.repository.dataSourceImpl.MainRepository
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -28,10 +28,20 @@ class MainViewModel @Inject constructor(
 
 
     val taskResult = MutableLiveData<Map<String, Any>?>()
-    val profileOptionList= mapOf(0 to "Your Transactions",1 to "Tokens",2 to "Spread the word",3 to "Terms of Use", 4 to "Privacy policy",5 to "More Apps",6 to "Delete Account")
+    val profileOptionList = mapOf(
+        0 to "Your Transactions",
+        1 to "Tokens",
+        2 to "Spread the word",
+        3 to "Terms of Use",
+        4 to "Privacy policy",
+        5 to "More Apps",
+        6 to "Delete Account"
+    )
 
     private val db = Firebase.firestore
     val lastTaskId = MutableLiveData<String>()
+
+    val transactionHistory = MutableLiveData<List<TransactionHistory>>()
     fun addTask(task: Task) {
         viewModelScope.launch(Dispatchers.IO) {
             db.collection("prompts")
@@ -134,6 +144,17 @@ class MainViewModel @Inject constructor(
     fun uerLogout() {
         viewModelScope.launch {
             repository.userLogout()
+        }
+    }
+
+    fun getTranactions() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getTransactions(onSuccess = { transactions ->
+                transactionHistory.value = transactions
+            },
+                onFailure = { exception ->
+                    error.value = "Error fetching prompts: ${exception.message}"
+                })
         }
     }
 

@@ -147,7 +147,6 @@ class HomeFragment : Fragment() {
         val uid = auth.currentUser?.uid.toString()
         binding.apply {
             generateVoice.setOnClickListener {
-
                 val prompt = binding.userPrompt.text.toString()
                 if (prompt.isNullOrBlank()) {
                     Toast.makeText(requireContext(), "Enter Prompt", Toast.LENGTH_LONG).show()
@@ -170,23 +169,12 @@ class HomeFragment : Fragment() {
 
                         dialog.show()
 
+                    } else if (tokens < prompt.length) {
+                        Toast.makeText(requireContext(), "Not enough Tokens", Toast.LENGTH_SHORT)
+                            .show()
                     } else {
-//                        val task = Task(
-//                            userId = uid,
-//                            promptText = prompt,
-//                            status = "pending",
-//                            createdAt = FieldValue.serverTimestamp(),
-//                            fileUrl = "",
-//                            completedAt = "",
-//                            deductionDate=FieldValue.serverTimestamp(),
-//                            tokensDeducted=0,
-//                            promptLength=prompt.length
-//
-//                        )
-//                        viewModel.addTask(task)
-                        addMessage("hello")
-
                         shimmerViewContainer.startShimmer()
+                        addMessage("hello")
                     }
                 }
             }
@@ -224,6 +212,7 @@ class HomeFragment : Fragment() {
         val user = auth.currentUser
         viewModel.userData.observe(viewLifecycleOwner, Observer { document ->
             tokens = document?.get("tokens") as? Long ?: 0L
+            val isPurchased = document?.get("isPurchased") as? Boolean ?: false
             val name = document?.get("name") as? String ?: user?.displayName
             binding.tokenValue.text = tokens.toString()
             binding.userName.text = "Hello\n" + name + "."

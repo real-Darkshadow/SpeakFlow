@@ -148,7 +148,7 @@ class HomeFragment : Fragment() {
         binding.apply {
             generateVoice.setOnClickListener {
 
-                val prompt = binding.promptText.text.toString()
+                val prompt = binding.userPrompt.text.toString()
                 if (prompt.isNullOrBlank()) {
                     Toast.makeText(requireContext(), "Enter Prompt", Toast.LENGTH_LONG).show()
                 } else {
@@ -215,8 +215,6 @@ class HomeFragment : Fragment() {
     private fun setObservers() {
         viewModel.taskResult.observe(viewLifecycleOwner, Observer { data ->
             val status = data?.get("status") as? String
-            val userId = data?.get("userId").toString()
-            val prompt = data?.get("promptText").toString()
             if (status == "success") {
                 binding.generateVoice.isClickable = true
                 Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()

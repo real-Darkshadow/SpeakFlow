@@ -1,9 +1,10 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/green_dark"
+    android:background="@color/white"
     android:overScrollMode="never"
     android:scrollbars="none"
     app:layout_constraintEnd_toEndOf="parent"
@@ -24,17 +25,17 @@
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:lineHeight="60dp"
-            android:text="Hello\nAadarsh Kumawat."
-            android:textColor="@color/text_white"
-            android:textSize="35sp"
-            app:fontFamily="@font/inter_semibold"
+            android:lineHeight="40dp"
+            tools:text="Hello\nAadarsh Kumawat."
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:fontFamily="@font/poppins_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
         <RelativeLayout
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -48,32 +49,20 @@
                 android:layout_height="24dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/token" />
+                android:src="@drawable/coin" />
 
-            <TextView
-                android:id="@+id/tokensLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_toEndOf="@id/back"
-                android:fontFamily="@font/inter"
-                android:paddingHorizontal="6dp"
-                android:text="Tokens"
-                android:textColor="@color/text_white"
-                android:textFontWeight="600"
-                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/token_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_toEndOf="@id/tokensLabel"
-                android:fontFamily="@font/inter"
-                android:text="1"
-                android:textColor="@color/text_white"
-                android:textFontWeight="600"
-                android:textSize="18sp" />
+                android:layout_toEndOf="@id/back"
+                android:fontFamily="@font/poppins"
+                tools:text="1"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/title"
@@ -81,45 +70,92 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
-                android:layout_centerVertical="true"
-                android:fontFamily="@font/inter"
+                android:fontFamily="@font/poppins"
                 android:text="Add More"
-                android:textColor="@color/text_white"
-                android:textFontWeight="600"
-                android:textSize="18sp" />
+                android:textColor="@color/black"
+                android:textSize="14sp" />
 
         </RelativeLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
+        <!--        <com.google.android.material.textfield.TextInputEditText-->
+        <!--            android:id="@+id/prompt_text"-->
+        <!--            android:background="@drawable/prompt_text_input_background"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="140dp"-->
+        <!--            android:textColorLink="@color/black"-->
+        <!--            android:textColor="@color/black"-->
+        <!--            android:padding="8dp"-->
+        <!--            android:layout_marginTop="8dp"-->
+        <!--         -->
+        <!--            android:gravity="top"-->
+        <!--            android:maxLength="1000"-->
+        <!--            android:textColorHint="@color/black"-->
+        <!--            android:hint="Enter your prompt" />-->
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/prompt_text"
-            android:background="@drawable/prompt_text_input_background"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:textColorLink="@color/text_white"
-            android:textColor="@color/text_white"
-            android:padding="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColorHint="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            android:gravity="top"
-            android:maxLength="1000"
-            android:textColorHint="@color/text_white"
-            android:hint="Enter your prompt" />
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/user_prompt"
+                android:inputType="textMultiLine"
+                android:hint="Enter Prompt"
+                android:fontFamily="@font/poppins"
+                android:gravity="top"
+                android:maxLength="1500"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@drawable/token_price_back" />
+        </com.google.android.material.textfield.TextInputLayout>
 
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/inspiration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:fontFamily="@font/inter"
-            android:textFontWeight="600"
-            android:textSize="16sp"
-            android:textColor="@color/text_white"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="14sp"
+            android:textColor="@color/black"
             android:text="I need inspiration"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/prompt_text" />
+
+        <ImageView
+            android:layout_marginTop="8dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/settings"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/prompt_text" />
+
+        <LinearLayout
+            android:id="@+id/chooseVoiceLayout"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inspiration"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose Voice"
+                android:fontFamily="@font/poppins_medium"
+                android:textSize="14sp"
+                android:textColor="@color/black" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/generate_voice"
@@ -129,18 +165,18 @@
             android:layout_marginTop="34dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/inspiration">
+            app:layout_constraintTop_toBottomOf="@+id/chooseVoiceLayout">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/global_button"
-                android:backgroundTint="@color/yellow"
+                android:backgroundTint="@color/black"
                 android:fontFamily="@font/inter_bold"
                 android:gravity="center"
                 android:padding="16dp"
                 android:text="Generate"
-                android:textColor="@color/black" />
+                android:textColor="@color/white" />
         </LinearLayout>
 
         <com.facebook.shimmer.ShimmerFrameLayout
@@ -185,7 +221,7 @@
             android:layout_marginTop="60dp"
             android:fontFamily="@font/inter_semibold"
             android:text="Live \nit up!"
-            android:textColor="@color/text_white"
+            android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@id/shimmer_view_container"
             android:textSize="38sp" />
         <TextView
@@ -194,7 +230,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="120dp"
             android:text="Crafted with &#x1F493; in India"
-            android:textColor="@color/text_white"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/live"/>

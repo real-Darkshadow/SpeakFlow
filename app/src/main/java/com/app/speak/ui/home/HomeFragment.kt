@@ -25,10 +25,14 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.functions.FirebaseFunctionsException
+import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,6 +46,7 @@ class HomeFragment : Fragment() {
     val db = Firebase.firestore
     private lateinit var auth: FirebaseAuth
     var tokens = 0L
+    val functions = Firebase.functions
 
 
     override fun onCreateView(
@@ -67,7 +72,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val uid = auth.currentUser?.uid.toString()
-        viewModel.userDataListener(uid)
+
+
         initAd()
         setObservers()
         setListeners()
@@ -141,7 +147,7 @@ class HomeFragment : Fragment() {
         val uid = auth.currentUser?.uid.toString()
         binding.apply {
             generateVoice.setOnClickListener {
-                initAd()
+
                 val prompt = binding.promptText.text.toString()
                 if (prompt.isNullOrBlank()) {
                     Toast.makeText(requireContext(), "Enter Prompt", Toast.LENGTH_LONG).show()
@@ -165,19 +171,21 @@ class HomeFragment : Fragment() {
                         dialog.show()
 
                     } else {
-                        val task = Task(
-                            userId = uid,
-                            promptText = prompt,
-                            status = "pending",
-                            createdAt = FieldValue.serverTimestamp(),
-                            fileUrl = "",
-                            completedAt = "",
-                            deductionDate=FieldValue.serverTimestamp(),
-                            tokensDeducted=0,
-                            promptLength=prompt.length
+//                        val task = Task(
+//                            userId = uid,
+//                            promptText = prompt,
+//                            status = "pending",
+//                            createdAt = FieldValue.serverTimestamp(),
+//                            fileUrl = "",
+//                            completedAt = "",
+//                            deductionDate=FieldValue.serverTimestamp(),
+//                            tokensDeducted=0,
+//                            promptLength=prompt.length
+//
+//                        )
+//                        viewModel.addTask(task)
+                        addMessage("hello")
 
-                        )
-                        viewModel.addTask(task)
                         shimmerViewContainer.startShimmer()
                     }
                 }
@@ -185,7 +193,23 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun addMessage(text: String) {
+        // Create the arguments to the callable function.
+        val data = hashMapOf(
+            "text" to text,
+        )
 
+        functions
+            .getHttpsCallable("addMessage")
+            .call(data)
+            .continueWith { task ->
+                // This continuation runs on either success or failure, but if the task
+                // has failed then result will throw an Exception which will be
+                // propagated down.
+                val result = task.result?.data as String
+                Log.d("tag", result)
+            }
+    }
 
     @SuppressLint("SetTextI18n")
     private fun setObservers() {

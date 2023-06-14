@@ -8,9 +8,11 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.app.speak.R
 import com.app.speak.databinding.ActivityMainBinding
+import com.app.speak.db.AppPrefManager
 import com.app.speak.viewmodel.MainViewModel
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,7 +34,11 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         MobileAds.initialize(this) {}
-
+        val uid = FirebaseAuth.getInstance().uid.toString()
         navView.setupWithNavController(navController)
+        viewModel.fetchPrompts(uid)
+        viewModel.userDataListener(uid)
+
+
     }
 }

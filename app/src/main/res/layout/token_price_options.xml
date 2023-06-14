@@ -13,13 +13,13 @@
         android:id="@+id/radioButton"
         android:layout_width="wrap_content"
         android:buttonTint="@color/black"
-
+        android:clickable="false"
         android:layout_height="wrap_content"
         />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
@@ -29,10 +29,10 @@
             tools:text="10k Tokens"
             android:textSize="16sp"
             android:textColor="@color/black"
-            android:fontFamily="@font/inter_semibold" />
+            android:fontFamily="@font/poppins_medium" />
 
         <TextView
-            android:fontFamily="@font/inter"
+            android:fontFamily="@font/poppins"
             android:textColor="@color/green_dark"
             android:id="@+id/des"
             android:textFontWeight="400"

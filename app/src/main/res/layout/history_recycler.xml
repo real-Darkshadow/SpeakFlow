@@ -3,8 +3,9 @@
     android:layout_width="match_parent"
     app:cardCornerRadius="18dp"
     android:layout_marginBottom="24dp"
+    app:cardBackgroundColor="@color/white"
+    android:background="@drawable/token_price_back"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardBackgroundColor="@color/orange"
     android:layout_height="wrap_content">
 
     <LinearLayout
@@ -15,9 +16,8 @@
 
         <TextView
             android:textSize="18sp"
-            android:textColor="@color/text_white"
-            android:fontFamily="@font/inter_semibold"
-            android:textFontWeight="600"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppins_medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Recent Prompt" />
@@ -26,19 +26,19 @@
             android:id="@+id/prompt"
             android:layout_marginTop="12dp"
             android:maxLines="4"
-            android:fontFamily="@font/inter"
+            android:fontFamily="@font/poppins"
             android:ellipsize="end"
             android:textSize="16sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="To preserve the context of a file that was split into segments, you can prompt the model with the transcript of the preceding segment. This will make the transcript more accurate, as the model will use the relevant information from the previous audioThe model will only consider the final 224 tokens of the prompt and ignore anything earlier"
-            android:textColor="@color/text_white" />
+            android:textColor="@color/black" />
 
         <LinearLayout
             android:id="@+id/generate_voice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="80dp"
+            android:layout_marginHorizontal="50dp"
             android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="8dp"
@@ -49,12 +49,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/global_button"
-                android:backgroundTint="@color/yellow"
-                android:fontFamily="@font/inter_bold"
+                android:backgroundTint="@color/black"
+                android:fontFamily="@font/poppins_medium"
                 android:gravity="center"
-                android:padding="16dp"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="12dp"
                 android:text="Re-Generate"
-                android:textColor="@color/black" />
+                android:textColor="@color/white" />
         </LinearLayout>
     </LinearLayout>
 

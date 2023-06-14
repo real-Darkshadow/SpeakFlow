@@ -147,7 +147,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getTranactions() {
+    fun getTransactions() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getTransactions(onSuccess = { transactions ->
                 transactionHistory.value = transactions

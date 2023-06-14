@@ -21,17 +21,19 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 
 
 class AddTokenFragment : Fragment() {
     private var _binding: FragmentAddTokenBinding? = null
     private val binding get() = _binding!!
-
-    private val viewmodel: TokensViewModel by activityViewModels()
+    private var tokens = 0L
+    private val viewModel: TokensViewModel by activityViewModels()
     private var rewardedAd: RewardedAd? = null
     private val TAG = "AddToken"
     val db = Firebase.firestore
+    val functions = Firebase.functions
 
 
     override fun onCreateView(
@@ -48,10 +50,15 @@ class AddTokenFragment : Fragment() {
         binding.priceOptions.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.priceOptions.isNestedScrollingEnabled = false;
-        initAd()
+        viewModel.userDataListener(FirebaseAuth.getInstance().uid.toString())
         setObservers()
         setListeners()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initAd()
     }
 
     private fun setListeners() {
@@ -63,7 +70,15 @@ class AddTokenFragment : Fragment() {
     }
 
     private fun setObservers() {
-        viewmodel.planPrices.observe(viewLifecycleOwner, Observer {
+
+        viewModel.userData.observe(viewLifecycleOwner, Observer { document ->
+            tokens = document?.get("tokens") as? Long ?: 0L
+            binding.availableToken.text = tokens.toString()
+
+
+        })
+
+        viewModel.planPrices.observe(viewLifecycleOwner, Observer {
             if (it.isNullOrEmpty()) {
 
             } else {

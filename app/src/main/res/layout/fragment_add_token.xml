@@ -1,28 +1,39 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
+    android:overScrollMode="never"
+    android:scrollbars="none"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:paddingHorizontal="16dp"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="parent">
 
-    android:layout_height="match_parent"
-    android:padding="16dp">
-
-    <ImageView
-        android:id="@+id/back_button"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrow_back"
-        app:layout_constraintBottom_toBottomOf="@+id/header"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="parent">
 
-    <TextView
+        <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintBottom_toBottomOf="@+id/header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
         android:id="@+id/header"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/inter_semibold"
-        android:text="Tokens"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Tokens"
         android:textColor="@color/black"
         android:textFontWeight="400"
         android:textSize="24dp"
@@ -49,7 +60,7 @@
                 android:id="@+id/tokentext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/inter"
+                android:fontFamily="@font/poppins_medium"
                 android:text="Available Tokens"
                 android:textColor="@color/black"
                 android:textFontWeight="400"
@@ -62,7 +73,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginTop="6dp"
-                android:src="@drawable/token"
+                android:src="@drawable/coin"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tokentext" />
 
@@ -71,10 +82,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="0"
-
                 android:textColor="@color/black"
                 android:textSize="20sp"
+                android:fontFamily="@font/poppins"
                 app:layout_constraintBottom_toBottomOf="@+id/tokenimg"
                 app:layout_constraintStart_toEndOf="@id/tokenimg"
                 app:layout_constraintTop_toBottomOf="@id/tokentext" />
@@ -101,7 +111,7 @@
                     android:background="@drawable/global_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/inter_semibold"
+                    android:fontFamily="@font/poppins_medium"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="8dp"
                     android:text="Watch Ad"
@@ -117,7 +127,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:fontFamily="@font/inter_semibold"
+        android:fontFamily="@font/poppins_medium"
         android:text="Buy More Tokens"
         android:textColor="@color/black"
         android:textFontWeight="400"
@@ -133,23 +143,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/buymoretext" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
+        <LinearLayout
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="24dp"
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:background="@drawable/global_button"
-            android:backgroundTint="@color/black"
-            android:gravity="center"
-            android:padding="16dp"
-            android:text="Continue" />
-    </LinearLayout>
+            app:layout_constraintTop_toBottomOf="@id/price_options"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:background="@drawable/global_button"
+                android:backgroundTint="@color/black"
+                android:gravity="center"
+                android:fontFamily="@font/poppins_medium"
+                android:padding="16dp"
+                android:text="Continue" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

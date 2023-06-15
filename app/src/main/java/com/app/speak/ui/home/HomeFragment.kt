@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -16,8 +18,9 @@ import androidx.lifecycle.Observer
 import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.db.AppPrefManager
-import com.app.speak.models.Task
 import com.app.speak.viewmodel.MainViewModel
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -25,19 +28,16 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var _binding: FragmentHomeBinding? = null
     val appPrefManager by lazy { AppPrefManager(requireActivity()) }
@@ -173,13 +173,51 @@ class HomeFragment : Fragment() {
                         Toast.makeText(requireContext(), "Not enough Tokens", Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        shimmerViewContainer.startShimmer()
                         addMessage("hello")
                     }
                 }
             }
+
+            val player = ExoPlayer.Builder(requireActivity().applicationContext).build()
+
+            binding.audioPlayer.player = player
+
+            val mediaItem: MediaItem =
+                MediaItem.fromUri("https://webaudioapi.com/samples/audio-tag/chrono.mp3")
+// Set the media item to be played.
+            player.setMediaItem(mediaItem)
+// Prepare the player.
+            player.prepare()
+// Start the playback.
+            player.play()
+
+
+//            val mp3File = File("path_to_your_mp3_file.mp3")
+//            val fileInputStream = FileInputStream(mp3File)
+//            val fileLength = mp3File.length().toInt()
+//            val mp3ByteArray = ByteArray(fileLength)
+//
+//            fileInputStream.read(mp3ByteArray)
+//            fileInputStream.close()
+//
+//            val dataSource = ByteArrayDataSource(mp3ByteArray)
+//            val mediaSource = ProgressiveMediaSource.Factory(dataSource)
+//                .createMediaSource(dataSource.uri)
+//
+//            exoPlayer.prepare(mediaSource)
+//            exoPlayer.playWhenReady = true
+
+
         }
+        val values = arrayOf("Value 1", "Value 2", "Value 3") // Replace with your desired values
+
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, values)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.customSpinner.adapter = adapter
+
+        binding.customSpinner.onItemSelectedListener = this
     }
+
 
     private fun addMessage(text: String) {
         // Create the arguments to the callable function.
@@ -206,7 +244,6 @@ class HomeFragment : Fragment() {
             if (status == "success") {
                 binding.generateVoice.isClickable = true
                 Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()
-                binding.shimmerViewContainer.stopShimmer()
             }
         })
         val user = auth.currentUser
@@ -223,9 +260,19 @@ class HomeFragment : Fragment() {
             Toast.makeText(requireContext(), "Task $taskId added", Toast.LENGTH_SHORT).show()
         })
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        val selectedItem = parent?.getItemAtPosition(position) as String
+        Toast.makeText(requireContext(), selectedItem, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("Not yet implemented")
     }
 
 }

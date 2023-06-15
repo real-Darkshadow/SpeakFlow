@@ -1,14 +1,12 @@
 package com.app.speak.ui.activity
 
-import android.app.Activity
+import ExtensionFunction.changeStatusBarColor
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.ViewModel
+import androidx.compose.ui.graphics.Color
 import com.app.speak.R
-import com.app.speak.databinding.ActivityMainBinding
 import com.app.speak.databinding.ActivityTokensBinding
-import com.app.speak.viewmodel.MainViewModel
 import com.app.speak.viewmodel.TokensViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,6 +20,7 @@ class TokensActivity : AppCompatActivity() {
         binding = ActivityTokensBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel.getPrices()
+        changeStatusBarColor(color = R.color.white,0)
         setListeners()
         setObservers()
     }

@@ -1,44 +1,34 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scroll"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/green_dark"
-    android:overScrollMode="never"
-    android:scrollbars="none"
-    app:layout_constraintEnd_toEndOf="parent"
-    android:paddingHorizontal="16dp"
-    android:paddingBottom="25dp"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="parent">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent">
-
+        android:paddingHorizontal="16dp"
+        android:background="@color/white"
+        android:paddingTop="16dp">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:lineHeight="60dp"
-            android:text="Hello\nAadarsh Kumawat."
-            android:textColor="@color/text_white"
-            android:textSize="35sp"
-            app:fontFamily="@font/inter_semibold"
+            android:lineHeight="40dp"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:fontFamily="@font/poppins_medium"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Hello\nAadarsh Kumawat." />
 
 
         <RelativeLayout
-            android:layout_marginTop="32dp"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_name">
@@ -49,32 +39,20 @@
                 android:layout_height="24dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/token" />
+                android:src="@drawable/coin" />
 
-            <TextView
-                android:id="@+id/tokensLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_toEndOf="@id/back"
-                android:fontFamily="@font/inter"
-                android:paddingHorizontal="6dp"
-                android:text="Tokens"
-                android:textColor="@color/text_white"
-                android:textFontWeight="600"
-                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/token_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_toEndOf="@id/tokensLabel"
-                android:fontFamily="@font/inter"
-                android:text="1"
-                android:textColor="@color/text_white"
-                android:textFontWeight="600"
-                android:textSize="18sp" />
+                android:layout_marginStart="4dp"
+                android:layout_toEndOf="@id/back"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                tools:text="1" />
 
             <TextView
                 android:id="@+id/title"
@@ -82,45 +60,85 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
-                android:layout_centerVertical="true"
-                android:fontFamily="@font/inter"
+                android:fontFamily="@font/poppins"
                 android:text="Add More"
-                android:textColor="@color/text_white"
-                android:textFontWeight="600"
-                android:textSize="18sp" />
+                android:textColor="@color/black"
+                android:textSize="14sp" />
 
         </RelativeLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/prompt_text"
-            android:background="@drawable/prompt_text_input_background"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:textColorLink="@color/text_white"
-            android:textColor="@color/text_white"
-            android:padding="8dp"
-            android:layout_marginTop="12dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false"
+            android:background="@drawable/token_price_back"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            android:gravity="top"
-            android:maxLength="1000"
-            android:textColorHint="@color/text_white"
-            android:hint="Enter your prompt" />
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/user_prompt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/poppins"
+                android:gravity="top"
+                android:hint="Enter Prompt"
+                android:inputType="textMultiLine"
+                android:maxLength="1500"
+                android:background="@android:color/transparent" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/inspiration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:fontFamily="@font/inter"
-            android:textFontWeight="600"
-            android:textSize="16sp"
-            android:textColor="@color/text_white"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/poppins_medium"
             android:text="I need inspiration"
+            android:textColor="@color/black"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/prompt_text" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/settings"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/prompt_text" />
+
+        <LinearLayout
+            android:id="@+id/chooseVoiceLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inspiration">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Choose Voice"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <Spinner
+                android:id="@+id/custom_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/spinner_background"
+                android:spinnerMode="dropdown"
+                android:entries="@array/spinner_items"
+                android:popupBackground="#FFFFFF"
+                android:dropDownVerticalOffset="40dp"
+                android:dropDownWidth="match_parent"
+                android:gravity="start" />
+        </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/generate_voice"
@@ -130,30 +148,30 @@
             android:layout_marginTop="34dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/inspiration">
+            app:layout_constraintTop_toBottomOf="@+id/chooseVoiceLayout">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/global_button"
-                android:backgroundTint="@color/yellow"
+                android:backgroundTint="@color/black"
                 android:fontFamily="@font/inter_bold"
                 android:gravity="center"
                 android:padding="16dp"
                 android:text="Generate"
-                android:textColor="@color/black" />
+                android:textColor="@color/white" />
         </LinearLayout>
 
         <com.facebook.shimmer.ShimmerFrameLayout
-            app:shimmer_auto_start="false"
-            app:shimmer_clip_to_children="true"
             android:id="@+id/shimmer_view_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="34dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/generate_voice">
+            app:layout_constraintTop_toBottomOf="@+id/generate_voice"
+            app:shimmer_auto_start="false"
+            app:shimmer_clip_to_children="true">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/generated_audio"
@@ -162,42 +180,43 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:orientation="vertical"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:padding="60dp"
-                    android:layout_height="wrap_content">
+                    android:orientation="vertical"
+                    android:padding="60dp">
 
                     <TextView
-                        android:textColor="@color/text_white"
-                        android:textSize="24sp"
-                        android:fontFamily="@font/inter_semibold"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="stay tuned for more new exciting features" />
+                        android:fontFamily="@font/inter_semibold"
+                        android:text="stay tuned for more new exciting features"
+                        android:textColor="@color/text_white"
+                        android:textSize="24sp" />
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
         </com.facebook.shimmer.ShimmerFrameLayout>
 
         <TextView
+            android:id="@+id/live"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/live"
             android:layout_marginTop="60dp"
             android:fontFamily="@font/inter_semibold"
             android:text="Live \nit up!"
-            android:textColor="@color/text_white"
-            app:layout_constraintTop_toBottomOf="@id/shimmer_view_container"
-            android:textSize="38sp" />
+            android:textColor="@color/black"
+            android:textSize="38sp"
+            app:layout_constraintTop_toBottomOf="@id/shimmer_view_container" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="120dp"
             android:text="Crafted with &#x1F493; in India"
-            android:textColor="@color/text_white"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/live"/>
+            app:layout_constraintTop_toBottomOf="@+id/live" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

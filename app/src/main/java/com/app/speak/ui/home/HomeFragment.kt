@@ -25,10 +25,14 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.functions.FirebaseFunctionsException
+import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,6 +46,7 @@ class HomeFragment : Fragment() {
     val db = Firebase.firestore
     private lateinit var auth: FirebaseAuth
     var tokens = 0L
+    val functions = Firebase.functions
 
 
     override fun onCreateView(
@@ -67,7 +72,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val uid = auth.currentUser?.uid.toString()
-        viewModel.fetchData(uid)
+
+
         initAd()
         setObservers()
         setListeners()
@@ -141,8 +147,7 @@ class HomeFragment : Fragment() {
         val uid = auth.currentUser?.uid.toString()
         binding.apply {
             generateVoice.setOnClickListener {
-                initAd()
-                val prompt = binding.promptText.text.toString()
+                val prompt = binding.userPrompt.text.toString()
                 if (prompt.isNullOrBlank()) {
                     Toast.makeText(requireContext(), "Enter Prompt", Toast.LENGTH_LONG).show()
                 } else {
@@ -164,35 +169,40 @@ class HomeFragment : Fragment() {
 
                         dialog.show()
 
+                    } else if (tokens < prompt.length) {
+                        Toast.makeText(requireContext(), "Not enough Tokens", Toast.LENGTH_SHORT)
+                            .show()
                     } else {
-                        val task = Task(
-                            userId = uid,
-                            promptText = prompt,
-                            status = "pending",
-                            createdAt = FieldValue.serverTimestamp(),
-                            fileUrl = "",
-                            completedAt = "",
-                            deductionDate=FieldValue.serverTimestamp(),
-                            tokensDeducted=0,
-                            promptLength=prompt.length
-
-                        )
-                        viewModel.addTask(task)
                         shimmerViewContainer.startShimmer()
+                        addMessage("hello")
                     }
                 }
             }
         }
     }
 
+    private fun addMessage(text: String) {
+        // Create the arguments to the callable function.
+        val data = hashMapOf(
+            "text" to text,
+        )
 
+        functions
+            .getHttpsCallable("addMessage")
+            .call(data)
+            .continueWith { task ->
+                // This continuation runs on either success or failure, but if the task
+                // has failed then result will throw an Exception which will be
+                // propagated down.
+                val result = task.result?.data as String
+                Log.d("tag", result)
+            }
+    }
 
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
         viewModel.taskResult.observe(viewLifecycleOwner, Observer { data ->
             val status = data?.get("status") as? String
-            val userId = data?.get("userId").toString()
-            val prompt = data?.get("promptText").toString()
             if (status == "success") {
                 binding.generateVoice.isClickable = true
                 Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()
@@ -200,8 +210,9 @@ class HomeFragment : Fragment() {
             }
         })
         val user = auth.currentUser
-        viewModel.data.observe(viewLifecycleOwner, Observer { document ->
+        viewModel.userData.observe(viewLifecycleOwner, Observer { document ->
             tokens = document?.get("tokens") as? Long ?: 0L
+            val isPurchased = document?.get("isPurchased") as? Boolean ?: false
             val name = document?.get("name") as? String ?: user?.displayName
             binding.tokenValue.text = tokens.toString()
             binding.userName.text = "Hello\n" + name + "."

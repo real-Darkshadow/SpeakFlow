@@ -2,5 +2,6 @@ package com.app.speak.models
 
 data class planPrices(
     val planName:String,
-    val price:String
+    val price:String,
+    var isSelected: Boolean = false
 )

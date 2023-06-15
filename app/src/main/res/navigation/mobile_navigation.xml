@@ -22,4 +22,9 @@
         android:name="com.app.speak.ui.Profile.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/transactionsFragment"
+        android:name="com.app.speak.ui.Profile.TransactionsFragment"
+        android:label="fragment_transactions"
+        tools:layout="@layout/fragment_transactions" />
 </navigation>

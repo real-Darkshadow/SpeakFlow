@@ -4,12 +4,15 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.app.speak.R
 import com.app.speak.databinding.ActivityMainBinding
+import com.app.speak.db.AppPrefManager
 import com.app.speak.viewmodel.MainViewModel
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,9 +29,16 @@ class MainActivity : AppCompatActivity() {
 
         val navView: BottomNavigationView = binding.navView
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        MobileAds.initialize(this) {}
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navController = navHostFragment.navController
 
+        MobileAds.initialize(this) {}
+        val uid = FirebaseAuth.getInstance().uid.toString()
         navView.setupWithNavController(navController)
+        viewModel.fetchPrompts(uid)
+        viewModel.userDataListener(uid)
+
+
     }
 }

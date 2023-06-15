@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.speak.models.PromptModel
 import com.app.speak.models.Task
+import com.app.speak.models.TransactionHistory
 import com.app.speak.repository.dataSourceImpl.MainRepository
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -23,15 +23,25 @@ class MainViewModel @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
     //    private val _data = MutableLiveData<DocumentSnapshot?>()
-    val data = MutableLiveData<Map<String, Any>?>()
+    val userData = MutableLiveData<Map<String, Any>?>()
     val promptHistory = MutableLiveData<ArrayList<String>>()
 
 
     val taskResult = MutableLiveData<Map<String, Any>?>()
-    val profileOptionList= mapOf(0 to "Your Transactions",1 to "Add Tokens",2 to "Spread the word",3 to "Terms of Use", 4 to "Privacy policy",5 to "More Apps",6 to "Delete Account")
+    val profileOptionList = mapOf(
+        0 to "Your Transactions",
+        1 to "Tokens",
+        2 to "Spread the word",
+        3 to "Terms of Use",
+        4 to "Privacy policy",
+        5 to "More Apps",
+        6 to "Delete Account"
+    )
 
     private val db = Firebase.firestore
     val lastTaskId = MutableLiveData<String>()
+
+    val transactionHistory = MutableLiveData<List<TransactionHistory>>()
     fun addTask(task: Task) {
         viewModelScope.launch(Dispatchers.IO) {
             db.collection("prompts")
@@ -48,19 +58,16 @@ class MainViewModel @Inject constructor(
 
     }
 
-    fun setUser(uid: String) {
-        repository.setUser(uid)
-    }
 
-    fun fetchData(documentId: String) {
+    fun getUserData(documentId: String) {
         viewModelScope.launch {
-            repository.getDocument(documentId)
+            repository.getUserData(documentId)
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
                         // Document exists, retrieve the data
-                        data.value = documentSnapshot.data
-                        setUser(documentId)
-                        userListener()
+                        userData.value = documentSnapshot.data
+                       // setUser(documentId)
+//                        userDataListener()
                         // Process the data as needed
                     } else {
                         // Document does not exist
@@ -83,14 +90,17 @@ class MainViewModel @Inject constructor(
     }
 
     fun fetchPrompts(userId: String) {
-        repository.getPromptsByUser(userId,
-            onSuccess = { promptsList ->
-                prompts.value = promptsList
-            },
-            onFailure = { exception ->
-                error.value = "Error fetching prompts: ${exception.message}"
-            }
-        )
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getPromptsByUser(userId,
+                onSuccess = { promptsList ->
+                    prompts.value = promptsList
+                },
+                onFailure = { exception ->
+                    error.value = "Error fetching prompts: ${exception.message}"
+                }
+            )
+        }
+
     }
 
     private fun taskListener() {
@@ -111,21 +121,40 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun userListener() {
-        val auth = FirebaseAuth.getInstance()
-        val docRef = db.collection("users").document(auth.uid.toString())
-        docRef.addSnapshotListener { snapshot, e ->
-            if (e != null) {
-                Log.w("tag", "Listen failed.", e)
-                return@addSnapshotListener
+    fun userDataListener(uId: String) {
+        val docRef = db.collection("users").document(uId)
+        viewModelScope.launch (Dispatchers.IO){
+            docRef.addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.w("tag", "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+                if (snapshot != null && snapshot.exists()) {
+                    userData.value = snapshot.data
+                    repository.setUser(uId)
+                    Log.d("tag", "Current data: ${snapshot.data}")
+                } else {
+                    Log.d("tag", "Current data: null")
+                }
             }
-            if (snapshot != null && snapshot.exists()) {
-                val datak = snapshot.data
-                data.value = datak
-                Log.d("tag", "Current data: ${snapshot.data}")
-            } else {
-                Log.d("tag", "Current data: null")
-            }
+        }
+
+    }
+
+    fun uerLogout() {
+        viewModelScope.launch {
+            repository.userLogout()
+        }
+    }
+
+    fun getTransactions() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getTransactions(onSuccess = { transactions ->
+                transactionHistory.value = transactions
+            },
+                onFailure = { exception ->
+                    error.value = "Error fetching prompts: ${exception.message}"
+                })
         }
     }
 

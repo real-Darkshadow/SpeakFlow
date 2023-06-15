@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.app.speak.BuildConfig
 import com.app.speak.R
 import com.app.speak.databinding.FragmentRegisterBinding
 import com.app.speak.ui.activity.MainActivity
@@ -119,7 +120,7 @@ class RegisterFragment : Fragment() {
 
     private fun createRequest() {
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.your_web_client_id))
+            .requestIdToken(BuildConfig.web_client)
             .requestEmail()
             .build()
         mGoogleSignInClient =

@@ -15,7 +15,6 @@ class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
-        changeStatusBarColor(R.color.green_dark, 0)
     }
 
     override fun onStart() {

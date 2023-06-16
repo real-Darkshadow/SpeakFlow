@@ -179,9 +179,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
 
             val player = ExoPlayer.Builder(requireActivity().applicationContext).build()
-
-            binding.audioPlayer.player = player
-
             val mediaItem: MediaItem =
                 MediaItem.fromUri("https://webaudioapi.com/samples/audio-tag/chrono.mp3")
 // Set the media item to be played.
@@ -189,7 +186,9 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 // Prepare the player.
             player.prepare()
 // Start the playback.
-            player.play()
+            binding.play.setOnClickListener {
+                player.play()
+            }
 
 
 //            val mp3File = File("path_to_your_mp3_file.mp3")

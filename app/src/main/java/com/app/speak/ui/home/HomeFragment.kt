@@ -2,7 +2,11 @@ package com.app.speak.ui.home
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +15,7 @@ import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -47,6 +52,9 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var auth: FirebaseAuth
     var tokens = 0L
     val functions = Firebase.functions
+
+    lateinit var runnable: Runnable
+    private var handler = Handler()
 
 
     override fun onCreateView(
@@ -177,34 +185,56 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     }
                 }
             }
+            seekbar.progress = 0
 
-            val player = ExoPlayer.Builder(requireActivity().applicationContext).build()
-            val mediaItem: MediaItem =
-                MediaItem.fromUri("https://webaudioapi.com/samples/audio-tag/chrono.mp3")
+            val player: MediaPlayer = MediaPlayer()
+            player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+
 // Set the media item to be played.
-            player.setMediaItem(mediaItem)
+            player.setDataSource("https://webaudioapi.com/samples/audio-tag/chrono.mp3")
 // Prepare the player.
             player.prepare()
+            seekbar.max = player.duration.toInt()
 // Start the playback.
-            binding.play.setOnClickListener {
-                player.play()
+            play.setOnClickListener {
+                if (!player.isPlaying) {
+                    player.start()
+                    binding.play.setImageResource(R.drawable.baseline_pause_24)
+                } else {
+                    player.pause()
+                    binding.play.setImageResource(R.drawable.baseline_play_arrow_24)
+                }
             }
 
+            seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    if (fromUser) {
+                        player.seekTo(progress)
+                    }
+                }
 
-//            val mp3File = File("path_to_your_mp3_file.mp3")
-//            val fileInputStream = FileInputStream(mp3File)
-//            val fileLength = mp3File.length().toInt()
-//            val mp3ByteArray = ByteArray(fileLength)
-//
-//            fileInputStream.read(mp3ByteArray)
-//            fileInputStream.close()
-//
-//            val dataSource = ByteArrayDataSource(mp3ByteArray)
-//            val mediaSource = ProgressiveMediaSource.Factory(dataSource)
-//                .createMediaSource(dataSource.uri)
-//
-//            exoPlayer.prepare(mediaSource)
-//            exoPlayer.playWhenReady = true
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                }
+
+            })
+            runnable = Runnable {
+                seekbar.progress = player.currentPosition.toInt()
+                handler.postDelayed(runnable, 1000)
+            }
+            handler.postDelayed(runnable, 1000)
+
+            player.setOnCompletionListener {
+                play.setImageResource(R.drawable.baseline_play_arrow_24)
+                seekbar.progress = 0
+            }
 
 
         }

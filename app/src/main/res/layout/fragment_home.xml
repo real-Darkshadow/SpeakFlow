@@ -189,6 +189,7 @@
                         android:textSize="16sp" />
 
                     <SeekBar
+                        android:id="@+id/seekbar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 

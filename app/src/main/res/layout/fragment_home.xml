@@ -132,7 +132,6 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/spinner_background"
                 android:spinnerMode="dropdown"
-                android:entries="@array/spinner_items"
                 android:popupBackground="#FFFFFF"
                 android:dropDownVerticalOffset="40dp"
                 android:dropDownWidth="match_parent"
@@ -162,19 +161,14 @@
                 android:textColor="@color/white" />
         </LinearLayout>
 
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/shimmer_view_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="34dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/generate_voice"
-            app:shimmer_auto_start="false"
-            app:shimmer_clip_to_children="true">
+
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/generated_audio"
+                android:layout_marginTop="34dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/generate_voice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -186,16 +180,45 @@
                     android:padding="60dp">
 
                     <TextView
+                        android:visibility="visible"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:fontFamily="@font/inter_semibold"
-                        android:text="stay tuned for more new exciting features"
-                        android:textColor="@color/text_white"
-                        android:textSize="24sp" />
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Click 'Generate' to create the voice file."
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <SeekBar
+                        android:id="@+id/seekbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:src="@drawable/baseline_skip_previous_24"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:id="@+id/play"
+                            android:clickable="true"
+                            android:layout_width="wrap_content"
+                            android:src="@drawable/baseline_play_arrow_24"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:src="@drawable/baseline_skip_next_24"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-        </com.facebook.shimmer.ShimmerFrameLayout>
 
         <TextView
             android:id="@+id/live"
@@ -206,7 +229,7 @@
             android:text="Live \nit up!"
             android:textColor="@color/black"
             android:textSize="38sp"
-            app:layout_constraintTop_toBottomOf="@id/shimmer_view_container" />
+            app:layout_constraintTop_toBottomOf="@id/generated_audio" />
 
         <TextView
             android:layout_width="wrap_content"

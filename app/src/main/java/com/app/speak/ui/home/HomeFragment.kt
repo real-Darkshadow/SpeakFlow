@@ -2,13 +2,20 @@ package com.app.speak.ui.home
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -16,8 +23,9 @@ import androidx.lifecycle.Observer
 import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.db.AppPrefManager
-import com.app.speak.models.Task
 import com.app.speak.viewmodel.MainViewModel
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -25,19 +33,16 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var _binding: FragmentHomeBinding? = null
     val appPrefManager by lazy { AppPrefManager(requireActivity()) }
@@ -47,6 +52,9 @@ class HomeFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     var tokens = 0L
     val functions = Firebase.functions
+
+    lateinit var runnable: Runnable
+    private var handler = Handler()
 
 
     override fun onCreateView(
@@ -173,13 +181,72 @@ class HomeFragment : Fragment() {
                         Toast.makeText(requireContext(), "Not enough Tokens", Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        shimmerViewContainer.startShimmer()
                         addMessage("hello")
                     }
                 }
             }
+            seekbar.progress = 0
+
+            val player: MediaPlayer = MediaPlayer()
+            player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+
+// Set the media item to be played.
+            player.setDataSource("https://webaudioapi.com/samples/audio-tag/chrono.mp3")
+// Prepare the player.
+            player.prepare()
+            seekbar.max = player.duration.toInt()
+// Start the playback.
+            play.setOnClickListener {
+                if (!player.isPlaying) {
+                    player.start()
+                    binding.play.setImageResource(R.drawable.baseline_pause_24)
+                } else {
+                    player.pause()
+                    binding.play.setImageResource(R.drawable.baseline_play_arrow_24)
+                }
+            }
+
+            seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    if (fromUser) {
+                        player.seekTo(progress)
+                    }
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                }
+
+            })
+            runnable = Runnable {
+                seekbar.progress = player.currentPosition.toInt()
+                handler.postDelayed(runnable, 1000)
+            }
+            handler.postDelayed(runnable, 1000)
+
+            player.setOnCompletionListener {
+                play.setImageResource(R.drawable.baseline_play_arrow_24)
+                seekbar.progress = 0
+            }
+
+
         }
+        val values = arrayOf("Value 1", "Value 2", "Value 3") // Replace with your desired values
+
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, values)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.customSpinner.adapter = adapter
+
+        binding.customSpinner.onItemSelectedListener = this
     }
+
 
     private fun addMessage(text: String) {
         // Create the arguments to the callable function.
@@ -206,7 +273,6 @@ class HomeFragment : Fragment() {
             if (status == "success") {
                 binding.generateVoice.isClickable = true
                 Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()
-                binding.shimmerViewContainer.stopShimmer()
             }
         })
         val user = auth.currentUser
@@ -223,9 +289,19 @@ class HomeFragment : Fragment() {
             Toast.makeText(requireContext(), "Task $taskId added", Toast.LENGTH_SHORT).show()
         })
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        val selectedItem = parent?.getItemAtPosition(position) as String
+        Toast.makeText(requireContext(), selectedItem, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("Not yet implemented")
     }
 
 }

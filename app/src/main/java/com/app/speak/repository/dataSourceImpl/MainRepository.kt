@@ -115,6 +115,30 @@ class MainRepository @Inject constructor(
                 }
         }
     }
+    suspend fun getVoices(){
+        withContext(Dispatchers.IO) {
+            db.collection("Voices").get()
+                .addOnSuccessListener { querySnapshot ->
+                    val transactions = mutableListOf<TransactionHistory>()
+                    for (document in querySnapshot) {
+                        val transactionName = document.getString("transactionName") ?: ""
+                        val transactionDate = document.getString("transactionDate") ?: ""
+                        val transactionStatus = document.getString("transactionStatus") ?: ""
+                        val transactionId = document.getString("transactionId") ?: ""
+
+                        val trans = TransactionHistory(
+                            transactionName,
+                            transactionDate,
+                            transactionStatus,
+                            transactionId
+                        )
+                        transactions.add(trans)
+                    }
+                }
+                .addOnFailureListener { e ->
+                }
+        }
+    }
 
     suspend fun userLogout() {
         withContext(Dispatchers.IO) {

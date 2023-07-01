@@ -41,6 +41,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -194,9 +197,12 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 
 // Set the media item to be played.
-            player.setDataSource("https://webaudioapi.com/samples/audio-tag/chrono.mp3")
+            GlobalScope.launch(Dispatchers.IO){
+                player.setDataSource("https://webaudioapi.com/samples/audio-tag/chrono.mp3")
+                player.prepare()
+            }
 // Prepare the player.
-            player.prepare()
+
             seekbar.max = player.duration.toInt()
 // Start the playback.
             play.setOnClickListener {

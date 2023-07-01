@@ -2,6 +2,7 @@ package com.app.speak.ui.home
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -23,6 +24,7 @@ import androidx.lifecycle.Observer
 import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.db.AppPrefManager
+import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -245,6 +247,10 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         binding.customSpinner.adapter = adapter
 
         binding.customSpinner.onItemSelectedListener = this
+
+        binding.addMore.setOnClickListener {
+            startActivity(Intent(requireContext(),TokensActivity::class.java))
+        }
     }
 
 
@@ -296,8 +302,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val selectedItem = parent?.getItemAtPosition(position) as String
-        Toast.makeText(requireContext(), selectedItem, Toast.LENGTH_SHORT).show()
+        viewModel.selectedVoice = parent?.getItemAtPosition(position).toString()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {

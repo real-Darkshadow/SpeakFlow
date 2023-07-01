@@ -25,6 +25,7 @@ class MainViewModel @Inject constructor(
     //    private val _data = MutableLiveData<DocumentSnapshot?>()
     val userData = MutableLiveData<Map<String, Any>?>()
     val promptHistory = MutableLiveData<ArrayList<String>>()
+    var selectedVoice:String=""
 
 
     val taskResult = MutableLiveData<Map<String, Any>?>()

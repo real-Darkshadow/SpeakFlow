@@ -21,17 +21,8 @@ class TokensActivity : AppCompatActivity() {
         setContentView(binding.root)
         viewModel.getPrices()
         changeStatusBarColor(color = R.color.white,0)
-        setListeners()
-        setObservers()
     }
 
-    private fun setObservers() {
-//
-    }
-
-    private fun setListeners() {
-//
-    }
 
 
 }

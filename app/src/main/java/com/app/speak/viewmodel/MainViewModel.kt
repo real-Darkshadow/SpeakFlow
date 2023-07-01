@@ -1,6 +1,8 @@
 package com.app.speak.viewmodel
 
+import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,9 +13,13 @@ import com.app.speak.repository.dataSourceImpl.MainRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -25,9 +31,11 @@ class MainViewModel @Inject constructor(
     //    private val _data = MutableLiveData<DocumentSnapshot?>()
     val userData = MutableLiveData<Map<String, Any>?>()
     val promptHistory = MutableLiveData<ArrayList<String>>()
-    var selectedVoice:String=""
+    var selectedVoice: String = ""
 
-
+    private var uri: Uri? = null
+    private var _code = MutableLiveData<String>()
+    val code: LiveData<String> get() = _code
     val taskResult = MutableLiveData<Map<String, Any>?>()
     val profileOptionList = mapOf(
         0 to "Your Transactions",
@@ -157,6 +165,24 @@ class MainViewModel @Inject constructor(
                     error.value = "Error fetching prompts: ${exception.message}"
                 })
         }
+    }
+
+
+    fun codeFromUri(bitmap: InputImage) {
+        viewModelScope.launch {
+            // worked bt not so good : Wil use Cloud vision api :P
+            val textRecognizer: com.google.mlkit.vision.text.TextRecognizer =
+                TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+            val task = textRecognizer.process(bitmap)
+            task.addOnCompleteListener {
+                _code.value = it.result.text
+                Log.d("tag", it.result.text)
+            }.addOnFailureListener {
+                Log.e("ERROR", "Exception : " + it.message)
+            }
+
+        }
+
     }
 
 

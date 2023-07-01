@@ -1,13 +1,14 @@
 package com.app.speak.ui.home
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -26,8 +28,7 @@ import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.db.AppPrefManager
 import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -40,6 +41,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
+import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -255,7 +257,10 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         binding.customSpinner.onItemSelectedListener = this
 
         binding.addMore.setOnClickListener {
-            startActivity(Intent(requireContext(),TokensActivity::class.java))
+            startActivity(Intent(requireContext(), TokensActivity::class.java))
+        }
+        binding.floats.setOnClickListener {
+            pick()
         }
     }
 
@@ -314,5 +319,37 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("Not yet implemented")
     }
+
+    fun pick() {
+        ImagePicker.with(this)
+            .compress(1024)         //Final image size will be less than 1 MB(Optional)
+            .maxResultSize(
+                1080,
+                1080
+            )  //Final image resolution will be less than 1080 x 1080(Optional)
+            .createIntent { intent ->
+                startForProfileImageResult.launch(intent)
+            }
+    }
+
+    private lateinit var mProfileUri: Uri
+    private val startForProfileImageResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val resultCode = result.resultCode
+            val data = result.data
+
+            if (resultCode == Activity.RESULT_OK) {
+                //Image Uri will not be null for RESULT_OK
+                val fileUri = data?.data!!
+                val image = InputImage.fromFilePath(requireContext(), fileUri)
+                viewModel.codeFromUri(image)
+                mProfileUri = fileUri
+            } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+            }
+        }
 
 }

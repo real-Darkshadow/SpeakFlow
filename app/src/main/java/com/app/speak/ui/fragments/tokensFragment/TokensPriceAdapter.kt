@@ -46,7 +46,7 @@ class TokensPriceAdapter(val planPrices: List<planPrices>) : RecyclerView.Adapte
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val title: TextView = itemView.findViewById(R.id.title)
+        val title: TextView = itemView.findViewById(R.id.add_more)
         val des: TextView = itemView.findViewById(R.id.des)
         val layout: LinearLayout = itemView.findViewById(R.id.layout)
         val radioButton: RadioButton = itemView.findViewById(R.id.radioButton)

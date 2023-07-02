@@ -44,6 +44,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     lateinit var runnable: Runnable
     private var TAG = "MainFrag"
     private var handler = Handler()
+    private lateinit var uid: String
 
 
     private var interstitialAd: InterstitialAd? = null
@@ -68,7 +69,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val uid = auth.currentUser?.uid.toString()
+        uid = auth.currentUser?.uid.toString()
         viewModel.fetchPrompts(uid)
         MobileAds.initialize(requireContext()) {}
         loadInterstitialAd()
@@ -303,5 +304,11 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 }
             }
         }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getUserData(uid)
+
+    }
 
 }

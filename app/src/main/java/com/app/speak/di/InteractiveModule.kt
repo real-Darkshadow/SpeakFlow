@@ -28,6 +28,8 @@ object InteractiveModule {
         appPrefManager: AppPrefManager,
         @Named("device_id")
         deviceId: String,
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore
     ): MainRepositoryInterface {
         val apiInterface = api.create(ApiService::class.java)
         return MainRepository(
@@ -35,6 +37,7 @@ object InteractiveModule {
             apiInterface,
             appPrefManager,
             deviceId,
+            firestore,
         )
     }
 

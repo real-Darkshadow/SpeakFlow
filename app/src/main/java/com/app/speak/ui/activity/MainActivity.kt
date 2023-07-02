@@ -35,9 +35,7 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         MobileAds.initialize(this) {}
-        val uid = FirebaseAuth.getInstance().uid.toString()
         navView.setupWithNavController(navController)
-        viewModel.getUserData(uid)
         changeStatusBarColor(color = R.color.white, 0)
 
     }

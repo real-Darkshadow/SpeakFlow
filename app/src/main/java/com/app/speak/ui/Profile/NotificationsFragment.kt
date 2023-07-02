@@ -1,10 +1,12 @@
 package com.app.speak.ui.Profile
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -58,6 +60,23 @@ class NotificationsFragment : Fragment() {
                 when (it) {
                     0 -> findNavController().navigate(R.id.transactionsFragment)
                     1 -> startActivity(Intent(requireContext(), TokensActivity::class.java))
+                    2 -> shareText(getString(R.string.share_text))
+                    3 -> startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://sites.google.com/view/speakflow/terms-of-use")
+                        )
+                    )
+
+                    4 -> startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://sites.google.com/view/speakflow/privacy-policy")
+                        )
+                    )
+
+                    5 -> {}
+                    6 -> {}
                 }
             }
             options.isNestedScrollingEnabled = false;
@@ -67,6 +86,14 @@ class NotificationsFragment : Fragment() {
                 startActivity(Intent(requireActivity(), AuthActivity::class.java))
             }
         }
+    }
+
+    fun shareText(text: String) {
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "text/plain"
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text)
+
+        startActivity(Intent.createChooser(shareIntent, "Share via"))
     }
 
     override fun onDestroyView() {

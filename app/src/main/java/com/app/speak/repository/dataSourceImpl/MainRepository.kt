@@ -1,5 +1,6 @@
 package com.app.speak.repository.dataSourceImpl
 
+import android.util.Log
 import com.app.speak.Speak
 import com.app.speak.api.ApiService
 import com.app.speak.db.AppPrefManager
@@ -11,6 +12,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +26,9 @@ class MainRepository @Inject constructor(
     val appPrefManager: AppPrefManager,
     @Named("device_id")
     private val deviceID: String,
-) : MainRepositoryInterface {
+    private val firestore: FirebaseFirestore,
+
+    ) : MainRepositoryInterface {
     private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val db = Firebase.firestore
 
@@ -32,6 +36,7 @@ class MainRepository @Inject constructor(
         val documentRef = db.collection("users").document(documentId)
         return documentRef.get()
     }
+
     fun emailSignIn(email: String, password: String): Task<AuthResult> {
         return mAuth.signInWithEmailAndPassword(email, password)
     }
@@ -143,6 +148,27 @@ class MainRepository @Inject constructor(
     suspend fun userLogout() {
         withContext(Dispatchers.IO) {
             mAuth.signOut()
+        }
+    }
+
+    fun storeDetailsInFirebase(name: String, uid: String, email: String) {
+        val userMap = hashMapOf(
+            "userId" to uid,
+            "name" to name,
+            "email" to email,
+            "tokens" to 100  // or however many tokens new users should start with
+        )
+        try {
+            firestore.collection("users").document(uid)
+                .set(userMap)
+                .addOnSuccessListener {
+                    return@addOnSuccessListener
+                }
+                .addOnFailureListener { e ->
+                    return@addOnFailureListener
+                }
+        } catch (e: Exception) {
+            Log.d("Tag", e.toString())
         }
     }
 }

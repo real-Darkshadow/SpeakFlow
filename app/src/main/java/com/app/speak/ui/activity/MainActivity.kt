@@ -1,5 +1,6 @@
 package com.app.speak.ui.activity
 
+import ExtensionFunction.changeStatusBarColor
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -36,9 +37,8 @@ class MainActivity : AppCompatActivity() {
         MobileAds.initialize(this) {}
         val uid = FirebaseAuth.getInstance().uid.toString()
         navView.setupWithNavController(navController)
-        viewModel.fetchPrompts(uid)
-        viewModel.userDataListener(uid)
-
+        viewModel.getUserData(uid)
+        changeStatusBarColor(color = R.color.white, 0)
 
     }
 }

@@ -1,45 +1,29 @@
 package com.app.speak.ui.home
 
+import ExtensionFunction.isNotNullOrBlank
+import ExtensionFunction.showToast
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.Dialog
+import android.app.*
 import android.content.Intent
-import android.media.AudioManager
-import android.media.MediaPlayer
-import android.net.Uri
-import android.os.Bundle
-import android.os.Handler
+import android.media.*
+import android.os.*
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.SeekBar
-import android.widget.Toast
+import android.view.*
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
-import com.app.speak.db.AppPrefManager
 import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel
 import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.android.gms.ads.AdError
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.OnUserEarnedRewardListener
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,17 +36,17 @@ import kotlinx.coroutines.launch
 class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var _binding: FragmentHomeBinding? = null
-    val appPrefManager by lazy { AppPrefManager(requireActivity()) }
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
     val db = Firebase.firestore
     private lateinit var auth: FirebaseAuth
     var tokens = 0L
-    val functions = Firebase.functions
-
     lateinit var runnable: Runnable
+    private var TAG = "MainFrag"
     private var handler = Handler()
 
+
+    private var interstitialAd: InterstitialAd? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -82,88 +66,64 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
     }
 
-    private var rewardedAd: RewardedAd? = null
-    private final var TAG = "MainActivity"
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val uid = auth.currentUser?.uid.toString()
-
-
-        initAd()
+        viewModel.fetchPrompts(uid)
+        MobileAds.initialize(requireContext()) {}
+        loadInterstitialAd()
         setObservers()
         setListeners()
     }
 
-    fun initAd() {
-        var adRequest = AdRequest.Builder().build()
-        RewardedAd.load(
+    private fun loadInterstitialAd() {
+        val adRequest = AdRequest.Builder().build()
+        InterstitialAd.load(
             requireContext(),
             "ca-app-pub-2526931847493583/6336229825",
             adRequest,
-            object : RewardedAdLoadCallback() {
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    adError?.toString()?.let { Log.d(TAG, it) }
-                    rewardedAd = null
+            object : InterstitialAdLoadCallback() {
+                override fun onAdLoaded(ad: InterstitialAd) {
+                    interstitialAd = ad
+                    Log.d(TAG, "InterstitialAd was loaded.")
                 }
 
-                override fun onAdLoaded(ad: RewardedAd) {
-                    Log.d(TAG, "Ad was loaded.")
-                    rewardedAd = ad
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    adError.message.let { Log.d(TAG, it) }
+                    interstitialAd = null
                 }
-            })
+            }
+        )
     }
 
-    fun showAd() {
+    private fun showInterstitialAd() {
+        if (interstitialAd != null) {
+            interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    Log.d(TAG, "InterstitialAd was dismissed.")
+                    // Load a new InterstitialAd
+                    loadInterstitialAd()
+                }
 
-        rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-            override fun onAdClicked() {
-                // Called when a click is recorded for an ad.
-                Log.d(TAG, "Ad was clicked.")
-            }
+                override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                    Log.e(TAG, "InterstitialAd failed to show.")
+                }
 
-            override fun onAdDismissedFullScreenContent() {
-                // Called when ad is dismissed.
-                // Set the ad reference to null so you don't show the ad a second time.
-                Log.d(TAG, "Ad dismissed fullscreen content.")
-                rewardedAd = null
+                override fun onAdShowedFullScreenContent() {
+                    Log.d(TAG, "InterstitialAd was shown.")
+                }
             }
-
-            override fun onAdFailedToShowFullScreenContent(p0: AdError) {
-                // Called when ad fails to show.
-                Log.e(TAG, "Ad failed to show fullscreen content.")
-                rewardedAd = null
-            }
-
-            override fun onAdImpression() {
-                // Called when an impression is recorded for an ad.
-                Log.d(TAG, "Ad recorded an impression.")
-            }
-
-            override fun onAdShowedFullScreenContent() {
-                // Called when ad is shown.
-                Log.d(TAG, "Ad showed fullscreen content.")
-            }
-        }
-        rewardedAd?.let { ad ->
-            ad.show(requireActivity(), OnUserEarnedRewardListener { rewardItem ->
-                // Handle the reward.
-                val rewardAmount = rewardItem.amount
-                val rewardType = rewardItem.type
-                val db = db.collection("users").document(auth.uid.toString())
-                db.update("tokens", rewardAmount)
-                Log.d(TAG, "User earned the reward.")
-            })
-        } ?: run {
-            Log.d(TAG, "The rewarded ad wasn't ready yet.")
+            interstitialAd?.show(requireActivity())
+        } else {
+            Log.d(TAG, "The InterstitialAd wasn't ready yet.")
         }
     }
 
     private fun setListeners() {
-        val uid = auth.currentUser?.uid.toString()
         binding.apply {
             generateVoice.setOnClickListener {
                 val prompt = binding.userPrompt.text.toString()
-                if (prompt.isNullOrBlank()) {
+                if (prompt.isBlank()) {
                     Toast.makeText(requireContext(), "Enter Prompt", Toast.LENGTH_LONG).show()
                 } else {
                     if (tokens <= 0) {
@@ -178,7 +138,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
                         val button = dialog.findViewById<Button>(R.id.watchad)
                         button.setOnClickListener {
-                            showAd()
+                            showInterstitialAd()
                             dialog.dismiss()
                         }
 
@@ -188,13 +148,13 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         Toast.makeText(requireContext(), "Not enough Tokens", Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        addMessage("hello")
+                        showToast("firebase function")
                     }
                 }
             }
             seekbar.progress = 0
 
-            val player: MediaPlayer = MediaPlayer()
+            val player = MediaPlayer()
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
 
@@ -205,7 +165,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
 // Prepare the player.
 
-            seekbar.max = player.duration.toInt()
+            seekbar.max = player.duration
 // Start the playback.
             play.setOnClickListener {
                 if (!player.isPlaying) {
@@ -236,7 +196,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
             })
             runnable = Runnable {
-                seekbar.progress = player.currentPosition.toInt()
+                seekbar.progress = player.currentPosition
                 handler.postDelayed(runnable, 1000)
             }
             handler.postDelayed(runnable, 1000)
@@ -265,46 +225,33 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
 
-    private fun addMessage(text: String) {
-        // Create the arguments to the callable function.
-        val data = hashMapOf(
-            "text" to text,
-        )
-
-        functions
-            .getHttpsCallable("addMessage")
-            .call(data)
-            .continueWith { task ->
-                // This continuation runs on either success or failure, but if the task
-                // has failed then result will throw an Exception which will be
-                // propagated down.
-                val result = task.result?.data as String
-                Log.d("tag", result)
-            }
-    }
-
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
-        viewModel.taskResult.observe(viewLifecycleOwner, Observer { data ->
+        viewModel.taskResult.observe(viewLifecycleOwner) { data ->
             val status = data?.get("status") as? String
             if (status == "success") {
                 binding.generateVoice.isClickable = true
                 Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()
             }
-        })
+        }
         val user = auth.currentUser
-        viewModel.userData.observe(viewLifecycleOwner, Observer { document ->
+        viewModel.userData.observe(viewLifecycleOwner) { document ->
             tokens = document?.get("tokens") as? Long ?: 0L
-            val isPurchased = document?.get("isPurchased") as? Boolean ?: false
             val name = document?.get("name") as? String ?: user?.displayName
             binding.tokenValue.text = tokens.toString()
-            binding.userName.text = "Hello\n" + name + "."
+            binding.userName.text = "Hello\n$name."
 
-        })
-        viewModel.lastTaskId.observe(viewLifecycleOwner, Observer { taskId ->
+        }
+        viewModel.lastTaskId.observe(viewLifecycleOwner) { taskId ->
             binding.generateVoice.isClickable = false
             Toast.makeText(requireContext(), "Task $taskId added", Toast.LENGTH_SHORT).show()
-        })
+        }
+        viewModel.imageText.observe(viewLifecycleOwner) {
+            val userPrompt = binding.userPrompt.text.toString()
+            if (it.isNotNullOrBlank() && userPrompt.isEmpty()) {
+                binding.userPrompt.setText(it)
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -316,12 +263,13 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         viewModel.selectedVoice = parent?.getItemAtPosition(position).toString()
     }
 
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        TODO("Not yet implemented")
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+
     }
 
-    fun pick() {
-        ImagePicker.with(this)
+
+    private fun pick() {
+        ImagePicker.with(this).galleryOnly()
             .compress(1024)         //Final image size will be less than 1 MB(Optional)
             .maxResultSize(
                 1080,
@@ -332,23 +280,27 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
     }
 
-    private lateinit var mProfileUri: Uri
     private val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val resultCode = result.resultCode
             val data = result.data
 
-            if (resultCode == Activity.RESULT_OK) {
-                //Image Uri will not be null for RESULT_OK
-                val fileUri = data?.data!!
-                val image = InputImage.fromFilePath(requireContext(), fileUri)
-                viewModel.codeFromUri(image)
-                mProfileUri = fileUri
-            } else if (resultCode == ImagePicker.RESULT_ERROR) {
-                Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    //Image Uri will not be null for RESULT_OK
+                    val fileUri = data?.data!!
+                    val image = InputImage.fromFilePath(requireContext(), fileUri)
+                    viewModel.codeFromUri(image)
+                }
+
+                ImagePicker.RESULT_ERROR -> {
+                    Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                else -> {
+                    Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

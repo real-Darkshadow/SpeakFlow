@@ -9,15 +9,21 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.app.speak.R
 
-class profile_adapter(val profileOptionList: Map<Int, String>,val onclick: (Int) -> Unit,) : RecyclerView.Adapter<profile_adapter.vh>() {
-    inner class vh(view: View):RecyclerView.ViewHolder(view) {
+class profile_adapter(
+    val profileOptionList: Map<Int, Pair<String, String>>,
+    val onclick: (Int) -> Unit,
+) : RecyclerView.Adapter<profile_adapter.vh>() {
+    inner class vh(view: View) : RecyclerView.ViewHolder(view) {
         val text = view.findViewById<TextView>(R.id.order_name)
         val field = view.findViewById<ConstraintLayout>(R.id.option_id)
         val option_image = view.findViewById<ImageView>(R.id.option_image)
+        val des = view.findViewById<TextView>(R.id.description)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): vh {
-        return  vh(LayoutInflater.from(parent.context).inflate(R.layout.profile_options,parent,false))
+        return vh(
+            LayoutInflater.from(parent.context).inflate(R.layout.profile_options, parent, false)
+        )
     }
 
     override fun getItemCount(): Int {
@@ -26,8 +32,9 @@ class profile_adapter(val profileOptionList: Map<Int, String>,val onclick: (Int)
 
     override fun onBindViewHolder(holder: vh, position: Int) {
         val profileOption = profileOptionList[position]
-        holder.text.text = profileOption
+        holder.text.text = profileOption?.first
         holder.field.setOnClickListener { onclick(position) }
+        holder.des.text = profileOption?.second
         when (position) {
             0 -> holder.option_image.setBackgroundResource(R.drawable.transaction)
             1 -> holder.option_image.setBackgroundResource(R.drawable.coin)

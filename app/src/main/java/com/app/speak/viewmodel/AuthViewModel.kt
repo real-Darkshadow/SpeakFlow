@@ -17,8 +17,6 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val MainRepository: MainRepository,
-    private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore,
 ) : ViewModel() {
 
 
@@ -30,12 +28,14 @@ class AuthViewModel @Inject constructor(
     val emailSignUpResult: LiveData<Result<AuthResult>> get() = _signUpResult
 
     fun emailSignIn(email: String, password: String) {
-        MainRepository.emailSignIn(email, password).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                _signInResult.value = Result.success(task.result)
-            } else {
-                val errorMessage = task.exception?.message ?: "Unknown error occurred"
-                _signInResult.value = Result.failure(Exception(errorMessage))
+        viewModelScope.launch {
+            MainRepository.emailSignIn(email, password).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _signInResult.value = Result.success(task.result)
+                } else {
+                    val errorMessage = task.exception?.message ?: "Unknown error occurred"
+                    _signInResult.value = Result.failure(Exception(errorMessage))
+                }
             }
         }
 
@@ -43,6 +43,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun emailSignUp(email: String, password: String) {
+        viewModelScope.launch {
             MainRepository.emailSignUp(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     _signUpResult.value = Result.success(task.result)
@@ -51,30 +52,13 @@ class AuthViewModel @Inject constructor(
                     _signUpResult.value = Result.failure(Exception(errorMessage))
                 }
             }
+        }
+
     }
 
     fun storeDetailFireBase(name: String, uid: String, email: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val userMap = hashMapOf(
-                "userId" to uid,
-                "name" to name,
-                "email" to email,
-                "tokens" to 100  // or however many tokens new users should start with
-            )
-            try {
-                firestore.collection("users").document(uid)
-                    .set(userMap)
-                    .addOnSuccessListener {
-                        documentWriteResult.value = true
-                        Log.d("TAG", "User document successfully written!")
-                    }
-                    .addOnFailureListener { e ->
-                        documentWriteResult.value = false
-                        Log.w("TAG", "Error writing user document", e)
-                    }
-            } catch (e: Exception) {
-                Log.d("Tag", e.toString())
-            }
+            MainRepository.storeDetailsInFirebase(name, uid, email)
         }
 
 

@@ -25,6 +25,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import com.app.speak.BuildConfig
 import com.app.speak.R
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import org.json.JSONObject
 import retrofit2.HttpException

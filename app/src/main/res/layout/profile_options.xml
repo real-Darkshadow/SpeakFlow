@@ -43,13 +43,12 @@
             android:textSize="16sp"
             tools:text="Spread the word" />
         <TextView
-            android:id="@+id/order_id"
+            android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins"
             android:textColor="@color/gray"
-            android:textSize="14sp"
-            android:text="Share the app with your family and\n friends." />
+            android:textSize="14sp" />
 
     </LinearLayout>
 

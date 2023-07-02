@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.speak.databinding.FragmentDashboardBinding
 import com.app.speak.db.AppPrefManager
 import com.app.speak.viewmodel.MainViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,9 +32,12 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        viewModel.fetchPrompts(uid)
         binding.promptHistoryRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         setObservers()
+
     }
 
 

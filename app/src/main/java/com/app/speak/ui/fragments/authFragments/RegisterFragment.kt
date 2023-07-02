@@ -1,6 +1,8 @@
 package com.app.speak.ui.fragments.authFragments
 
 import ExtensionFunction.gone
+import ExtensionFunction.hideKeyboard
+import ExtensionFunction.isValidEmail
 import ExtensionFunction.visible
 import android.content.Intent
 import android.os.Bundle
@@ -80,9 +82,12 @@ class RegisterFragment : Fragment() {
         val password = binding.userPassword.text.toString()
         if (email.isBlank() || password.isBlank() || userName.isBlank()) {
             Toast.makeText(requireContext(), "Enter Full Details", Toast.LENGTH_LONG).show()
+        } else if (!email.isValidEmail()) {
+            Toast.makeText(requireContext(), "Enter Valid Email", Toast.LENGTH_LONG).show()
         } else {
             binding.loading.visible()
             viewModel.emailSignUp(email, password)
+            hideKeyboard()
         }
     }
 

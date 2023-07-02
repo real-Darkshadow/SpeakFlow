@@ -12,7 +12,7 @@ class TransactionAdapter(private val transactionHistories: List<TransactionHisto
     RecyclerView.Adapter<TransactionAdapter.vh>() {
     inner class vh(view: View) : RecyclerView.ViewHolder(view) {
         val date = view.findViewById<TextView>(R.id.order_date)
-        val id = view.findViewById<TextView>(R.id.order_id)
+        val id = view.findViewById<TextView>(R.id.description)
         val status = view.findViewById<TextView>(R.id.order_status)
         val name = view.findViewById<TextView>(R.id.order_name)
     }

@@ -22,6 +22,7 @@ class TokensViewModel @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
     val userData = MutableLiveData<Map<String, Any>?>()
+    var tokens = 0L
 
 
     val planPrices: MutableLiveData<List<planPrices>> by lazy {
@@ -45,20 +46,12 @@ class TokensViewModel @Inject constructor(
     }
 
     fun userDataListener(uId: String) {
-        val docRef = Firebase.firestore.collection("users").document(uId)
         viewModelScope.launch(Dispatchers.IO) {
-            docRef.addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    Log.w("tag", "Listen failed.", e)
-                    return@addSnapshotListener
-                }
-                if (snapshot != null && snapshot.exists()) {
-                    userData.value = snapshot.data
-                    repository.setUser(uId)
-                    Log.d("tag", "Current data: ${snapshot.data}")
-                } else {
-                    Log.d("tag", "Current data: null")
-                }
+            val result = repository.getUserData(uId).addOnSuccessListener {
+                userData.value = it.data
+            }.addOnFailureListener { exception ->
+                // Error occurred while retrieving the document
+                Log.d("tag", "Error getting document: ${exception.message}")
             }
         }
 

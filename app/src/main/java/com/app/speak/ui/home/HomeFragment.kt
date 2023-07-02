@@ -223,6 +223,11 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         binding.floats.setOnClickListener {
             pick()
         }
+        binding.extraSettings.setOnClickListener {
+            val bottomSheetFragment = MyBottomSheetFragment()
+            bottomSheetFragment.show(requireActivity().supportFragmentManager, "myBottomSheet")
+
+        }
     }
 
 
@@ -283,6 +288,9 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             .createIntent { intent ->
                 startForProfileImageResult.launch(intent)
             }
+        val bottomSheetFragment = MyBottomSheetFragment()
+        bottomSheetFragment.show(requireActivity().supportFragmentManager, "myBottomSheet")
+
     }
 
     private val startForProfileImageResult =
@@ -309,10 +317,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
         }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.getUserData(uid)
 
-    }
 
 }

@@ -1,9 +1,11 @@
 package com.app.speak.viewmodel
 
+import android.speech.tts.Voice
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.speak.models.AiVoice
 import com.app.speak.models.PromptModel
 import com.app.speak.models.TransactionHistory
 import com.app.speak.repository.dataSourceImpl.MainRepository
@@ -47,6 +49,7 @@ class MainViewModel @Inject constructor(
     private val db = Firebase.firestore
     val lastTaskId = MutableLiveData<String>()
     val transactionHistory = MutableLiveData<List<TransactionHistory>>()
+    val voicesList = MutableLiveData<ArrayList<AiVoice>>()
 
 
 
@@ -129,6 +132,36 @@ class MainViewModel @Inject constructor(
                 Log.d("tag", it.result.text)
             }.addOnFailureListener {
                 Log.e("ERROR", "Exception : " + it.message)
+            }
+        }
+    }
+
+    fun getVoices() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getVoices().addOnSuccessListener {
+                for (document in it) {
+                    val liveVoices = document.data.get("liveVoices")
+
+// Check if the data is an ArrayList
+                    if (liveVoices is ArrayList<*>) {
+                        val convertedVoices = ArrayList<AiVoice>()
+
+                        // Convert each HashMap to AiVoice and add to the convertedVoices list
+                        for (item in liveVoices) {
+                            if (item is HashMap<*, *>) {
+                                val voiceHashMap = item as HashMap<String, String>
+                                val aiVoice = AiVoice(voiceHashMap)
+                                convertedVoices.add(aiVoice)
+                            }
+                        }
+
+                        // Set the converted voices list to the MutableLiveData
+                        voicesList.value = convertedVoices
+                    }
+                }
+
+            }.addOnFailureListener {
+                Log.e("tag", it.toString())
             }
         }
     }

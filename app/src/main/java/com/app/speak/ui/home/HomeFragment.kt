@@ -70,8 +70,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         uid = auth.currentUser?.uid.toString()
-        viewModel.fetchPrompts(uid)
         MobileAds.initialize(requireContext()) {}
+        viewModel.getVoices()
         loadInterstitialAd()
         setObservers()
         setListeners()
@@ -252,6 +252,10 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             if (it.isNotNullOrBlank() && userPrompt.isEmpty()) {
                 binding.userPrompt.setText(it)
             }
+        }
+        viewModel.voicesList.observe(viewLifecycleOwner) {
+            Log.d("tag", it[0].toString())
+
         }
     }
 

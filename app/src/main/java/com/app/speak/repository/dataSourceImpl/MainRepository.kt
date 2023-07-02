@@ -13,6 +13,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
@@ -32,9 +33,12 @@ class MainRepository @Inject constructor(
     private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val db = Firebase.firestore
 
-    fun getUserData(documentId: String): Task<DocumentSnapshot> {
-        val documentRef = db.collection("users").document(documentId)
-        return documentRef.get()
+    suspend fun getUserData(documentId: String): Task<DocumentSnapshot> {
+        return withContext(Dispatchers.IO) {
+            val documentRef = db.collection("users").document(documentId)
+            documentRef.get()
+        }
+
     }
 
     fun emailSignIn(email: String, password: String): Task<AuthResult> {
@@ -120,28 +124,11 @@ class MainRepository @Inject constructor(
                 }
         }
     }
-    suspend fun getVoices(){
-        withContext(Dispatchers.IO) {
-            db.collection("Voices").get()
-                .addOnSuccessListener { querySnapshot ->
-                    val transactions = mutableListOf<TransactionHistory>()
-                    for (document in querySnapshot) {
-                        val transactionName = document.getString("transactionName") ?: ""
-                        val transactionDate = document.getString("transactionDate") ?: ""
-                        val transactionStatus = document.getString("transactionStatus") ?: ""
-                        val transactionId = document.getString("transactionId") ?: ""
 
-                        val trans = TransactionHistory(
-                            transactionName,
-                            transactionDate,
-                            transactionStatus,
-                            transactionId
-                        )
-                        transactions.add(trans)
-                    }
-                }
-                .addOnFailureListener { e ->
-                }
+    suspend fun getVoices(): Task<QuerySnapshot> {
+        return withContext(Dispatchers.IO) {
+            val doc = db.collection("Voices")
+            doc.get()
         }
     }
 
@@ -171,4 +158,5 @@ class MainRepository @Inject constructor(
             Log.d("Tag", e.toString())
         }
     }
+
 }

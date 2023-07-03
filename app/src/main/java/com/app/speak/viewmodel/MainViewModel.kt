@@ -32,6 +32,7 @@ class MainViewModel @Inject constructor(
     val prompts: MutableLiveData<List<PromptModel>> by lazy {
         MutableLiveData<List<PromptModel>>()
     }
+    val showOverlay = MutableLiveData<Boolean>()
 
     val error: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
@@ -164,5 +165,9 @@ class MainViewModel @Inject constructor(
                 Log.e("tag", it.toString())
             }
         }
+    }
+
+    fun setOverlayVisible(visible: Boolean) {
+        showOverlay.value = visible
     }
 }

@@ -21,9 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_gravity="bottom"
-        app:itemRippleColor="@color/white"
+        app:itemRippleColor="@android:color/transparent"
         android:background="@drawable/background_bottom_navigation"
-
         app:labelVisibilityMode="unlabeled"
         app:itemIconTint="@drawable/selector_bottom_nav_icon"
         app:layout_constraintBottom_toBottomOf="parent"

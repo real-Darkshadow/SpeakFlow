@@ -1,7 +1,9 @@
 package com.app.speak.ui.home
 
+import ExtensionFunction.gone
 import ExtensionFunction.isNotNullOrBlank
 import ExtensionFunction.showToast
+import ExtensionFunction.visible
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
@@ -220,13 +222,12 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         binding.addMore.setOnClickListener {
             startActivity(Intent(requireContext(), TokensActivity::class.java))
         }
-        binding.floats.setOnClickListener {
+        binding.uploadPhoto.setOnClickListener {
             pick()
         }
         binding.extraSettings.setOnClickListener {
             val bottomSheetFragment = MyBottomSheetFragment()
             bottomSheetFragment.show(requireActivity().supportFragmentManager, "myBottomSheet")
-
         }
     }
 
@@ -288,9 +289,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             .createIntent { intent ->
                 startForProfileImageResult.launch(intent)
             }
-        val bottomSheetFragment = MyBottomSheetFragment()
-        bottomSheetFragment.show(requireActivity().supportFragmentManager, "myBottomSheet")
-
     }
 
     private val startForProfileImageResult =

@@ -1,0 +1,10 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <solid android:color="@color/gray" /> <!-- Set the progress color -->
+                <size android:height="2dp" /> <!-- Set the height of the progress drawable to 2dp -->
+            </shape>
+        </clip>
+    </item>
+</layer-list>

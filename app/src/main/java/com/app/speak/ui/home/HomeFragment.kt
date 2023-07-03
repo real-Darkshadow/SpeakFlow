@@ -211,14 +211,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 
         }
-        val values = arrayOf("Value 1", "Value 2", "Value 3") // Replace with your desired values
-
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, values)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.customSpinner.adapter = adapter
-
-        binding.customSpinner.onItemSelectedListener = this
-
         binding.addMore.setOnClickListener {
             startActivity(Intent(requireContext(), TokensActivity::class.java))
         }

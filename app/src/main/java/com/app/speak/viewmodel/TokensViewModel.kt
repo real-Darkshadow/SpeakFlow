@@ -17,12 +17,9 @@ import javax.inject.Inject
 @HiltViewModel
 class TokensViewModel @Inject constructor(
     private val repository: MainRepository,
-    private val firestore: FirebaseFirestore
 ) : ViewModel() {
     val userData = MutableLiveData<Map<String, Any>?>()
     var tokens = 0L
-
-
     val planPrices=MutableLiveData<List<PlanPrices>>()
 
     fun getPrices() {

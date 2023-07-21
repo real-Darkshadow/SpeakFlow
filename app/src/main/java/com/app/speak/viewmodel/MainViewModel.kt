@@ -23,7 +23,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: MainRepository,
-    private val firestore: FirebaseFirestore
 ) : ViewModel() {
     val userData = MutableLiveData<Map<String, Any>?>()
     var selectedVoiceId: String = ""
@@ -31,8 +30,6 @@ class MainViewModel @Inject constructor(
     val prompts: MutableLiveData<List<PromptModel>> by lazy {
         MutableLiveData<List<PromptModel>>()
     }
-    val showOverlay = MutableLiveData<Boolean>()
-
     val error: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
@@ -91,7 +88,6 @@ class MainViewModel @Inject constructor(
                 Log.w("tag", "Listen failed.", e)
                 return@addSnapshotListener
             }
-
             if (snapshot != null && snapshot.exists()) {
                 val data = snapshot.data
                 taskResult.value = data
@@ -159,7 +155,5 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun setOverlayVisible(visible: Boolean) {
-        showOverlay.value = visible
-    }
+
 }

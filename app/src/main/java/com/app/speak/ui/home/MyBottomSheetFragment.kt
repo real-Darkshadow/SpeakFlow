@@ -25,15 +25,8 @@ class MyBottomSheetFragment : BottomSheetDialogFragment() {
         return inflater.inflate(R.layout.bottom_sheet_layout, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        // Perform any additional setup or view manipulation here
-    }
-
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        viewModel.setOverlayVisible(false)
     }
 
 }

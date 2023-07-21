@@ -1,9 +1,7 @@
 package com.app.speak.ui.home
 
-import ExtensionFunction.gone
 import ExtensionFunction.isNotNullOrBlank
 import ExtensionFunction.showToast
-import ExtensionFunction.visible
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
@@ -35,7 +33,7 @@ import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -252,8 +250,33 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
         }
         viewModel.voicesList.observe(viewLifecycleOwner) {
-            Log.d("tag", it[0].toString())
+            val voices = it?:ArrayList()
+            val voicesNames = it?.map { it.name }?: emptyList()
+            val voiceAdapter = ArrayAdapter(
+                requireContext(), android.R.layout
+                    .simple_spinner_item, voicesNames
+            )
+            voiceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+           binding.apply {
+               voiceSpinner.adapter = voiceAdapter
+               voiceSpinner.visibility = View.VISIBLE
+               voiceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                   override fun onItemSelected(
+                       parent: AdapterView<*>,
+                       view: View?,
+                       position: Int,
+                       id: Long,
+                   ) {
+                       viewModel.selectedVoiceId = voices[position].id
+                   }
 
+                   override fun onNothingSelected(parent: AdapterView<*>) {
+                       // Handle the case where no item is selected
+                   }
+
+
+               }
+           }
         }
     }
 
@@ -262,13 +285,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = null
     }
 
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        viewModel.selectedVoice = parent?.getItemAtPosition(position).toString()
-    }
-
-    override fun onNothingSelected(p0: AdapterView<*>?) {
-
-    }
 
 
     private fun pick() {
@@ -306,6 +322,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 }
             }
         }
+
 
 
 

@@ -8,9 +8,9 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.speak.R
-import com.app.speak.models.planPrices
+import com.app.speak.models.PlanPrices
 
-class TokensPriceAdapter(val planPrices: List<planPrices>) : RecyclerView.Adapter<TokensPriceAdapter.ViewHolder>() {
+class TokensPriceAdapter(val planPrices: List<PlanPrices>) : RecyclerView.Adapter<TokensPriceAdapter.ViewHolder>() {
     private var selectedItem = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,7 +26,7 @@ class TokensPriceAdapter(val planPrices: List<planPrices>) : RecyclerView.Adapte
         val planPrice = planPrices[holder.adapterPosition]
 
         holder.title.text = planPrice.planName
-        holder.des.text = planPrice.price
+        holder.des.text = planPrice.planPrice
 
         holder.layout.setOnClickListener {
             val clickedPosition = holder.adapterPosition

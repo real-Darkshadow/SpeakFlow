@@ -4,12 +4,10 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.speak.models.PromptModel
-import com.app.speak.models.planPrices
+import com.app.speak.models.LiveVoice
+import com.app.speak.models.PlanPrices
 import com.app.speak.repository.dataSourceImpl.MainRepository
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,23 +23,27 @@ class TokensViewModel @Inject constructor(
     var tokens = 0L
 
 
-    val planPrices: MutableLiveData<List<planPrices>> by lazy {
-        MutableLiveData<List<planPrices>>()
-    }
-
-    val error: MutableLiveData<String> by lazy {
-        MutableLiveData<String>()
-    }
+    val planPrices=MutableLiveData<List<PlanPrices>>()
 
     fun getPrices() {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getPrices(onSuccess = {
-                planPrices.value = it
-            },
-                onFailure = { exception ->
-                    error.value = "Error fetching prompts: ${exception.message}"
+            repository.getPrices().addOnSuccessListener {
+            for (document in it) {
+            val availablePlans = document.data["AvailablePlans"] as? List<Map<String, Any>>
+            if (availablePlans != null) {
+                // Map the data into a list of PlanPrices objects
+                val availablePlansList: List<PlanPrices> = availablePlans.map { dataMap ->
+                    PlanPrices(
+                        planName = dataMap["planName"].toString(),
+                        id = dataMap["id"].toString(),
+                        planPrice = dataMap["planPrice"].toString()
+                    )
                 }
-            )
+                planPrices.postValue(availablePlansList)
+            }
+            }}.addOnFailureListener {
+                Log.e("e",it.toString())
+            }
         }
     }
 

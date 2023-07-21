@@ -6,7 +6,7 @@ import com.app.speak.api.ApiService
 import com.app.speak.db.AppPrefManager
 import com.app.speak.models.PromptModel
 import com.app.speak.models.TransactionHistory
-import com.app.speak.models.planPrices
+import com.app.speak.models.PlanPrices
 import com.app.speak.repository.dataSource.MainRepositoryInterface
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -76,22 +76,9 @@ class MainRepository @Inject constructor(
 
 
 
-    suspend fun getPrices(onSuccess: (List<planPrices>) -> Unit, onFailure: (Exception) -> Unit) {
-        withContext(Dispatchers.IO){
-            db.collection("plans").whereEqualTo("valid",true).get()
-                .addOnSuccessListener { querySnapshot ->
-                    val plans = mutableListOf<planPrices>()
-                    for (document in querySnapshot) {
-                        val planName = document.getString("planName") ?: ""
-                        val price = document.getString("price") ?: ""
-                        val plan = planPrices(planName, price)
-                        plans.add(plan)
-                    }
-                    onSuccess(plans)
-                }
-                .addOnFailureListener { e ->
-                    onFailure(e)
-                }
+    suspend fun getPrices(): Task<QuerySnapshot> {
+        return withContext(Dispatchers.IO){
+            db.collection("plans").get()
         }
     }
 

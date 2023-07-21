@@ -52,7 +52,7 @@ class AddTokenFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.priceOptions.isNestedScrollingEnabled = false;
         viewModel.userDataListener(FirebaseAuth.getInstance().uid.toString())
-        loadInterstitialAd()
+        viewModel.getPrices()
         setObservers()
         setListeners()
 
@@ -60,6 +60,7 @@ class AddTokenFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        loadInterstitialAd()
     }
 
     private fun setListeners() {
@@ -78,11 +79,8 @@ class AddTokenFragment : Fragment() {
         }
 
         viewModel.planPrices.observe(viewLifecycleOwner) {
-            if (it.isNullOrEmpty()) {
-
-            } else {
+            Log.d("tag",it.toString())
                 binding.priceOptions.adapter = TokensPriceAdapter(it)
-            }
         }
     }
 

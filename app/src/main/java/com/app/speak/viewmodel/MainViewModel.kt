@@ -1,11 +1,10 @@
 package com.app.speak.viewmodel
 
-import android.speech.tts.Voice
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.speak.models.AiVoice
+import com.app.speak.models.LiveVoice
 import com.app.speak.models.PromptModel
 import com.app.speak.models.TransactionHistory
 import com.app.speak.repository.dataSourceImpl.MainRepository
@@ -27,7 +26,7 @@ class MainViewModel @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
     val userData = MutableLiveData<Map<String, Any>?>()
-    var selectedVoice: String = ""
+    var selectedVoiceId: String = ""
     var imageText = MutableLiveData<String>()
     val prompts: MutableLiveData<List<PromptModel>> by lazy {
         MutableLiveData<List<PromptModel>>()
@@ -50,7 +49,7 @@ class MainViewModel @Inject constructor(
     private val db = Firebase.firestore
     val lastTaskId = MutableLiveData<String>()
     val transactionHistory = MutableLiveData<List<TransactionHistory>>()
-    val voicesList = MutableLiveData<ArrayList<AiVoice>>()
+    val voicesList = MutableLiveData<List<LiveVoice>>()
 
 
 
@@ -141,23 +140,16 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             repository.getVoices().addOnSuccessListener {
                 for (document in it) {
-                    val liveVoices = document.data.get("liveVoices")
-
-// Check if the data is an ArrayList
-                    if (liveVoices is ArrayList<*>) {
-                        val convertedVoices = ArrayList<AiVoice>()
-
-                        // Convert each HashMap to AiVoice and add to the convertedVoices list
-                        for (item in liveVoices) {
-                            if (item is HashMap<*, *>) {
-                                val voiceHashMap = item as HashMap<String, String>
-                                val aiVoice = AiVoice(voiceHashMap)
-                                convertedVoices.add(aiVoice)
-                            }
+                    val liveVoicesData=(document.data.get("liveVoices") as? List<Map<String, Any>>)
+                    if (liveVoicesData != null) {
+                        // Map the data into a list of LiveVoice objects
+                        val liveVoicesList: List<LiveVoice> = liveVoicesData.map { dataMap ->
+                            LiveVoice(
+                                name = dataMap["name"].toString(),
+                                id = dataMap["id"].toString()
+                            )
                         }
-
-                        // Set the converted voices list to the MutableLiveData
-                        voicesList.value = convertedVoices
+                        voicesList.postValue(liveVoicesList)
                     }
                 }
 

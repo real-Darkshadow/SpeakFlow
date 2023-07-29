@@ -24,6 +24,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: MainRepository,
 ) : ViewModel() {
+    val audioLink = "https://webaudioapi.com/samples/audio-tag/chrono.mp3"
     val userData = MutableLiveData<Map<String, Any>?>()
     var selectedVoiceId: String = ""
     var imageText = MutableLiveData<String>()
@@ -49,7 +50,6 @@ class MainViewModel @Inject constructor(
     val voicesList = MutableLiveData<List<LiveVoice>>()
 
 
-
     fun getUserData(documentId: String) {
         viewModelScope.launch {
             repository.getUserData(documentId)
@@ -64,7 +64,6 @@ class MainViewModel @Inject constructor(
                 }
         }
     }
-
 
 
     fun fetchPrompts(userId: String) {
@@ -97,7 +96,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
 
 
     fun uerLogout() {
@@ -136,7 +134,8 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             repository.getVoices().addOnSuccessListener {
                 for (document in it) {
-                    val liveVoicesData=(document.data.get("liveVoices") as? List<Map<String, Any>>)
+                    val liveVoicesData =
+                        (document.data.get("liveVoices") as? List<Map<String, Any>>)
                     if (liveVoicesData != null) {
                         // Map the data into a list of LiveVoice objects
                         val liveVoicesList: List<LiveVoice> = liveVoicesData.map { dataMap ->
@@ -156,8 +155,20 @@ class MainViewModel @Inject constructor(
     }
 
     fun createNewProcess(data: HashMap<String, String>) {
-        repository.createNewProcess(data)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.createNewProcess(data).addOnSuccessListener {
+
+                }.addOnFailureListener {
+                    Log.e("tag", it.toString())
+
+                }
+            } catch (e: Exception) {
+
+            }
+        }
     }
-
-
 }
+
+
+

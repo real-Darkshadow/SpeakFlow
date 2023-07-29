@@ -11,6 +11,7 @@ import com.app.speak.repository.dataSource.MainRepositoryInterface
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -56,7 +57,7 @@ class MainRepository @Inject constructor(
     suspend fun getPromptsByUser(userId: String, onSuccess: (List<PromptModel>) -> Unit, onFailure: (Exception) -> Unit) {
         withContext(Dispatchers.IO){
             db.collection("prompts")
-                .whereEqualTo("userId", userId)
+                .whereEqualTo("uid", userId)
                 .get()
                 .addOnSuccessListener { querySnapshot ->
                     val prompts = mutableListOf<PromptModel>()
@@ -146,8 +147,11 @@ class MainRepository @Inject constructor(
         }
     }
 
-    override fun createNewProcess(data: HashMap<String, String>) {
-        firestore.collection("prompts").add(data)
+    override suspend fun createNewProcess(data: HashMap<String, String>): Task<DocumentReference> {
+        return withContext(Dispatchers.IO) {
+            firestore.collection("prompts").add(data)
+        }
+
     }
 
 }

@@ -168,7 +168,7 @@ class HomeFragment : Fragment() {
 
 // Set the media item to be played.
             GlobalScope.launch(Dispatchers.IO){
-                player.setDataSource("https://webaudioapi.com/samples/audio-tag/chrono.mp3")
+                player.setDataSource(viewModel.audioLink)
                 player.prepare()
             }
 // Prepare the player.

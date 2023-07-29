@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
+import com.app.speak.db.AppPrefManager
 import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -24,6 +25,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.AndroidEntryPoint
@@ -149,7 +151,12 @@ class HomeFragment : Fragment() {
                         Toast.makeText(requireContext(), "Not enough Tokens", Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        showToast("firebase function")
+                        val data = hashMapOf(
+                            "prompt" to prompt,
+                            "uid" to AppPrefManager(requireContext()).user.uid,
+                            "status" to "processing"
+                        )
+                        viewModel.createNewProcess(data)
                     }
                 }
             }

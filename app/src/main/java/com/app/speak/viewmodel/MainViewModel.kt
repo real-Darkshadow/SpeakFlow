@@ -155,5 +155,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun createNewProcess(data: HashMap<String, String>) {
+        repository.createNewProcess(data)
+    }
+
 
 }

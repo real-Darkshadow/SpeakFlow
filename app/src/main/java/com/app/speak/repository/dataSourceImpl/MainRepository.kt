@@ -146,4 +146,8 @@ class MainRepository @Inject constructor(
         }
     }
 
+    override fun createNewProcess(data: HashMap<String, String>) {
+        firestore.collection("prompts").add(data)
+    }
+
 }

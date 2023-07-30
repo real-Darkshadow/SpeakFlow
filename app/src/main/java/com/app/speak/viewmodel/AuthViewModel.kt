@@ -20,21 +20,17 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    val documentWriteResult: MutableLiveData<Boolean> = MutableLiveData()
-    private val _signInResult = MutableLiveData<Result<AuthResult>>()
-    val emailSignInResult: LiveData<Result<AuthResult>> get() = _signInResult
-
-    private val _signUpResult = MutableLiveData<Result<AuthResult>>()
-    val emailSignUpResult: LiveData<Result<AuthResult>> get() = _signUpResult
+    val emailSignInResult = MutableLiveData<Result<AuthResult>>()
+    val emailSignUpResult = MutableLiveData<Result<AuthResult>>()
 
     fun emailSignIn(email: String, password: String) {
         viewModelScope.launch {
             MainRepository.emailSignIn(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _signInResult.value = Result.success(task.result)
+                    emailSignInResult.value = Result.success(task.result)
                 } else {
                     val errorMessage = task.exception?.message ?: "Unknown error occurred"
-                    _signInResult.value = Result.failure(Exception(errorMessage))
+                    emailSignInResult.value = Result.failure(Exception(errorMessage))
                 }
             }
         }
@@ -46,10 +42,10 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             MainRepository.emailSignUp(email, password).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _signUpResult.value = Result.success(task.result)
+                    emailSignUpResult.value = Result.success(task.result)
                 } else {
                     val errorMessage = task.exception?.message ?: "Unknown error occurred"
-                    _signUpResult.value = Result.failure(Exception(errorMessage))
+                    emailSignUpResult.value = Result.failure(Exception(errorMessage))
                 }
             }
         }

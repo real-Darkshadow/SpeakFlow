@@ -244,7 +244,6 @@ class HomeFragment : Fragment() {
             val name = document?.get("name") as? String ?: user?.displayName
             binding.tokenValue.text = tokens.toString()
             binding.userName.text = "Hello\n$name."
-
         }
         viewModel.lastTaskId.observe(viewLifecycleOwner) { taskId ->
             binding.generateVoice.isClickable = false

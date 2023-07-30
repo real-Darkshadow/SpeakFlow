@@ -1,6 +1,8 @@
 package com.app.speak.ui.fragments.tokensFragment
 
+import ExtensionFunction.gone
 import ExtensionFunction.showToast
+import ExtensionFunction.visible
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -68,6 +71,7 @@ class AddTokenFragment : Fragment() {
         viewModel.userDataListener(FirebaseAuth.getInstance().uid.toString())
         paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
         viewModel.getPrices()
+        binding.loading.visible()
         setObservers()
         setListeners()
     }
@@ -85,6 +89,9 @@ class AddTokenFragment : Fragment() {
             checkoutBtn.setOnClickListener {
                 stripePayment()
             }
+            backButton.setOnClickListener {
+                requireActivity().finish()
+            }
         }
     }
 
@@ -96,8 +103,10 @@ class AddTokenFragment : Fragment() {
         }
 
         viewModel.planPrices.observe(viewLifecycleOwner) {
-            Log.d("tag", it.toString())
-            binding.priceOptions.adapter = TokensPriceAdapter(it)
+            if (!it.isNullOrEmpty()) {
+                binding.loading.gone()
+                binding.priceOptions.adapter = TokensPriceAdapter(it)
+            }
         }
         viewModel.stripeCheckoutResult.observe(viewLifecycleOwner) {
 

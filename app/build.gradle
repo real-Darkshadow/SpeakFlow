@@ -135,16 +135,13 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.media3:media3-ui:1.0.2'
+    implementation 'androidx.media3:media3-ui:1.1.0'
     implementation 'com.github.jpvs0101:Currencyfy:v1.0.2'
 
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
-    implementation 'com.google.android.gms:play-services-ads:22.1.0'
+    implementation 'com.google.android.gms:play-services-ads:22.2.0'
 
 
-    //Exo Video Player
-    implementation 'com.google.android.exoplayer:exoplayer:2.18.7'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.7'
 
     // For youtube Url Extractor
     implementation 'com.github.HaarigerHarald:android-youtubeExtractor:v1.7.0'
@@ -161,20 +158,20 @@ dependencies {
 
     // Recommended: Add the Firebase SDK for Google Analytics.
     implementation 'com.google.firebase:firebase-analytics-ktx:21.3.0'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.7'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.4.0'
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.3.2'
-    implementation 'com.google.firebase:firebase-perf-ktx:20.3.2'
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
-    implementation 'com.google.firebase:firebase-config-ktx:21.4.0'
+    implementation 'com.google.firebase:firebase-perf-ktx:20.4.0'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.2.0'
+    implementation 'com.google.firebase:firebase-config-ktx:21.4.1'
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:21.1.0'
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.2.0'
     //Image Parsing Library
     implementation 'com.github.bumptech.glide:glide:4.13.1'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
-    implementation 'com.google.firebase:firebase-auth-ktx:22.0.0'
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.6.1'
+    implementation 'com.google.firebase:firebase-auth-ktx:22.1.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.7.0'
     implementation 'com.google.firebase:firebase-functions-ktx:20.3.1'
     implementation 'com.google.firebase:firebase-database-ktx:20.2.2'
     implementation 'com.google.mlkit:text-recognition:16.0.0'
@@ -195,7 +192,7 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'com.airbnb.android:lottie:6.0.0'
 
-    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    implementation 'com.google.android.gms:play-services-auth:20.6.0'
 
 
     def lifecycle_version = "2.6.1"
@@ -227,7 +224,7 @@ dependencies {
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
     implementation "androidx.navigation:navigation-compose:$nav_version"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
-    implementation 'com.stripe:stripe-android:20.25.5'
+    implementation 'com.stripe:stripe-android:20.27.3'
 
 
 }

@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.speak.models.LiveVoice
 import com.app.speak.models.PlanPrices
+import com.app.speak.models.StripeResponse
 import com.app.speak.repository.dataSourceImpl.MainRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,10 +20,11 @@ import javax.inject.Inject
 class TokensViewModel @Inject constructor(
     private val repository: MainRepository,
 ) : ViewModel() {
+    lateinit var transactionId: String
     val userData = MutableLiveData<Map<String, Any>?>()
     var tokens = 0L
-    val planPrices=MutableLiveData<List<PlanPrices>>()
-
+    val planPrices = MutableLiveData<List<PlanPrices>>()
+    val stripeCheckoutResult = MutableLiveData<StripeResponse?>()
     fun getPrices() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getPrices().addOnSuccessListener {
@@ -51,6 +54,21 @@ class TokensViewModel @Inject constructor(
             }.addOnFailureListener { exception ->
                 // Error occurred while retrieving the document
                 Log.d("tag", "Error getting document: ${exception.message}")
+            }
+        }
+
+    }
+
+    fun stripeCheckout() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.createStripeCheckout().addOnSuccessListener {
+                val stripeApiResponse = it.data?.let { data ->
+                    val gson = Gson()
+                    gson.fromJson(data.toString(), StripeResponse::class.java)
+                }
+                stripeCheckoutResult.postValue(stripeApiResponse)
+            }.addOnFailureListener {
+                Log.e("error", it.toString())
             }
         }
 

@@ -55,7 +55,12 @@ class MainViewModel @Inject constructor(
             repository.getUserData(documentId)
                 .addOnSuccessListener { documentSnapshot ->
                     userData.value = documentSnapshot.data
-                    repository.setUser(documentId)
+                    val data = documentSnapshot.data
+                    repository.setUser(
+                        documentId,
+                        data?.get("name").toString(),
+                        data?.get("email").toString()
+                    )
 
                 }
                 .addOnFailureListener { exception ->

@@ -37,13 +37,13 @@ class TokensPriceAdapter(val planPrices: List<PlanPrices>, val onclick: (String)
                     planPrices[selectedItem].isSelected = false
                     notifyItemChanged(selectedItem)
                 }
-
                 planPrice.isSelected = true
                 selectedItem = clickedPosition
+                onclick(planPrice.id)
                 notifyItemChanged(clickedPosition)
             }
         }
-        onclick(planPrice.id)
+
         holder.radioButton.isChecked = planPrice.isSelected
     }
 

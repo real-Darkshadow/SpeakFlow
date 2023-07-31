@@ -55,12 +55,16 @@ class MainRepository @Inject constructor(
         return mAuth.createUserWithEmailAndPassword(email, password)
     }
 
-    fun setUser(uid: String) {
-        appPrefManager.setUserData(uid)
+    fun setUser(uid: String, name: String, email: String) {
+        appPrefManager.setUserData(uid, name, email)
     }
 
-    suspend fun getPromptsByUser(userId: String, onSuccess: (List<PromptModel>) -> Unit, onFailure: (Exception) -> Unit) {
-        withContext(Dispatchers.IO){
+    suspend fun getPromptsByUser(
+        userId: String,
+        onSuccess: (List<PromptModel>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        withContext(Dispatchers.IO) {
             db.collection("prompts")
                 .whereEqualTo("uid", userId)
                 .get()

@@ -58,7 +58,7 @@ class AddTokenFragment : Fragment() {
         binding.priceOptions.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.priceOptions.isNestedScrollingEnabled = false;
-        viewModel.userDataListener(FirebaseAuth.getInstance().uid.toString())
+        viewModel.getUserData(appPrefManager.user.uid)
         paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
         viewModel.getPrices()
         binding.background.gone()
@@ -79,10 +79,14 @@ class AddTokenFragment : Fragment() {
                 showInterstitialAd()
             }
             checkoutBtn.setOnClickListener {
+                binding.loading.visible()
+                binding.background.isEnabled = false
                 val data = hashMapOf(
                     "uid" to appPrefManager.user.uid,
                     "currency" to if (getLocale() == "in") "inr" else "usd",
                     "planId" to viewModel.selectedPlan,
+                    "name" to appPrefManager.user.name,
+                    "email" to appPrefManager.user.email,
                 )
                 stripePayment(data)
             }
@@ -109,7 +113,8 @@ class AddTokenFragment : Fragment() {
             }
         }
         viewModel.stripeCheckoutResult.observe(viewLifecycleOwner) {
-
+            binding.loading.gone()
+            binding.background.isEnabled = true
             it?.let { stripe ->
                 customerId = stripe.customer
                 paymentIntentClientSecret = stripe.paymentIntent
@@ -157,6 +162,7 @@ class AddTokenFragment : Fragment() {
 
             is PaymentSheetResult.Completed -> {
                 // Display for example, an order confirmation screen
+                viewModel.getUserData(appPrefManager.user.uid)
                 showToast("Completed")
             }
         }
@@ -200,6 +206,7 @@ class AddTokenFragment : Fragment() {
 
                 override fun onAdShowedFullScreenContent() {
                     Log.d(TAG, "InterstitialAd was shown.")
+
                 }
             }
             interstitialAd?.show(requireActivity())

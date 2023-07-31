@@ -1,7 +1,9 @@
 package com.app.speak.ui.home
 
+import ExtensionFunction.gone
 import ExtensionFunction.isNotNullOrBlank
 import ExtensionFunction.showToast
+import ExtensionFunction.visible
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
@@ -73,6 +75,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         uid = auth.currentUser?.uid.toString()
         MobileAds.initialize(requireContext()) {}
+        binding.background.gone()
+        binding.loading.visible()
         viewModel.getVoices()
         loadInterstitialAd()
         setObservers()
@@ -240,6 +244,8 @@ class HomeFragment : Fragment() {
         }
         val user = auth.currentUser
         viewModel.userData.observe(viewLifecycleOwner) { document ->
+            binding.loading.gone()
+            binding.background.visible()
             tokens = document?.get("tokens") as? Long ?: 0L
             val name = document?.get("name") as? String ?: user?.displayName
             binding.tokenValue.text = tokens.toString()

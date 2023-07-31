@@ -159,9 +159,9 @@ class MainRepository @Inject constructor(
 
     }
 
-    override suspend fun createStripeCheckout(): Task<HttpsCallableResult> {
+    override suspend fun createStripeCheckout(data: HashMap<String, String>): Task<HttpsCallableResult> {
         return withContext(Dispatchers.IO) {
-            functions.getHttpsCallable("createStripeCheckout").call()
+            functions.getHttpsCallable("createStripeCheckout").call(data)
 
         }
     }

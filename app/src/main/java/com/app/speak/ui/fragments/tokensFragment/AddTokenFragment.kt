@@ -19,6 +19,7 @@ import com.app.speak.R
 import com.app.speak.api.PaymentStatus
 import com.app.speak.api.Status
 import com.app.speak.databinding.FragmentAddTokenBinding
+import com.app.speak.db.AppPrefManager
 import com.app.speak.ui.fragments.authFragments.RegisterFragment.Companion.TAG
 import com.app.speak.viewmodel.TokensViewModel
 import com.google.android.gms.ads.AdError
@@ -51,7 +52,7 @@ class AddTokenFragment : Fragment() {
     lateinit var paymentSheet: PaymentSheet
     lateinit var paymentIntentClientSecret: String
     lateinit var customerConfig: PaymentSheet.CustomerConfiguration
-
+    lateinit var appPrefManager: AppPrefManager
     private lateinit var customerId: String
     private lateinit var ephemeralKeySecret: String
     override fun onCreateView(
@@ -71,7 +72,9 @@ class AddTokenFragment : Fragment() {
         viewModel.userDataListener(FirebaseAuth.getInstance().uid.toString())
         paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
         viewModel.getPrices()
+        binding.background.gone()
         binding.loading.visible()
+        appPrefManager = AppPrefManager(requireContext())
         setObservers()
         setListeners()
     }
@@ -87,7 +90,14 @@ class AddTokenFragment : Fragment() {
                 showInterstitialAd()
             }
             checkoutBtn.setOnClickListener {
-                stripePayment()
+                val data = hashMapOf(
+                    "uid" to appPrefManager.user.uid,
+                    "currency" to "inr",
+                    "planId" to "",
+
+
+                    )
+                stripePayment(data)
             }
             backButton.setOnClickListener {
                 requireActivity().finish()
@@ -105,6 +115,7 @@ class AddTokenFragment : Fragment() {
         viewModel.planPrices.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
                 binding.loading.gone()
+                binding.background.visible()
                 binding.priceOptions.adapter = TokensPriceAdapter(it)
             }
         }
@@ -126,9 +137,9 @@ class AddTokenFragment : Fragment() {
     }
 
 
-    private fun stripePayment() {
+    private fun stripePayment(data: HashMap<String, String>) {
         try {
-            viewModel.stripeCheckout()
+            viewModel.stripeCheckout(data)
         } catch (e: Exception) {
             Log.e(TAG, "stripePayment: ${e.message}")
         }

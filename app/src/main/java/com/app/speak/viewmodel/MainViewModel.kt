@@ -84,7 +84,7 @@ class MainViewModel @Inject constructor(
         val docRef = db.collection("prompts").document(lastTaskId.value.toString())
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
-                Log.w("tag", "Listen failed.", e)
+                Log.d("tag", "Listen failed.", e)
                 return@addSnapshotListener
             }
             if (snapshot != null && snapshot.exists()) {

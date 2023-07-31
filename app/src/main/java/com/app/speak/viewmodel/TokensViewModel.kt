@@ -59,9 +59,9 @@ class TokensViewModel @Inject constructor(
 
     }
 
-    fun stripeCheckout() {
+    fun stripeCheckout(data: HashMap<String, String>) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.createStripeCheckout().addOnSuccessListener {
+            repository.createStripeCheckout(data).addOnSuccessListener {
                 val stripeApiResponse = it.data?.let { data ->
                     val gson = Gson()
                     gson.fromJson(data.toString(), StripeResponse::class.java)

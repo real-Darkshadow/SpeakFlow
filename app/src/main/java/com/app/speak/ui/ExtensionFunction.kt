@@ -25,6 +25,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import com.app.speak.BuildConfig
 import com.app.speak.R
+import com.app.speak.models.CrashlyticsCustomLog
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
@@ -44,7 +45,6 @@ object ExtensionFunction {
     fun Activity.getLocale(): String = getLocaleFromContext(
         context = this //get context from the activity scope
     )
-
     fun getLocaleFromContext(context: Context): String {
         if (BuildConfig.BUILD_TYPE == "internationalDebug")
             return "us"
@@ -55,6 +55,25 @@ object ExtensionFunction {
         return tm.networkCountryIso
 
     }
+
+
+    fun logError(lambda: CrashlyticsCustomLog.() -> Unit) =
+        CrashlyticsCustomLog().apply(lambda).apply {
+            exception?.let {
+                try {
+                    Log.d("TAG", "logError: $message")
+                    Firebase.crashlytics.log(
+                        message.toJson() ?: ("" + (exception?.message
+                            ?: "") + "\nfunction = ${function.toString()}")
+                    )
+                    Firebase.crashlytics.recordException(it)
+
+                } catch (e: Exception) {
+                    //nothing
+                }
+
+            }
+        }
 
     fun Activity.showToast(msg: String?) {
         try {

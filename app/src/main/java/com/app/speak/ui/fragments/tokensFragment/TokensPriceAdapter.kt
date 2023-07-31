@@ -10,11 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.speak.R
 import com.app.speak.models.PlanPrices
 
-class TokensPriceAdapter(val planPrices: List<PlanPrices>) : RecyclerView.Adapter<TokensPriceAdapter.ViewHolder>() {
+class TokensPriceAdapter(val planPrices: List<PlanPrices>, val onclick: (String) -> Unit) :
+    RecyclerView.Adapter<TokensPriceAdapter.ViewHolder>() {
     private var selectedItem = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.token_price_options, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.token_price_options, parent, false)
         return ViewHolder(view)
     }
 
@@ -41,7 +43,7 @@ class TokensPriceAdapter(val planPrices: List<PlanPrices>) : RecyclerView.Adapte
                 notifyItemChanged(clickedPosition)
             }
         }
-
+        onclick(planPrice.id)
         holder.radioButton.isChecked = planPrice.isSelected
     }
 

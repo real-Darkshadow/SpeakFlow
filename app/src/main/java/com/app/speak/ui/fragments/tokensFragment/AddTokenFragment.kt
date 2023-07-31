@@ -1,38 +1,27 @@
 package com.app.speak.ui.fragments.tokensFragment
 
+import ExtensionFunction.getLocale
 import ExtensionFunction.gone
 import ExtensionFunction.showToast
 import ExtensionFunction.visible
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.app.speak.R
-import com.app.speak.api.PaymentStatus
-import com.app.speak.api.Status
 import com.app.speak.databinding.FragmentAddTokenBinding
 import com.app.speak.db.AppPrefManager
-import com.app.speak.ui.fragments.authFragments.RegisterFragment.Companion.TAG
 import com.app.speak.viewmodel.TokensViewModel
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
@@ -92,11 +81,9 @@ class AddTokenFragment : Fragment() {
             checkoutBtn.setOnClickListener {
                 val data = hashMapOf(
                     "uid" to appPrefManager.user.uid,
-                    "currency" to "inr",
-                    "planId" to "",
-
-
-                    )
+                    "currency" to if (getLocale() == "in") "inr" else "usd",
+                    "planId" to viewModel.selectedPlan,
+                )
                 stripePayment(data)
             }
             backButton.setOnClickListener {
@@ -116,7 +103,9 @@ class AddTokenFragment : Fragment() {
             if (!it.isNullOrEmpty()) {
                 binding.loading.gone()
                 binding.background.visible()
-                binding.priceOptions.adapter = TokensPriceAdapter(it)
+                binding.priceOptions.adapter = TokensPriceAdapter(it) { plan ->
+                    viewModel.selectedPlan = plan
+                }
             }
         }
         viewModel.stripeCheckoutResult.observe(viewLifecycleOwner) {

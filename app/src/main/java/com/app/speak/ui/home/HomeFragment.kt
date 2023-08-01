@@ -159,7 +159,8 @@ class HomeFragment : Fragment() {
                         val data = hashMapOf(
                             "prompt" to prompt,
                             "uid" to AppPrefManager(requireContext()).user.uid,
-                            "status" to "processing"
+                            "status" to "processing",
+                            "voiceId" to viewModel.selectedVoiceId
                         )
                         binding.loading.visible()
                         generateVoice.isClickable = false

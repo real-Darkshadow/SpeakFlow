@@ -13,8 +13,9 @@ class TransactionAdapter(private val transactionHistories: List<TransactionHisto
     inner class vh(view: View) : RecyclerView.ViewHolder(view) {
         val date = view.findViewById<TextView>(R.id.order_date)
         val id = view.findViewById<TextView>(R.id.description)
-        val status = view.findViewById<TextView>(R.id.order_status)
+        val status = view.findViewById<TextView>(R.id.status)
         val name = view.findViewById<TextView>(R.id.order_name)
+        val amount = view.findViewById<TextView>(R.id.amount)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): vh {
@@ -32,5 +33,6 @@ class TransactionAdapter(private val transactionHistories: List<TransactionHisto
         holder.name.text = data.transactionName
         holder.id.text = data.transactionId
         holder.status.text = data.transactionStatus
+        holder.amount.text = data.amount.toString()
     }
 }

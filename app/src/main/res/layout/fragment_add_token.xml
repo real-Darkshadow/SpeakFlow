@@ -2,18 +2,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/white"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:overScrollMode="never"
-        android:scrollbars="none"
-        android:layout_height="match_parent">
+        android:scrollbars="none">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
             android:id="@+id/background"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="16dp"
             android:paddingTop="16dp">
@@ -28,143 +28,142 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-        android:id="@+id/header"
-        android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_semibold"
-            android:text="Tokens"
-        android:textColor="@color/black"
-        android:textFontWeight="400"
-        android:textSize="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/back_button"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        app:cardCornerRadius="12dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/tokens_card_gradient"
-            android:padding="25dp">
-
-            <TextView
-                android:id="@+id/tokentext"
+                android:id="@+id/header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_medium"
-                android:text="Available Tokens"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Tokens"
                 android:textColor="@color/black"
                 android:textFontWeight="400"
-                android:textSize="12dp"
-                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/back_button"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/tokenimg"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginTop="6dp"
-                android:src="@drawable/coin"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="12dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tokentext" />
+                app:layout_constraintTop_toBottomOf="@+id/header">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tokens_card_gradient"
+                    android:padding="25dp">
+
+                    <TextView
+                        android:id="@+id/tokentext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Available Tokens"
+                        android:textColor="@color/black"
+                        android:textFontWeight="400"
+                        android:textSize="12dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/tokenimg"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginTop="6dp"
+                        android:src="@drawable/coin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tokentext" />
+
+                    <TextView
+                        android:id="@+id/available_token"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="@font/poppins"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tokenimg"
+                        app:layout_constraintStart_toEndOf="@id/tokenimg"
+                        app:layout_constraintTop_toBottomOf="@id/tokentext" />
+
+                    <ImageView
+                        android:id="@+id/img"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:src="@drawable/arrow_right"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/available_token">
+
+                        <TextView
+                            android:id="@+id/watch_ad"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/global_button"
+                            android:backgroundTint="@color/black"
+                            android:fontFamily="@font/poppins_medium"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="8dp"
+                            android:text="Watch Ad"
+                            android:textColor="@color/white"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
-                android:id="@+id/available_token"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:fontFamily="@font/poppins"
-                app:layout_constraintBottom_toBottomOf="@+id/tokenimg"
-                app:layout_constraintStart_toEndOf="@id/tokenimg"
-                app:layout_constraintTop_toBottomOf="@id/tokentext" />
-
-            <ImageView
-                android:id="@+id/img"
+                android:id="@+id/buymoretext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:src="@drawable/arrow_right"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:fontFamily="@font/poppins_medium"
+                android:text="Buy More Tokens"
+                android:textColor="@color/black"
+                android:textFontWeight="400"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/price_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/buymoretext" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/available_token">
+                app:layout_constraintTop_toBottomOf="@id/price_options">
 
                 <TextView
-                    android:id="@+id/watch_ad"
-                    android:backgroundTint="@color/black"
-                    android:background="@drawable/global_button"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/checkoutBtn"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/global_button"
+                    android:backgroundTint="@color/black"
                     android:fontFamily="@font/poppins_medium"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="8dp"
-                    android:text="Watch Ad"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
-
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:text="Continue"
+                    android:textColor="@color/white" />
             </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <TextView
-        android:id="@+id/buymoretext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:fontFamily="@font/poppins_medium"
-        android:text="Buy More Tokens"
-        android:textColor="@color/black"
-        android:textFontWeight="400"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/card" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/price_options"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buymoretext" />
-
-        <LinearLayout
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="24dp"
-            android:id="@+id/linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/price_options"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:id="@+id/checkoutBtn"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:background="@drawable/global_button"
-                android:backgroundTint="@color/black"
-                android:gravity="center"
-                android:fontFamily="@font/poppins_medium"
-                android:padding="16dp"
-                android:text="Continue" />
-        </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

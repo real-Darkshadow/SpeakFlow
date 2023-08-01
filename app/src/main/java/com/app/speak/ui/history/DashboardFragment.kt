@@ -32,8 +32,7 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        viewModel.fetchPrompts(uid)
+
         binding.promptHistoryRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         setObservers()

@@ -92,15 +92,6 @@ class RegisterFragment : Fragment() {
     }
 
     private fun setObserver() {
-        viewModel.documentWriteResult.observe(viewLifecycleOwner, Observer { isSuccess ->
-            if (isSuccess) {
-                startActivity(Intent(requireActivity(), MainActivity::class.java))
-                requireActivity().finish()
-            } else {
-                binding.loading.gone()
-                Toast.makeText(requireContext(), "Unknown Error Occurred", Toast.LENGTH_LONG).show()
-            }
-        })
         viewModel.emailSignUpResult.observe(viewLifecycleOwner, Observer { result ->
             if (result.isSuccess) {
                 Log.d("TAG", "createUserWithEmail: success")
@@ -110,6 +101,8 @@ class RegisterFragment : Fragment() {
                 val uid = user?.uid.toString()
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP) {}
                 viewModel.storeDetailFireBase(name, uid, email)
+                startActivity(Intent(requireActivity(), MainActivity::class.java))
+                requireActivity().finish()
             } else {
                 binding.loading.gone()
                 val exception = result.exceptionOrNull()

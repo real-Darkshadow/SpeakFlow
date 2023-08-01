@@ -1,0 +1,6 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#000000" /> <!-- Set the thumb color to black -->
+    <size
+        android:width="4dp"
+        android:height="12dp" /> <!-- Set the thumb size -->
+</shape>

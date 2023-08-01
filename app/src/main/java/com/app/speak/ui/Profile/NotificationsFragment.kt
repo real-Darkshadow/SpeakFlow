@@ -38,7 +38,6 @@ class NotificationsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         firebaeAuth = FirebaseAuth.getInstance()
-        viewModel.getUserData(firebaeAuth.uid.toString())
         setListeners()
         setObservers()
     }

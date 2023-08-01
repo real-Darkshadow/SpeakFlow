@@ -15,7 +15,7 @@ class PromptHistoryAdapter(val prompts: List<PromptModel>) :
     }
 
     override fun onBindViewHolder(holder: vh, position: Int) {
-        holder.prompt.text = prompts[position].promptText
+        holder.prompt.text = prompts[position].prompt
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): vh {

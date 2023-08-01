@@ -19,7 +19,6 @@ class TokensActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTokensBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel.getPrices()
         changeStatusBarColor(color = R.color.white,0)
     }
 

@@ -1,7 +1,9 @@
 package com.app.speak.ui.home
 
+import ExtensionFunction.gone
 import ExtensionFunction.isNotNullOrBlank
 import ExtensionFunction.showToast
+import ExtensionFunction.visible
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
@@ -15,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
+import com.app.speak.db.AppPrefManager
 import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -24,6 +27,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,7 +37,7 @@ import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -71,6 +75,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         super.onViewCreated(view, savedInstanceState)
         uid = auth.currentUser?.uid.toString()
         MobileAds.initialize(requireContext()) {}
+        binding.background.gone()
+        binding.loading.visible()
         viewModel.getVoices()
         loadInterstitialAd()
         setObservers()
@@ -149,7 +155,12 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         Toast.makeText(requireContext(), "Not enough Tokens", Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        showToast("firebase function")
+                        val data = hashMapOf(
+                            "prompt" to prompt,
+                            "uid" to AppPrefManager(requireContext()).user.uid,
+                            "status" to "processing"
+                        )
+                        viewModel.createNewProcess(data)
                     }
                 }
             }
@@ -161,7 +172,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 // Set the media item to be played.
             GlobalScope.launch(Dispatchers.IO){
-                player.setDataSource("https://webaudioapi.com/samples/audio-tag/chrono.mp3")
+                player.setDataSource(viewModel.audioLink)
                 player.prepare()
             }
 // Prepare the player.
@@ -209,19 +220,15 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
 
         }
-        val values = arrayOf("Value 1", "Value 2", "Value 3") // Replace with your desired values
-
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, values)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.customSpinner.adapter = adapter
-
-        binding.customSpinner.onItemSelectedListener = this
-
         binding.addMore.setOnClickListener {
             startActivity(Intent(requireContext(), TokensActivity::class.java))
         }
-        binding.floats.setOnClickListener {
+        binding.uploadPhoto.setOnClickListener {
             pick()
+        }
+        binding.extraSettings.setOnClickListener {
+            val bottomSheetFragment = MyBottomSheetFragment()
+            bottomSheetFragment.show(requireActivity().supportFragmentManager, "myBottomSheet")
         }
     }
 
@@ -237,11 +244,12 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
         val user = auth.currentUser
         viewModel.userData.observe(viewLifecycleOwner) { document ->
+            binding.loading.gone()
+            binding.background.visible()
             tokens = document?.get("tokens") as? Long ?: 0L
             val name = document?.get("name") as? String ?: user?.displayName
             binding.tokenValue.text = tokens.toString()
             binding.userName.text = "Hello\n$name."
-
         }
         viewModel.lastTaskId.observe(viewLifecycleOwner) { taskId ->
             binding.generateVoice.isClickable = false
@@ -254,8 +262,33 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
         }
         viewModel.voicesList.observe(viewLifecycleOwner) {
-            Log.d("tag", it[0].toString())
+            val voices = it?:ArrayList()
+            val voicesNames = it?.map { it.name }?: emptyList()
+            val voiceAdapter = ArrayAdapter(
+                requireContext(), android.R.layout
+                    .simple_spinner_item, voicesNames
+            )
+            voiceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+           binding.apply {
+               voiceSpinner.adapter = voiceAdapter
+               voiceSpinner.visibility = View.VISIBLE
+               voiceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                   override fun onItemSelected(
+                       parent: AdapterView<*>,
+                       view: View?,
+                       position: Int,
+                       id: Long,
+                   ) {
+                       viewModel.selectedVoiceId = voices[position].id
+                   }
 
+                   override fun onNothingSelected(parent: AdapterView<*>) {
+                       // Handle the case where no item is selected
+                   }
+
+
+               }
+           }
         }
     }
 
@@ -264,13 +297,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = null
     }
 
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        viewModel.selectedVoice = parent?.getItemAtPosition(position).toString()
-    }
-
-    override fun onNothingSelected(p0: AdapterView<*>?) {
-
-    }
 
 
     private fun pick() {
@@ -309,10 +335,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
         }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.getUserData(uid)
 
-    }
+
 
 }

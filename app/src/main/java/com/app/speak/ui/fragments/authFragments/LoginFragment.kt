@@ -38,10 +38,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
     var _binding: FragmentLoginBinding? = null
-    val appPrefManager by lazy { AppPrefManager(requireActivity()) }
     private val viewModel: AuthViewModel by activityViewModels()
     val firebaseAnalytics = Firebase.analytics
-
     val binding get() = _binding!!
     val RC_SIGN_IN: Int = 1
     lateinit var gso: GoogleSignInOptions
@@ -110,15 +108,6 @@ class LoginFragment : Fragment() {
             }
             Log.d("EventLogging", "Event logging executed.")
         })
-        viewModel.documentWriteResult.observe(viewLifecycleOwner, Observer { isSuccess ->
-            if (isSuccess) {
-                startActivity(Intent(requireActivity(), MainActivity::class.java))
-                requireActivity().finish()
-            } else {
-                binding.loading.gone()
-                Toast.makeText(requireContext(), "Unknown Error Occurred", Toast.LENGTH_LONG).show()
-            }
-        })
     }
 
 
@@ -172,6 +161,8 @@ class LoginFragment : Fragment() {
                     val uid = user?.uid.toString()
                     firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
                     viewModel.storeDetailFireBase(name, uid, email)
+                    startActivity(Intent(requireActivity(), MainActivity::class.java))
+                    requireActivity().finish()
                 } else {
                     binding.loading.gone()
                     // If sign in fails, display a message to the user.

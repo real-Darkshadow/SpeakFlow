@@ -7,6 +7,7 @@ import com.app.speak.repository.dataSource.MainRepositoryInterface
 import com.app.speak.repository.dataSourceImpl.MainRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.functions.FirebaseFunctions
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,7 +30,8 @@ object InteractiveModule {
         @Named("device_id")
         deviceId: String,
         firebaseAuth: FirebaseAuth,
-        firestore: FirebaseFirestore
+        firestore: FirebaseFirestore,
+        functions: FirebaseFunctions
     ): MainRepositoryInterface {
         val apiInterface = api.create(ApiService::class.java)
         return MainRepository(
@@ -38,6 +40,7 @@ object InteractiveModule {
             appPrefManager,
             deviceId,
             firestore,
+            functions
         )
     }
 
@@ -48,6 +51,11 @@ object InteractiveModule {
     @Provides
     fun provideFirebaseAuth(): FirebaseAuth {
         return FirebaseAuth.getInstance()
+    }
+
+    @Provides
+    fun provideFirebaseFunctions(): FirebaseFunctions {
+        return FirebaseFunctions.getInstance()
     }
 
     @Provides

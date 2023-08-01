@@ -39,4 +39,12 @@ class MainActivity : AppCompatActivity() {
         changeStatusBarColor(color = R.color.white, 0)
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        viewModel.fetchPrompts(uid)
+        viewModel.getUserData(uid)
+
+    }
 }

@@ -5,18 +5,23 @@ import com.app.speak.Speak
 import com.app.speak.api.ApiService
 import com.app.speak.db.AppPrefManager
 import com.app.speak.models.PromptModel
+import com.app.speak.models.StripeResponse
 import com.app.speak.models.TransactionHistory
-import com.app.speak.models.planPrices
 import com.app.speak.repository.dataSource.MainRepositoryInterface
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.functions.HttpsCallableResult
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Named
@@ -28,6 +33,7 @@ class MainRepository @Inject constructor(
     @Named("device_id")
     private val deviceID: String,
     private val firestore: FirebaseFirestore,
+    private val functions: FirebaseFunctions,
 
     ) : MainRepositoryInterface {
     private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -49,14 +55,18 @@ class MainRepository @Inject constructor(
         return mAuth.createUserWithEmailAndPassword(email, password)
     }
 
-    fun setUser(uid: String) {
-        appPrefManager.setUserData(uid)
+    fun setUser(uid: String, name: String, email: String) {
+        appPrefManager.setUserData(uid, name, email)
     }
 
-    suspend fun getPromptsByUser(userId: String, onSuccess: (List<PromptModel>) -> Unit, onFailure: (Exception) -> Unit) {
-        withContext(Dispatchers.IO){
+    suspend fun getPromptsByUser(
+        userId: String,
+        onSuccess: (List<PromptModel>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        withContext(Dispatchers.IO) {
             db.collection("prompts")
-                .whereEqualTo("userId", userId)
+                .whereEqualTo("uid", userId)
                 .get()
                 .addOnSuccessListener { querySnapshot ->
                     val prompts = mutableListOf<PromptModel>()
@@ -76,22 +86,9 @@ class MainRepository @Inject constructor(
 
 
 
-    suspend fun getPrices(onSuccess: (List<planPrices>) -> Unit, onFailure: (Exception) -> Unit) {
-        withContext(Dispatchers.IO){
-            db.collection("plans").whereEqualTo("valid",true).get()
-                .addOnSuccessListener { querySnapshot ->
-                    val plans = mutableListOf<planPrices>()
-                    for (document in querySnapshot) {
-                        val planName = document.getString("planName") ?: ""
-                        val price = document.getString("price") ?: ""
-                        val plan = planPrices(planName, price)
-                        plans.add(plan)
-                    }
-                    onSuccess(plans)
-                }
-                .addOnFailureListener { e ->
-                    onFailure(e)
-                }
+    suspend fun getPrices(): Task<QuerySnapshot> {
+        return withContext(Dispatchers.IO){
+            db.collection("plans").get()
         }
     }
 
@@ -159,4 +156,19 @@ class MainRepository @Inject constructor(
         }
     }
 
+    override suspend fun createNewProcess(data: HashMap<String, String>): Task<DocumentReference> {
+        return withContext(Dispatchers.IO) {
+            firestore.collection("prompts").add(data)
+        }
+
+    }
+
+    override suspend fun createStripeCheckout(data: HashMap<String, String>): Task<HttpsCallableResult> {
+        return withContext(Dispatchers.IO) {
+            functions.getHttpsCallable("createStripeCheckout").call(data)
+
+        }
+    }
 }
+
+

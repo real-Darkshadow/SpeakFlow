@@ -6,19 +6,20 @@ import ExtensionFunction.showToast
 import ExtensionFunction.visible
 import android.annotation.SuppressLint
 import android.app.*
-import android.content.Intent
 import android.media.*
 import android.os.*
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.db.AppPrefManager
-import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.ads.*
@@ -27,7 +28,6 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.AndroidEntryPoint
@@ -167,11 +167,21 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
+            userPrompt.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    binding.characters.text = p0?.length.toString()
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+                }
+            })
+
 
         }
-        binding.addMore.setOnClickListener {
-            startActivity(Intent(requireContext(), TokensActivity::class.java))
-        }
+
         binding.uploadPhoto.setOnClickListener {
             pick()
         }
@@ -192,8 +202,11 @@ class HomeFragment : Fragment() {
                     viewModel.audioLink = data?.get("signedUrl").toString()
                     if (viewModel.audioLink.isNotNullOrBlank()) {
                         startPlayer()
+                        val layoutParams =
+                            binding.uploadPhoto.layoutParams as CoordinatorLayout.LayoutParams
+                        layoutParams.anchorId = binding.playerLayout.id
+                        binding.uploadPhoto.layoutParams = layoutParams
                         binding.playerLayout.visible()
-                        binding.playerGenerateText.gone()
                     } else showToast("An Error Occurred\n Please Contact Support")
                     binding.loading.gone()
                     binding.generateVoice.isClickable = true
@@ -208,6 +221,7 @@ class HomeFragment : Fragment() {
             }
 
         }
+
         val user = auth.currentUser
         viewModel.userData.observe(viewLifecycleOwner) { document ->
             binding.loading.gone()
@@ -248,7 +262,7 @@ class HomeFragment : Fragment() {
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>) {
-                        // Handle the case where no item is selected
+                        viewModel.selectedVoiceId = voices[0].id
                     }
 
 

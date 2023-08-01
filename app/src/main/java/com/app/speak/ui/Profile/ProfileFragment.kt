@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -19,8 +18,8 @@ import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 
-class NotificationsFragment : Fragment() {
-    private val viewModel:MainViewModel by activityViewModels()
+class ProfileFragment : Fragment() {
+    private val viewModel: MainViewModel by activityViewModels()
     private var _binding: FragmentNotificationsBinding? = null
     val appPrefManager by lazy { AppPrefManager(requireActivity()) }
     private val binding get() = _binding!!
@@ -55,7 +54,7 @@ class NotificationsFragment : Fragment() {
         binding.apply {
             options.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            options.adapter = profile_adapter(viewModel.profileOptionList) { it ->
+            options.adapter = ProfileAdapter(viewModel.profileOptionList) { it ->
                 when (it) {
                     0 -> findNavController().navigate(R.id.transactionsFragment)
                     1 -> startActivity(Intent(requireContext(), TokensActivity::class.java))
@@ -75,7 +74,6 @@ class NotificationsFragment : Fragment() {
                     )
 
                     5 -> {}
-                    6 -> {}
                 }
             }
             options.isNestedScrollingEnabled = false;

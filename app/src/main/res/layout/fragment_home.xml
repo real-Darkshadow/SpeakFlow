@@ -9,8 +9,8 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
             android:id="@+id/background"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:paddingHorizontal="16dp"
@@ -29,49 +29,37 @@
                 tools:text="Hello\nAadarsh Kumawat." />
 
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/user_name">
 
-                <ImageView
+                <TextView
                     android:id="@+id/back"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/coin" />
-
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:fontFamily="@font/poppins"
+                    android:text="Tokens Available:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/token_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
                     android:layout_marginStart="4dp"
-                    android:layout_toEndOf="@id/back"
                     android:fontFamily="@font/poppins"
                     android:textColor="@color/black"
                     android:textSize="16sp"
-                    tools:text="1" />
+                    tools:text="100000" />
 
-                <TextView
-                    android:id="@+id/add_more"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerInParent="true"
-                    android:fontFamily="@font/poppins"
-                    android:text="Add More"
-                    android:textColor="@color/black"
-                    android:textFontWeight="500"
-                    android:textSize="16sp" />
-
-            </RelativeLayout>
+            </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/prompt_text"
@@ -92,21 +80,33 @@
                     android:gravity="top"
                     android:hint="@string/prompt_hint"
                     android:inputType="textMultiLine"
-                    android:maxLength="1500"
+                    android:maxLength="2000"
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/inspiration"
+                android:id="@+id/characters"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/poppins_medium"
-                android:text="I need inspiration"
-                android:textColor="@color/black"
+                android:text="0"
+                android:textColor="@color/gray"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/prompt_text" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/maxChr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text=" / 2000"
+                android:textColor="@color/gray"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@id/characters"
                 app:layout_constraintTop_toBottomOf="@id/prompt_text" />
 
             <ImageView
@@ -125,7 +125,7 @@
                 android:layout_marginTop="16dp"
                 android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/inspiration">
+                app:layout_constraintTop_toBottomOf="@+id/characters">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -137,9 +137,9 @@
                     android:textSize="16sp" />
 
                 <androidx.cardview.widget.CardView
-                    android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -183,75 +183,6 @@
             </LinearLayout>
 
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/generated_audio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="34dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/generate_voice">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="60dp">
-
-                    <TextView
-                        android:id="@+id/player_generate_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:fontFamily="@font/poppins_medium"
-                        android:text="Click 'Generate' to create the voice file."
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:visibility="visible" />
-
-                    <LinearLayout
-                        android:id="@+id/player_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <SeekBar
-                            android:id="@+id/seekbar"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/baseline_skip_previous_24" />
-
-                            <ImageView
-                                android:id="@+id/play"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:clickable="true"
-                                android:src="@drawable/baseline_play_arrow_24" />
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/baseline_skip_next_24" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
             <TextView
                 android:id="@+id/live"
                 android:layout_width="match_parent"
@@ -261,7 +192,7 @@
                 android:text="keep\ncrafting"
                 android:textColor="@color/black"
                 android:textSize="38sp"
-                app:layout_constraintTop_toBottomOf="@id/generated_audio" />
+                app:layout_constraintTop_toBottomOf="@id/generate_voice" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -294,15 +225,77 @@
             app:lottie_rawRes="@raw/loading" />
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/upload_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/black"
-        android:src="@drawable/fi_rs_upload" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:id="@+id/coordinator_layout"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/player_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/background_bottom_navigation"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/play"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:clickable="true"
+                android:layout_gravity="center"
+                android:paddingHorizontal="4dp"
+                android:src="@drawable/baseline_play_arrow_24" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_marginStart="12dp"
+                    android:id="@+id/audio_name"
+                    android:layout_width="wrap_content"
+                    android:paddingVertical="8dp"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins"
+                    android:layout_height="wrap_content"
+                    tools:text="Voice preview for Computer AI" />
+
+                <SeekBar
+                    android:id="@+id/seekbar"
+                    android:paddingBottom="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/downward" />
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/upload_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/black"
+            android:src="@drawable/fi_rs_upload"
+            app:layout_anchorGravity="top|right|end"
+            app:layout_insetEdge="bottom" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <View
         android:id="@+id/overlay"

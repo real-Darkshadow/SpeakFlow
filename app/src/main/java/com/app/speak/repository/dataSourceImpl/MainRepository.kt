@@ -66,7 +66,7 @@ class MainRepository @Inject constructor(
     ) {
         withContext(Dispatchers.IO) {
             db.collection("prompts")
-                .whereEqualTo("uid", userId)
+                .whereEqualTo("uid", userId).limit(3)
                 .get()
                 .addOnSuccessListener { querySnapshot ->
                     val prompts = mutableListOf<PromptModel>()

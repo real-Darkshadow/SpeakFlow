@@ -24,7 +24,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: MainRepository,
 ) : ViewModel() {
-    val audioLink = "https://webaudioapi.com/samples/audio-tag/chrono.mp3"
+    var audioLink = ""
     val userData = MutableLiveData<Map<String, Any>?>()
     var selectedVoiceId: String = ""
     var imageText = MutableLiveData<String>()
@@ -75,7 +75,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             repository.getPromptsByUser(userId,
                 onSuccess = { promptsList ->
-                    prompts.value = promptsList
+                    prompts.postValue(promptsList)
                 },
                 onFailure = { exception ->
                     error.value = "Error fetching prompts: ${exception.message}"
@@ -85,7 +85,7 @@ class MainViewModel @Inject constructor(
 
     }
 
-    private fun taskListener() {
+    fun taskListener() {
         val docRef = db.collection("prompts").document(lastTaskId.value.toString())
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -163,7 +163,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.createNewProcess(data).addOnSuccessListener {
-
+                    lastTaskId.postValue(it.id)
                 }.addOnFailureListener {
                     Log.e("tag", it.toString())
 

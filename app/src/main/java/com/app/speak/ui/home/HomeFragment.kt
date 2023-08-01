@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-
+//dont use global cope for audio
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
@@ -49,6 +49,7 @@ class HomeFragment : Fragment() {
     private var TAG = "MainFrag"
     private var handler = Handler()
     private lateinit var uid: String
+    private lateinit var appPrefManager: AppPrefManager
 
 
     private var interstitialAd: InterstitialAd? = null
@@ -160,64 +161,12 @@ class HomeFragment : Fragment() {
                             "uid" to AppPrefManager(requireContext()).user.uid,
                             "status" to "processing"
                         )
+                        binding.loading.visible()
+                        generateVoice.isClickable = false
                         viewModel.createNewProcess(data)
                     }
                 }
             }
-            seekbar.progress = 0
-
-            val player = MediaPlayer()
-            player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-
-// Set the media item to be played.
-            GlobalScope.launch(Dispatchers.IO){
-                player.setDataSource(viewModel.audioLink)
-                player.prepare()
-            }
-// Prepare the player.
-
-            seekbar.max = player.duration
-// Start the playback.
-            play.setOnClickListener {
-                if (!player.isPlaying) {
-                    player.start()
-                    binding.play.setImageResource(R.drawable.baseline_pause_24)
-                } else {
-                    player.pause()
-                    binding.play.setImageResource(R.drawable.baseline_play_arrow_24)
-                }
-            }
-
-            seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
-                ) {
-                    if (fromUser) {
-                        player.seekTo(progress)
-                    }
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                }
-
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                }
-
-            })
-            runnable = Runnable {
-                seekbar.progress = player.currentPosition
-                handler.postDelayed(runnable, 1000)
-            }
-            handler.postDelayed(runnable, 1000)
-
-            player.setOnCompletionListener {
-                play.setImageResource(R.drawable.baseline_play_arrow_24)
-                seekbar.progress = 0
-            }
-
 
         }
         binding.addMore.setOnClickListener {
@@ -236,11 +185,28 @@ class HomeFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
         viewModel.taskResult.observe(viewLifecycleOwner) { data ->
-            val status = data?.get("status") as? String
-            if (status == "success") {
-                binding.generateVoice.isClickable = true
-                Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()
+            val status = data?.get("status").toString()
+            when (status) {
+                "success" -> {
+                    viewModel.getUserData(uid)
+                    viewModel.audioLink = data?.get("signedUrl").toString()
+                    if (viewModel.audioLink.isNotNullOrBlank()) {
+                        startPlayer()
+                        binding.playerLayout.visible()
+                        binding.playerGenerateText.gone()
+                    } else showToast("An Error Occurred\n Please Contact Support")
+                    binding.loading.gone()
+                    binding.generateVoice.isClickable = true
+                }
+
+                "error" -> {
+                    viewModel.getUserData(uid)
+                    binding.loading.gone()
+                    binding.generateVoice.isClickable = true
+                    showToast("An Error Occurred\n Please Try Again")
+                }
             }
+
         }
         val user = auth.currentUser
         viewModel.userData.observe(viewLifecycleOwner) { document ->
@@ -252,8 +218,7 @@ class HomeFragment : Fragment() {
             binding.userName.text = "Hello\n$name."
         }
         viewModel.lastTaskId.observe(viewLifecycleOwner) { taskId ->
-            binding.generateVoice.isClickable = false
-            Toast.makeText(requireContext(), "Task $taskId added", Toast.LENGTH_SHORT).show()
+            viewModel.taskListener()
         }
         viewModel.imageText.observe(viewLifecycleOwner) {
             val userPrompt = binding.userPrompt.text.toString()
@@ -262,33 +227,33 @@ class HomeFragment : Fragment() {
             }
         }
         viewModel.voicesList.observe(viewLifecycleOwner) {
-            val voices = it?:ArrayList()
-            val voicesNames = it?.map { it.name }?: emptyList()
+            val voices = it ?: ArrayList()
+            val voicesNames = it?.map { it.name } ?: emptyList()
             val voiceAdapter = ArrayAdapter(
                 requireContext(), android.R.layout
                     .simple_spinner_item, voicesNames
             )
             voiceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-           binding.apply {
-               voiceSpinner.adapter = voiceAdapter
-               voiceSpinner.visibility = View.VISIBLE
-               voiceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                   override fun onItemSelected(
-                       parent: AdapterView<*>,
-                       view: View?,
-                       position: Int,
-                       id: Long,
-                   ) {
-                       viewModel.selectedVoiceId = voices[position].id
-                   }
+            binding.apply {
+                voiceSpinner.adapter = voiceAdapter
+                voiceSpinner.visibility = View.VISIBLE
+                voiceSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>,
+                        view: View?,
+                        position: Int,
+                        id: Long,
+                    ) {
+                        viewModel.selectedVoiceId = voices[position].id
+                    }
 
-                   override fun onNothingSelected(parent: AdapterView<*>) {
-                       // Handle the case where no item is selected
-                   }
+                    override fun onNothingSelected(parent: AdapterView<*>) {
+                        // Handle the case where no item is selected
+                    }
 
 
-               }
-           }
+                }
+            }
         }
     }
 
@@ -296,7 +261,6 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 
 
     private fun pick() {
@@ -335,7 +299,59 @@ class HomeFragment : Fragment() {
             }
         }
 
+    fun startPlayer() {
+        binding.apply {
+            seekbar.progress = 0
 
+            val player = MediaPlayer()
+            player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+
+            GlobalScope.launch(Dispatchers.IO) {
+                player.setDataSource(viewModel.audioLink)
+                player.prepare()
+            }
+
+            seekbar.max = player.duration
+            play.setOnClickListener {
+                if (!player.isPlaying) {
+                    player.start()
+                    binding.play.setImageResource(R.drawable.baseline_pause_24)
+                } else {
+                    player.pause()
+                    binding.play.setImageResource(R.drawable.baseline_play_arrow_24)
+                }
+            }
+            seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    if (fromUser) {
+                        player.seekTo(progress)
+                    }
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                }
+
+            })
+            runnable = Runnable {
+                seekbar.progress = player.currentPosition
+                handler.postDelayed(runnable, 1000)
+            }
+            handler.postDelayed(runnable, 1000)
+
+            player.setOnCompletionListener {
+                play.setImageResource(R.drawable.baseline_play_arrow_24)
+                seekbar.progress = 0
+            }
+        }
+    }
 
 
 }

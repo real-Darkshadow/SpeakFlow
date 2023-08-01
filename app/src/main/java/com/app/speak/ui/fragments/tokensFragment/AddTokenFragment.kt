@@ -58,12 +58,12 @@ class AddTokenFragment : Fragment() {
         binding.priceOptions.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.priceOptions.isNestedScrollingEnabled = false;
+        appPrefManager = AppPrefManager(requireContext())
         viewModel.getUserData(appPrefManager.user.uid)
         paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
         viewModel.getPrices()
         binding.background.gone()
         binding.loading.visible()
-        appPrefManager = AppPrefManager(requireContext())
         setObservers()
         setListeners()
     }
@@ -80,7 +80,7 @@ class AddTokenFragment : Fragment() {
             }
             checkoutBtn.setOnClickListener {
                 binding.loading.visible()
-                binding.background.isEnabled = false
+                binding.background.isClickable = false
                 val data = hashMapOf(
                     "uid" to appPrefManager.user.uid,
                     "currency" to if (getLocale() == "in") "inr" else "usd",
@@ -114,7 +114,7 @@ class AddTokenFragment : Fragment() {
         }
         viewModel.stripeCheckoutResult.observe(viewLifecycleOwner) {
             binding.loading.gone()
-            binding.background.isEnabled = true
+            binding.background.isClickable = true
             it?.let { stripe ->
                 customerId = stripe.customer
                 paymentIntentClientSecret = stripe.paymentIntent

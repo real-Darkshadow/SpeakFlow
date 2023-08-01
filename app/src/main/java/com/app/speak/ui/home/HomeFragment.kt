@@ -6,6 +6,7 @@ import ExtensionFunction.showToast
 import ExtensionFunction.visible
 import android.annotation.SuppressLint
 import android.app.*
+import android.content.Context
 import android.media.*
 import android.os.*
 import android.text.Editable
@@ -17,8 +18,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
+import com.app.speak.databinding.TokensWarningBinding
 import com.app.speak.db.AppPrefManager
 import com.app.speak.viewmodel.MainViewModel
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -135,23 +138,7 @@ class HomeFragment : Fragment() {
                     Toast.makeText(requireContext(), "Enter Prompt", Toast.LENGTH_LONG).show()
                 } else {
                     if (tokens <= 0) {
-                        val dialog = Dialog(requireContext())
-                        dialog.setContentView(R.layout.tokens_warning)
-
-                        val dialogView = dialog.findViewById<View>(R.id.layoutDialogContainer)
-                        val layoutParams = dialogView.layoutParams
-                        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
-                        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-                        dialogView.layoutParams = layoutParams
-
-                        val button = dialog.findViewById<Button>(R.id.watchad)
-                        button.setOnClickListener {
-                            showInterstitialAd()
-                            dialog.dismiss()
-                        }
-
-                        dialog.show()
-
+                        showCustomDialog(requireContext())
                     } else if (tokens < prompt.length) {
                         Toast.makeText(requireContext(), "Not enough Tokens", Toast.LENGTH_SHORT)
                             .show()
@@ -177,6 +164,7 @@ class HomeFragment : Fragment() {
                 }
 
                 override fun afterTextChanged(p0: Editable?) {
+                    viewModel.imageText.value = ""
                 }
             })
 
@@ -187,7 +175,7 @@ class HomeFragment : Fragment() {
             pick()
         }
         binding.extraSettings.setOnClickListener {
-            val bottomSheetFragment = MyBottomSheetFragment()
+            val bottomSheetFragment = VoiceTuneFragment()
             bottomSheetFragment.show(requireActivity().supportFragmentManager, "myBottomSheet")
         }
     }
@@ -196,8 +184,7 @@ class HomeFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
         viewModel.taskResult.observe(viewLifecycleOwner) { data ->
-            val status = data?.get("status").toString()
-            when (status) {
+            when (data?.get("status").toString()) {
                 "success" -> {
                     viewModel.getUserData(uid)
                     viewModel.audioLink = data?.get("signedUrl").toString()
@@ -236,8 +223,7 @@ class HomeFragment : Fragment() {
             viewModel.taskListener()
         }
         viewModel.imageText.observe(viewLifecycleOwner) {
-            val userPrompt = binding.userPrompt.text.toString()
-            if (it.isNotNullOrBlank() && userPrompt.isEmpty()) {
+            if (it.isNotNullOrBlank()) {
                 binding.userPrompt.setText(it)
             }
         }
@@ -322,7 +308,7 @@ class HomeFragment : Fragment() {
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
 
-            GlobalScope.launch(Dispatchers.IO) {
+            lifecycleScope.launch(Dispatchers.IO) {
                 player.setDataSource(viewModel.audioLink)
                 player.prepare()
             }
@@ -368,5 +354,27 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun showCustomDialog(context: Context) {
+        // Inflate the dialog layout using ViewBinding
+        val dialogBinding = TokensWarningBinding.inflate(LayoutInflater.from(context))
+
+//        // Customize the dialog title and message (optional)
+//        dialogBinding.dialogTitle.text = "Custom Dialog Title"
+//        dialogBinding.dialogMessage.text = "This is a custom dialog example."
+
+        val builder = AlertDialog.Builder(context)
+        builder.setView(dialogBinding.root)
+            .setPositiveButton("OK") { dialog, _ ->
+                // Do something when the "OK" button is clicked
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                // Do something when the "Cancel" button is clicked
+                dialog.dismiss()
+            }
+
+        val dialog = builder.create()
+        dialog.show()
+    }
 
 }

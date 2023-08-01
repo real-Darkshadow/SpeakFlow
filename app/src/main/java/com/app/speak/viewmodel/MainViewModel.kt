@@ -23,6 +23,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: MainRepository,
 ) : ViewModel() {
+    var stabilityPercentage = 50
+    var clarityPercentage = 75
     var audioLink = ""
     val userData = MutableLiveData<Map<String, Any>?>()
     var selectedVoiceId: String = ""
@@ -138,12 +140,12 @@ class MainViewModel @Inject constructor(
     }
 
     fun codeFromUri(bitmap: InputImage) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val textRecognizer: com.google.mlkit.vision.text.TextRecognizer =
                 TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
             val task = textRecognizer.process(bitmap)
             task.addOnCompleteListener {
-                imageText.value = it.result.text
+                imageText.postValue(it.result.text)
                 Log.d("tag", it.result.text)
             }.addOnFailureListener {
                 Log.e("ERROR", "Exception : " + it.message)

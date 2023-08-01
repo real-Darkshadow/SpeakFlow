@@ -1,5 +1,6 @@
 package com.app.speak.ui.Profile
 
+import ExtensionFunction.timestampToDate
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +30,7 @@ class TransactionAdapter(private val transactionHistories: List<TransactionHisto
 
     override fun onBindViewHolder(holder: vh, position: Int) {
         val data = transactionHistories[position]
-        holder.date.text = data.transactionDate
+        holder.date.text = data.transactionDate.timestampToDate()
         holder.name.text = data.transactionName
         holder.id.text = data.transactionId
         holder.status.text = data.transactionStatus

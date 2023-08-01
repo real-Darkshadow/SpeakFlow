@@ -33,6 +33,7 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -45,6 +46,7 @@ object ExtensionFunction {
     fun Activity.getLocale(): String = getLocaleFromContext(
         context = this //get context from the activity scope
     )
+
     fun getLocaleFromContext(context: Context): String {
         if (BuildConfig.BUILD_TYPE == "internationalDebug")
             return "us"
@@ -129,6 +131,18 @@ object ExtensionFunction {
         return df.format(this).toDouble()
     }
 
+    fun String?.timestampToDate(): String {
+        if (this.isNullOrBlank()) return ""
+        return try {
+            val dateInMillis = this.toLong() * 1000 // Convert the timestamp to milliseconds
+            val sdf = SimpleDateFormat("yyyy-MM-dd")
+            val formattedDate = Date(dateInMillis)
+            sdf.format(formattedDate)
+        } catch (e: NumberFormatException) {
+            // Handle the case when the input string is not a valid timestamp
+            ""
+        }
+    }
 
     fun Int.isHttpSuccessCode(): Boolean {
         return this in 200..299

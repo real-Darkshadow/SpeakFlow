@@ -22,7 +22,7 @@ class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
-
+    private lateinit var appPrefManager: AppPrefManager
     //get by limit and order
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +35,8 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        appPrefManager = AppPrefManager(requireContext())
+        viewModel.fetchPrompts(appPrefManager.user.uid)
         binding.loading.visible()
         binding.promptHistoryRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)

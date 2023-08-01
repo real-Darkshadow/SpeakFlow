@@ -9,10 +9,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.app.speak.R
 
-class profile_adapter(
-    val profileOptionList: Map<Int, Pair<String, String>>,
+class ProfileAdapter(
+    private val profileOptionList: Map<Int, Pair<String, String>>,
     val onclick: (Int) -> Unit,
-) : RecyclerView.Adapter<profile_adapter.vh>() {
+) : RecyclerView.Adapter<ProfileAdapter.vh>() {
     inner class vh(view: View) : RecyclerView.ViewHolder(view) {
         val text = view.findViewById<TextView>(R.id.order_name)
         val field = view.findViewById<ConstraintLayout>(R.id.option_id)
@@ -41,8 +41,7 @@ class profile_adapter(
             2 -> holder.option_image.setBackgroundResource(R.drawable.chat)
             3 -> holder.option_image.setBackgroundResource(R.drawable.terms_and_conditions)
             4 -> holder.option_image.setBackgroundResource(R.drawable.privacy)
-            5 -> holder.option_image.setBackgroundResource(R.drawable.app)
-            6 -> holder.option_image.setBackgroundResource(R.drawable.delete)
+            5 -> holder.option_image.setBackgroundResource(R.drawable.delete)
         }
     }
 }

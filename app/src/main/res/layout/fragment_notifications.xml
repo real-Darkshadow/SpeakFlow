@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="26dp"
-        tools:context=".ui.Profile.NotificationsFragment">
+        tools:context=".ui.Profile.ProfileFragment">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout

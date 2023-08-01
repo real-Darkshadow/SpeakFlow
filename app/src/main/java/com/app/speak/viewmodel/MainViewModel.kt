@@ -41,8 +41,7 @@ class MainViewModel @Inject constructor(
         2 to Pair("Spread the word", "Share our app with others and earn rewards."),
         3 to Pair("Terms of Use", "Read and understand our terms and conditions."),
         4 to Pair("Privacy Policy", "Review our privacy policy to learn how we handle your data."),
-        5 to Pair("More Apps", "Discover our other apps and services."),
-        6 to Pair("Delete Account", "Permanently delete your account and all associated data.")
+        5 to Pair("Delete Account", "Permanently delete your account and all associated data.")
     )
     private val db = Firebase.firestore
     val lastTaskId = MutableLiveData<String>()

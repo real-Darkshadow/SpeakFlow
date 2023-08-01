@@ -71,8 +71,8 @@ class MainRepository @Inject constructor(
                 .addOnSuccessListener { querySnapshot ->
                     val prompts = mutableListOf<PromptModel>()
                     for (document in querySnapshot) {
-                        val promptText = document.getString("promptText") ?: ""
-                        val prompt = PromptModel( promptText)
+                        val promptText = document.getString("prompt") ?: ""
+                        val prompt = PromptModel(promptText)
                         prompts.add(prompt)
                     }
                     onSuccess(prompts)

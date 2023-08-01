@@ -1,5 +1,7 @@
 package com.app.speak.ui.history
 
+import ExtensionFunction.gone
+import ExtensionFunction.visible
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +35,7 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.loading.visible()
         binding.promptHistoryRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         setObservers()
@@ -44,7 +46,10 @@ class DashboardFragment : Fragment() {
     private fun setObservers() {
         viewModel.prompts.observe(viewLifecycleOwner, Observer {
             if (it != null) {
+                binding.loading.gone()
                 binding.promptHistoryRecycler.adapter = PromptHistoryAdapter(it)
+            } else {
+
             }
         })
     }

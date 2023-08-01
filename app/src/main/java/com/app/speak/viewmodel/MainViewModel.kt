@@ -8,7 +8,6 @@ import com.app.speak.models.LiveVoice
 import com.app.speak.models.PromptModel
 import com.app.speak.models.TransactionHistory
 import com.app.speak.repository.dataSourceImpl.MainRepository
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.common.InputImage
@@ -72,14 +71,16 @@ class MainViewModel @Inject constructor(
 
     fun fetchPrompts(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getPromptsByUser(userId,
-                onSuccess = { promptsList ->
-                    prompts.postValue(promptsList)
-                },
-                onFailure = { exception ->
-                    error.value = "Error fetching prompts: ${exception.message}"
+            repository.getPromptsByUser(userId).addOnSuccessListener { querySnapshot ->
+                val promptList = mutableListOf<PromptModel>()
+                for (document in querySnapshot) {
+                    val promptText = document.getString("prompt") ?: ""
+                    val prompt = PromptModel(promptText)
+                    promptList.add(prompt)
                 }
-            )
+                prompts.postValue(promptList)
+
+            }
         }
 
     }
@@ -110,15 +111,31 @@ class MainViewModel @Inject constructor(
 
     fun getTransactions() {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getTransactions(onSuccess = { transactions ->
-                transactionHistory.value = transactions
-            },
-                onFailure = { exception ->
-                    error.value = "Error fetching prompts: ${exception.message}"
-                })
-        }
-    }
+            repository.getTransactions().addOnSuccessListener {
+                val transactionHistoryList = mutableListOf<TransactionHistory>()
 
+                for (document in it) {
+                    val transactionName = document.getString("planId") ?: ""
+                    val transactionDate = document.getString("transactionDate") ?: ""
+                    val transactionStatus = document.getString("paymentStatus") ?: ""
+                    val transactionId = document.getString("checkoutSessionId") ?: ""
+                    val amount = document.getLong("amount") ?: 0
+
+                    val trans = TransactionHistory(
+                        transactionName,
+                        transactionDate,
+                        transactionStatus,
+                        transactionId,
+                        amount
+                    )
+                    transactionHistoryList.add(trans)
+                }
+// Update the MutableLiveData with the list of TransactionHistory objects
+                transactionHistory.postValue(transactionHistoryList)
+            }
+        }
+
+    }
 
     fun codeFromUri(bitmap: InputImage) {
         viewModelScope.launch {

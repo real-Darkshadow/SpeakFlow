@@ -61,64 +61,22 @@ class MainRepository @Inject constructor(
 
     suspend fun getPromptsByUser(
         userId: String,
-        onSuccess: (List<PromptModel>) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        withContext(Dispatchers.IO) {
-            db.collection("prompts")
-                .whereEqualTo("uid", userId).limit(3)
-                .get()
-                .addOnSuccessListener { querySnapshot ->
-                    val prompts = mutableListOf<PromptModel>()
-                    for (document in querySnapshot) {
-                        val promptText = document.getString("prompt") ?: ""
-                        val prompt = PromptModel(promptText)
-                        prompts.add(prompt)
-                    }
-                    onSuccess(prompts)
-                }
-                .addOnFailureListener { e ->
-                    onFailure(e)
-                }
+    ): Task<QuerySnapshot> {
+        return withContext(Dispatchers.IO) {
+            db.collection("prompts").whereEqualTo("uid", userId).limit(5).get()
         }
-
     }
 
 
-
     suspend fun getPrices(): Task<QuerySnapshot> {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             db.collection("plans").get()
         }
     }
 
-    suspend fun getTransactions(
-        onSuccess: (List<TransactionHistory>) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        withContext(Dispatchers.IO) {
-            db.collection("transactions").whereEqualTo("uid", mAuth.uid).get()
-                .addOnSuccessListener { querySnapshot ->
-                    val transactions = mutableListOf<TransactionHistory>()
-                    for (document in querySnapshot) {
-                        val transactionName = document.getString("transactionName") ?: ""
-                        val transactionDate = document.getString("transactionDate") ?: ""
-                        val transactionStatus = document.getString("transactionStatus") ?: ""
-                        val transactionId = document.getString("transactionId") ?: ""
-
-                        val trans = TransactionHistory(
-                            transactionName,
-                            transactionDate,
-                            transactionStatus,
-                            transactionId
-                        )
-                        transactions.add(trans)
-                    }
-                    onSuccess(transactions)
-                }
-                .addOnFailureListener { e ->
-                    onFailure(e)
-                }
+    suspend fun getTransactions(): Task<QuerySnapshot> {
+        return withContext(Dispatchers.IO) {
+            db.collection("orders").whereEqualTo("uid", mAuth.uid).get()
         }
     }
 

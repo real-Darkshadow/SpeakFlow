@@ -2,52 +2,73 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
     android:layout_width="match_parent"
-    android:paddingHorizontal="16dp"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:paddingHorizontal="16dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.Profile.DashboardFragment">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent"
+            tools:context=".ui.Profile.DashboardFragment">
 
-            <LinearLayout
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="start|center_vertical"
-                android:orientation="horizontal">
+                android:layout_height="?actionBarSize"
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/header"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/inter_semibold"
-                    android:text="History"
-                    android:gravity="center"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:textColor="@color/black"
-                    android:textFontWeight="400"
-                    android:textSize="18dp" />
-            </LinearLayout>
+                    android:gravity="start|center_vertical"
+                    android:orientation="horizontal">
 
-        </androidx.appcompat.widget.Toolbar>
+                    <TextView
+                        android:id="@+id/header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/inter_semibold"
+                        android:gravity="center"
+                        android:text="History"
+                        android:textColor="@color/black"
+                        android:textFontWeight="400"
+                        android:textSize="18dp" />
+                </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/promptHistoryRecycler"
+            </androidx.appcompat.widget.Toolbar>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/promptHistoryRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/loading"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="false"
+                app:lottie_rawRes="@raw/loading" />
+        </LinearLayout>
+    </FrameLayout>
 </androidx.core.widget.NestedScrollView>

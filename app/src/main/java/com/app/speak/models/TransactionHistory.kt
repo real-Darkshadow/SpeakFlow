@@ -5,4 +5,5 @@ data class TransactionHistory(
     var transactionDate: String,
     var transactionStatus: String,
     var transactionId: String,
+    var amount: Long
 )

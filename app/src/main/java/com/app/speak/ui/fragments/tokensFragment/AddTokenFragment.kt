@@ -11,9 +11,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.app.speak.R
 import com.app.speak.databinding.FragmentAddTokenBinding
 import com.app.speak.db.AppPrefManager
+import com.app.speak.ui.utils.GridItemDecoration
 import com.app.speak.viewmodel.TokensViewModel
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -55,8 +58,15 @@ class AddTokenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.priceOptions.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.priceOptions.addItemDecoration(
+            GridItemDecoration(
+                resources.getDimensionPixelSize(
+                    R.dimen.plan_spacing
+                ),
+                true
+            )
+        )
+        binding.priceOptions.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.priceOptions.isNestedScrollingEnabled = false;
         appPrefManager = AppPrefManager(requireContext())
         viewModel.getUserData(appPrefManager.user.uid)
@@ -107,7 +117,7 @@ class AddTokenFragment : Fragment() {
             if (!it.isNullOrEmpty()) {
                 binding.loading.gone()
                 binding.background.visible()
-                binding.priceOptions.adapter = TokensPriceAdapter(it) { plan ->
+                binding.priceOptions.adapter = TokensPriceAdapter(requireContext(), it) { plan ->
                     viewModel.selectedPlan = plan
                 }
             }

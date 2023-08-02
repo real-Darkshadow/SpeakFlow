@@ -19,6 +19,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.app.speak.AudioDownloader
 import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.databinding.TokensWarningBinding
@@ -35,7 +36,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
@@ -52,8 +52,7 @@ class HomeFragment : Fragment() {
     private var TAG = "MainFrag"
     private var handler = Handler()
     private lateinit var uid: String
-    private lateinit var appPrefManager: AppPrefManager
-
+    private lateinit var AudioDownloader: AudioDownloader
 
     private var interstitialAd: InterstitialAd? = null
 
@@ -75,10 +74,16 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadInterstitialAd()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         uid = auth.currentUser?.uid.toString()
         MobileAds.initialize(requireContext()) {}
+        AudioDownloader = AudioDownloader(requireContext())
         binding.background.gone()
         binding.loading.visible()
         viewModel.getVoices()
@@ -112,15 +117,20 @@ class HomeFragment : Fragment() {
             interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
                     Log.d(TAG, "InterstitialAd was dismissed.")
+                    showToast("Download Started")
                     // Load a new InterstitialAd
                     loadInterstitialAd()
                 }
 
                 override fun onAdFailedToShowFullScreenContent(p0: AdError) {
                     Log.e(TAG, "InterstitialAd failed to show.")
+                    loadInterstitialAd()
+
                 }
 
                 override fun onAdShowedFullScreenContent() {
+
+                    loadInterstitialAd()
                     Log.d(TAG, "InterstitialAd was shown.")
                 }
             }
@@ -167,7 +177,14 @@ class HomeFragment : Fragment() {
                     viewModel.imageText.value = ""
                 }
             })
+            downloadButton.setOnClickListener {
 
+                if (tokens <= 100) {
+                    showInterstitialAd()
+                }
+
+                AudioDownloader.downloadFile(viewModel.audioLink)
+            }
 
         }
 
@@ -376,5 +393,6 @@ class HomeFragment : Fragment() {
         val dialog = builder.create()
         dialog.show()
     }
+
 
 }

@@ -1,12 +1,10 @@
 package com.app.speak.repository.dataSourceImpl
 
+import android.os.Environment
 import android.util.Log
 import com.app.speak.Speak
 import com.app.speak.api.ApiService
 import com.app.speak.db.AppPrefManager
-import com.app.speak.models.PromptModel
-import com.app.speak.models.StripeResponse
-import com.app.speak.models.TransactionHistory
 import com.app.speak.repository.dataSource.MainRepositoryInterface
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -19,24 +17,27 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.HttpsCallableResult
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Named
+
 
 class MainRepository @Inject constructor(
     val context: Speak,
     val apiService: ApiService,
     val appPrefManager: AppPrefManager,
     @Named("device_id")
-    private val deviceID: String,
+    deviceId: String,
     private val firestore: FirebaseFirestore,
     private val functions: FirebaseFunctions,
+    private val firebaseAuth: FirebaseAuth,
+    private val storage: FirebaseStorage,
 
     ) : MainRepositoryInterface {
-    private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var mAuth: FirebaseAuth = firebaseAuth
     private val db = Firebase.firestore
 
     suspend fun getUserData(documentId: String): Task<DocumentSnapshot> {
@@ -127,6 +128,8 @@ class MainRepository @Inject constructor(
 
         }
     }
+
+
 }
 
 

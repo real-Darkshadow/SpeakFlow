@@ -1,19 +1,19 @@
 package com.app.speak.ui.home
 
+import android.app.DownloadManager
 import android.content.DialogInterface
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SeekBar
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.activityViewModels
-import com.app.speak.R
 import com.app.speak.databinding.BottomSheetLayoutBinding
-import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.viewmodel.MainViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class VoiceTuneFragment : BottomSheetDialogFragment() {
@@ -53,6 +53,7 @@ class VoiceTuneFragment : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
+
     }
 
 }

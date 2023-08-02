@@ -35,7 +35,9 @@ class TokensViewModel @Inject constructor(
                     PlanPrices(
                         planName = dataMap["planName"].toString(),
                         id = dataMap["id"].toString(),
-                        planPrice = dataMap["planPrice"].toString()
+                        planPrice = dataMap["planPrice"].toString(),
+                        characters = dataMap["characters"].toString(),
+                        recommended = dataMap["recommended"],
                     )
                 }
                 planPrices.postValue(availablePlansList)

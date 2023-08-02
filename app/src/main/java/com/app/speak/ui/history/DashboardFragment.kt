@@ -47,11 +47,11 @@ class DashboardFragment : Fragment() {
 
     private fun setObservers() {
         viewModel.prompts.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
+            if (!it.isNullOrEmpty()) {
                 binding.loading.gone()
                 binding.promptHistoryRecycler.adapter = PromptHistoryAdapter(it)
             } else {
-
+                binding.loading.gone()
             }
         })
     }

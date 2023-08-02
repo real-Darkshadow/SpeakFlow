@@ -5,11 +5,7 @@ import ExtensionFunction.visible
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.RadioButton
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.app.speak.R
@@ -18,7 +14,7 @@ import com.app.speak.models.PlanPrices
 
 class TokensPriceAdapter(
     private val context: Context,
-    val planPrices: List<PlanPrices>, val onclick: (String) -> Unit
+    val locale: String, val planPrices: List<PlanPrices>, val onclick: (String) -> Unit
 ) :
     RecyclerView.Adapter<TokensPriceAdapter.ViewHolder>() {
 
@@ -36,9 +32,10 @@ class TokensPriceAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder) {
-            binding.pricing.text = "$" + planPrices[position].planPrice
+            if (locale == "in") binding.pricing.text = "₹" + planPrices[position].planPrice
+            else binding.pricing.text = "$" + planPrices[position].planPrice
             binding.planName.text = planPrices[position].planName
-            binding.characterPerMont.text = planPrices[position].characters + "characters per month"
+            binding.characterPerMont.text = planPrices[position].characters + " characters/mo"
             if (planPrices[position].recommended == true) binding.recommendedChip.visible()
             else binding.recommendedChip.gone()
             binding.monthCard.setOnClickListener {

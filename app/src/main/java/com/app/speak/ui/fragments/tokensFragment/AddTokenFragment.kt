@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.speak.R
 import com.app.speak.databinding.FragmentAddTokenBinding
 import com.app.speak.db.AppPrefManager
@@ -24,7 +23,6 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
@@ -117,9 +115,11 @@ class AddTokenFragment : Fragment() {
             if (!it.isNullOrEmpty()) {
                 binding.loading.gone()
                 binding.background.visible()
-                binding.priceOptions.adapter = TokensPriceAdapter(requireContext(), it) { plan ->
-                    viewModel.selectedPlan = plan
-                }
+                val locale = getLocale()
+                binding.priceOptions.adapter =
+                    TokensPriceAdapter(requireContext(), locale, it) { plan ->
+                        viewModel.selectedPlan = plan
+                    }
             }
         }
         viewModel.stripeCheckoutResult.observe(viewLifecycleOwner) {

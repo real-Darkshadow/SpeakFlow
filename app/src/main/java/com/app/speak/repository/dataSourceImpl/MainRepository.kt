@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.FirebaseFunctions
@@ -64,7 +65,10 @@ class MainRepository @Inject constructor(
         userId: String,
     ): Task<QuerySnapshot> {
         return withContext(Dispatchers.IO) {
-            db.collection("prompts").whereEqualTo("uid", userId).limit(5).get()
+            db.collection("prompts").whereEqualTo("uid", userId).limit(5).orderBy(
+                "createdAt",
+                Query.Direction.DESCENDING
+            ).get()
         }
     }
 
@@ -77,7 +81,8 @@ class MainRepository @Inject constructor(
 
     suspend fun getTransactions(): Task<QuerySnapshot> {
         return withContext(Dispatchers.IO) {
-            db.collection("orders").whereEqualTo("uid", mAuth.uid).get()
+            db.collection("orders").orderBy("transactionDate", Query.Direction.DESCENDING)
+                .whereEqualTo("uid", mAuth.uid).get()
         }
     }
 

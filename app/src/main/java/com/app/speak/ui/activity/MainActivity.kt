@@ -1,15 +1,13 @@
 package com.app.speak.ui.activity
 
-import ExtensionFunction.changeStatusBarColor
+import com.app.speak.ui.ExtensionFunction.changeStatusBarColor
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.app.speak.R
 import com.app.speak.databinding.ActivityMainBinding
-import com.app.speak.db.AppPrefManager
 import com.app.speak.viewmodel.MainViewModel
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView

@@ -40,7 +40,7 @@ class ProfileAdapter(
             1 -> holder.option_image.setBackgroundResource(R.drawable.coin)
             2 -> holder.option_image.setBackgroundResource(R.drawable.chat)
             3 -> holder.option_image.setBackgroundResource(R.drawable.terms_and_conditions)
-            4 -> holder.option_image.setBackgroundResource(R.drawable.privacy)
+            4 -> holder.option_image.setBackgroundResource(R.drawable.privacy_policy)
             5 -> holder.option_image.setBackgroundResource(R.drawable.delete)
         }
     }

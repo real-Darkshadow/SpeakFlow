@@ -1,9 +1,5 @@
 package com.app.speak.ui.home
 
-import ExtensionFunction.gone
-import ExtensionFunction.isNotNullOrBlank
-import ExtensionFunction.showToast
-import ExtensionFunction.visible
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
@@ -19,11 +15,16 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.AudioDownloader
 import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.databinding.TokensWarningBinding
 import com.app.speak.db.AppPrefManager
+import com.app.speak.ui.ExtensionFunction.gone
+import com.app.speak.ui.ExtensionFunction.isNotNullOrBlank
+import com.app.speak.ui.ExtensionFunction.showToast
+import com.app.speak.ui.ExtensionFunction.visible
 import com.app.speak.viewmodel.MainViewModel
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.ads.*
@@ -37,6 +38,7 @@ import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -56,6 +58,8 @@ class HomeFragment : Fragment() {
 
     private var interstitialAd: InterstitialAd? = null
 
+    @Inject
+    lateinit var analyticHelper: AnalyticsHelperUtil
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -87,6 +91,12 @@ class HomeFragment : Fragment() {
         binding.background.gone()
         binding.loading.visible()
         viewModel.getVoices()
+
+        analyticHelper.logEvent(
+            "Home_Viewed", mutableMapOf(
+                "uid" to uid
+            )
+        )
         loadInterstitialAd()
         setObservers()
         setListeners()
@@ -116,22 +126,15 @@ class HomeFragment : Fragment() {
         if (interstitialAd != null) {
             interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
-                    Log.d(TAG, "InterstitialAd was dismissed.")
-                    showToast("Download Started")
-                    // Load a new InterstitialAd
                     loadInterstitialAd()
                 }
 
                 override fun onAdFailedToShowFullScreenContent(p0: AdError) {
-                    Log.e(TAG, "InterstitialAd failed to show.")
                     loadInterstitialAd()
-
                 }
 
                 override fun onAdShowedFullScreenContent() {
-
                     loadInterstitialAd()
-                    Log.d(TAG, "InterstitialAd was shown.")
                 }
             }
             interstitialAd?.show(requireActivity())
@@ -153,15 +156,25 @@ class HomeFragment : Fragment() {
                         Toast.makeText(requireContext(), "Not enough Tokens", Toast.LENGTH_SHORT)
                             .show()
                     } else {
+                        analyticHelper.logEvent(
+                            "Voice_Generate_button", mutableMapOf(
+                                "uid" to uid,
+                                "voiceId" to viewModel.selectedVoiceId
+                            )
+                        )
                         val data = hashMapOf(
                             "prompt" to prompt,
                             "uid" to AppPrefManager(requireContext()).user.uid,
                             "status" to "processing",
                             "voiceId" to viewModel.selectedVoiceId
                         )
+                        if (tokens < 60) {
+                            showInterstitialAd()
+                        }
                         binding.loading.visible()
                         generateVoice.isClickable = false
                         viewModel.createNewProcess(data)
+
                     }
                 }
             }
@@ -178,8 +191,12 @@ class HomeFragment : Fragment() {
                 }
             })
             downloadButton.setOnClickListener {
-
-                if (tokens <= 100) {
+                analyticHelper.logEvent(
+                    "Voice_Download_button", mutableMapOf(
+                        "uid" to uid,
+                    )
+                )
+                if (tokens <= 60) {
                     showInterstitialAd()
                 }
 
@@ -203,6 +220,11 @@ class HomeFragment : Fragment() {
         viewModel.taskResult.observe(viewLifecycleOwner) { data ->
             when (data?.get("status").toString()) {
                 "success" -> {
+                    analyticHelper.logEvent(
+                        "Voice_Generate_Success", mutableMapOf(
+                            "uid" to uid,
+                        )
+                    )
                     viewModel.getUserData(uid)
                     viewModel.audioLink = data?.get("signedUrl").toString()
                     if (viewModel.audioLink.isNotNullOrBlank()) {
@@ -218,6 +240,11 @@ class HomeFragment : Fragment() {
                 }
 
                 "error" -> {
+                    analyticHelper.logEvent(
+                        "Voice_Generate_Error", mutableMapOf(
+                            "uid" to uid,
+                        )
+                    )
                     viewModel.getUserData(uid)
                     binding.loading.gone()
                     binding.generateVoice.isClickable = true

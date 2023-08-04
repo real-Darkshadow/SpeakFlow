@@ -1,9 +1,5 @@
 package com.app.speak.ui.fragments.authFragments
 
-import ExtensionFunction.gone
-import ExtensionFunction.hideKeyboard
-import ExtensionFunction.isValidEmail
-import ExtensionFunction.visible
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,15 +7,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.BuildConfig
 import com.app.speak.R
 import com.app.speak.databinding.FragmentLoginBinding
-import com.app.speak.db.AppPrefManager
+import com.app.speak.ui.ExtensionFunction.gone
+import com.app.speak.ui.ExtensionFunction.hideKeyboard
+import com.app.speak.ui.ExtensionFunction.isValidEmail
+import com.app.speak.ui.ExtensionFunction.logError
+import com.app.speak.ui.ExtensionFunction.visible
 import com.app.speak.ui.activity.MainActivity
 import com.app.speak.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -46,6 +47,8 @@ class LoginFragment : Fragment() {
     lateinit var mAuth: FirebaseAuth
     lateinit var mGoogleSignInClient: GoogleSignInClient
 
+    @Inject
+    lateinit var analyticHelper: AnalyticsHelperUtil
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -96,17 +99,25 @@ class LoginFragment : Fragment() {
     private fun setObservers() {
         viewModel.emailSignInResult.observe(viewLifecycleOwner, Observer { result ->
             if (result.isSuccess) {
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
+                analyticHelper.logEvent(
+                    "Email_Login", mutableMapOf(
+                        "email" to binding.userEmail.text.toString(),
+                    )
+                )
                 binding.loading.gone()
                 startActivity(Intent(requireActivity(), MainActivity::class.java))
                 requireActivity().finish()
             } else {
+                analyticHelper.logEvent(
+                    "Email_Login_Error", mutableMapOf(
+                        "email" to binding.userEmail.text.toString(),
+                    )
+                )
                 binding.loading.gone()
                 val exception = result.exceptionOrNull()
                 val errorMessage = exception?.message ?: "Unknown error occurred"
                 Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
             }
-            Log.d("EventLogging", "Event logging executed.")
         })
     }
 
@@ -150,25 +161,38 @@ class LoginFragment : Fragment() {
     }
 
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
-        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-        mAuth.signInWithCredential(credential)
-            .addOnCompleteListener(requireActivity()) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    val user = mAuth.currentUser
-                    val name = user?.displayName.toString()
-                    val email = user?.email.toString()
-                    val uid = user?.uid.toString()
-                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
-                    viewModel.storeDetailFireBase(name, uid, email)
-                    startActivity(Intent(requireActivity(), MainActivity::class.java))
-                    requireActivity().finish()
-                } else {
-                    binding.loading.gone()
-                    // If sign in fails, display a message to the user.
-                    Toast.makeText(requireActivity(), "Login Failed", Toast.LENGTH_SHORT).show()
+        try {
+            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+            mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(requireActivity()) { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+                        val user = mAuth.currentUser
+                        val name = user?.displayName.toString()
+                        val email = user?.email.toString()
+                        val uid = user?.uid.toString()
+                        analyticHelper.logEvent(
+                            "Google_Login", mutableMapOf(
+                                "email" to email,
+                                "uid" to uid,
+                                "name" to name
+                            )
+                        )
+                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
+                        viewModel.storeDetailFireBase(name, uid, email)
+                        startActivity(Intent(requireActivity(), MainActivity::class.java))
+                        requireActivity().finish()
+                    } else {
+                        binding.loading.gone()
+                        analyticHelper.logEvent("Google_Login_Error", mutableMapOf())
+                        // If sign in fails, display a message to the user.
+                        Toast.makeText(requireActivity(), "Login Failed", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
+        } catch (e: Exception) {
+            logError { }
+        }
+
     }
 
     override fun onDestroyView() {

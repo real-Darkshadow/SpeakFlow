@@ -21,7 +21,7 @@ class TokensViewModel @Inject constructor(
     lateinit var transactionId: String
     val userData = MutableLiveData<Map<String, Any>?>()
     var tokens = 0L
-    var selectedPlan = ""
+    var selectedPlan = "Basic"
     val planPrices = MutableLiveData<List<PlanPrices>>()
     val stripeCheckoutResult = MutableLiveData<StripeResponse?>()
     fun getPrices() {

@@ -1,6 +1,6 @@
 package com.app.speak.ui.activity
 
-import ExtensionFunction.changeStatusBarColor
+import com.app.speak.ui.ExtensionFunction.changeStatusBarColor
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity

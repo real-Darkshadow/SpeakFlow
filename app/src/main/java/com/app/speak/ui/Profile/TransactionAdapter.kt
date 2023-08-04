@@ -1,6 +1,5 @@
 package com.app.speak.ui.Profile
 
-import ExtensionFunction.timestampToDate
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.speak.R
 import com.app.speak.models.TransactionHistory
+import com.app.speak.ui.ExtensionFunction.timestampToDate
 
 class TransactionAdapter(private val transactionHistories: List<TransactionHistory>) :
     RecyclerView.Adapter<TransactionAdapter.vh>() {

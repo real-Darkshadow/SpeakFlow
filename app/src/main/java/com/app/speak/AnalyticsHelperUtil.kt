@@ -1,3 +1,5 @@
+package com.app.speak
+
 import android.os.Bundle
 import com.amplitude.android.Amplitude
 import com.google.firebase.analytics.FirebaseAnalytics

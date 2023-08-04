@@ -7,11 +7,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.speak.AnalyticsHelperUtil
+import com.app.speak.AudioDownloader
+import com.app.speak.R
 import com.app.speak.databinding.FragmentDashboardBinding
 import com.app.speak.db.AppPrefManager
 import com.app.speak.ui.ExtensionFunction.gone
+import com.app.speak.ui.ExtensionFunction.isNotNullOrBlank
+import com.app.speak.ui.ExtensionFunction.showToast
 import com.app.speak.ui.ExtensionFunction.visible
 import com.app.speak.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,10 +58,26 @@ class DashboardFragment : Fragment() {
 
 
     private fun setObservers() {
-        viewModel.prompts.observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty()) {
+        viewModel.prompts.observe(viewLifecycleOwner, Observer { promptList ->
+            if (!promptList.isNullOrEmpty()) {
                 binding.loading.gone()
-                binding.promptHistoryRecycler.adapter = PromptHistoryAdapter(it)
+                binding.promptHistoryRecycler.adapter =
+                    PromptHistoryAdapter(promptList, requireContext()) { string, bool ->
+                        when (bool) {
+                            false -> {
+                                viewModel.regeneratePrompt.value = string
+                                findNavController().navigate(R.id.navigation_home)
+                            }
+
+                            true -> {
+                                if (string.isNotNullOrBlank()) AudioDownloader(requireContext()).downloadFile(
+                                    string
+                                )
+                                else showToast("Some Error Occurred")
+                            }
+                        }
+
+                    }
             } else {
                 binding.loading.gone()
             }

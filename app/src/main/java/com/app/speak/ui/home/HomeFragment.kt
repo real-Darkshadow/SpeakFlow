@@ -217,6 +217,12 @@ class HomeFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
+        viewModel.regeneratePrompt.observe(viewLifecycleOwner) {
+            if (it.isNotNullOrBlank()) {
+                binding.userPrompt.setText(it)
+                viewModel.regeneratePrompt.value = ""
+            }
+        }
         viewModel.taskResult.observe(viewLifecycleOwner) { data ->
             when (data?.get("status").toString()) {
                 "success" -> {
@@ -302,10 +308,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
 
     private fun pick() {
@@ -421,5 +423,9 @@ class HomeFragment : Fragment() {
         dialog.show()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 
 }

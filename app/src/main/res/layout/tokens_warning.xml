@@ -32,7 +32,6 @@
             android:textColor="@color/black"
             android:id="@+id/addMore"
             android:text="Add More"
-            android:backgroundTint="@color/yellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp" />
@@ -50,7 +49,6 @@
         <Button
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
-            android:backgroundTint="@color/yellow"
             android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

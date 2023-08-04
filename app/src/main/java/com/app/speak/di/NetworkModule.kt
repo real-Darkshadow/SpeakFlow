@@ -4,28 +4,17 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import com.app.speak.BuildConfig
 import com.app.speak.Speak
-import com.app.speak.api.ApiService
-import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private var BASE_URL = BuildConfig.BASE_URL
-    private val okHttpClient = OkHttpClient()
-    private val convertor = GsonConverterFactory.create(GsonBuilder().setLenient().create())
-
-
     @Singleton
     @Provides
     fun hasInternetConnection(context: Speak): Boolean {
@@ -61,19 +50,7 @@ object NetworkModule {
 
     }
 
-    @Singleton
-    @Provides
-    fun provideRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
 
-    @Provides
-    fun provideApiService(retrofit: Retrofit): ApiService {
-        return retrofit.create(ApiService::class.java)
-    }
 
 
 }

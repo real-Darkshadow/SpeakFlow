@@ -20,7 +20,6 @@ android {
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         renderscriptTargetApi 33//must match target sdk and build tools
         renderscriptSupportModeEnabled true
@@ -30,14 +29,6 @@ android {
     }
 
 
-//    signingConfigs {
-//        release {
-//            keyAlias keystoreProperties['keyAlias']
-//            keyPassword keystoreProperties['keyPassword']
-//            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-//            storePassword keystoreProperties['storePassword']
-//        }
-//    }
 
     buildTypes {
         internationalDebug {
@@ -136,25 +127,11 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.media3:media3-ui:1.1.0'
-    implementation 'com.github.jpvs0101:Currencyfy:v1.0.2'
-
-    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
     implementation 'com.google.android.gms:play-services-ads:22.2.0'
-
-
-
-    // For youtube Url Extractor
-    implementation 'com.github.HaarigerHarald:android-youtubeExtractor:v1.7.0'
-
-    // Multi Dex Enabled
-    implementation 'androidx.multidex:multidex:2.0.1'
-
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
+    //noinspection GradleDynamicVersion
     implementation 'com.amplitude:analytics-android:1+'
 
     // Recommended: Add the Firebase SDK for Google Analytics.
@@ -162,27 +139,18 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.4.0'
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:20.3.2'
     implementation 'com.google.firebase:firebase-perf-ktx:20.4.0'
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.2.0'
     implementation 'com.google.firebase:firebase-config-ktx:21.4.1'
-    implementation 'com.google.firebase:firebase-dynamic-links-ktx:21.1.0'
     implementation 'com.google.firebase:firebase-messaging-ktx:23.2.0'
     //Image Parsing Library
-    implementation 'com.github.bumptech.glide:glide:4.13.1'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
     implementation 'com.google.firebase:firebase-auth-ktx:22.1.0'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.7.0'
     implementation 'com.google.firebase:firebase-functions-ktx:20.3.1'
-    implementation 'com.google.firebase:firebase-database-ktx:20.2.2'
     implementation 'com.google.mlkit:text-recognition:16.0.0'
-    implementation 'com.google.firebase:firebase-storage-ktx:20.2.1'
 
-//    implementation 'com.google.firebase:firebase-ml-vision:24.1.0'
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test:runner:1.5.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.github.dhaval2404:imagepicker:2.1'
 
 
@@ -191,7 +159,6 @@ dependencies {
     implementation 'com.google.android.play:core-ktx:1.8.1'
 
 
-    implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'com.airbnb.android:lottie:6.0.0'
 
     implementation 'com.google.android.gms:play-services-auth:20.6.0'

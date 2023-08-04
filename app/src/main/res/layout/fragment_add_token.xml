@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="16dp"
-            android:paddingTop="16dp">
+            >
 
             <ImageView
                 android:id="@+id/back_button"
@@ -51,7 +51,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/tokens_card_gradient"
+                    android:background="@color/black"
                     android:padding="25dp">
 
                     <TextView
@@ -60,7 +60,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
                         android:text="Available Tokens"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:textFontWeight="400"
                         android:textSize="12dp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +71,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginTop="6dp"
-                        android:src="@drawable/coin"
+                        android:src="@drawable/token_icon"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tokentext" />
 
@@ -80,8 +80,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
+                        android:layout_marginStart="4dp"
                         android:fontFamily="@font/poppins"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
+                        tools:text="1000"
                         android:textSize="20sp"
                         app:layout_constraintBottom_toBottomOf="@+id/tokenimg"
                         app:layout_constraintStart_toEndOf="@id/tokenimg"
@@ -108,12 +110,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/global_button"
-                            android:backgroundTint="@color/black"
+                            android:backgroundTint="@color/white"
                             android:fontFamily="@font/poppins_medium"
                             android:paddingHorizontal="12dp"
                             android:paddingVertical="8dp"
                             android:text="Watch Ad"
-                            android:textColor="@color/white"
+                            android:textColor="@color/black"
                             android:textSize="12sp" />
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,5 @@
 package com.app.speak.ui.history
 
-import ExtensionFunction.gone
-import ExtensionFunction.visible
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.databinding.FragmentDashboardBinding
 import com.app.speak.db.AppPrefManager
+import com.app.speak.ui.ExtensionFunction.gone
+import com.app.speak.ui.ExtensionFunction.visible
 import com.app.speak.viewmodel.MainViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DashboardFragment : Fragment() {
@@ -23,7 +23,9 @@ class DashboardFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var appPrefManager: AppPrefManager
-    //get by limit and order
+
+    @Inject
+    lateinit var analyticHelper: AnalyticsHelperUtil
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,6 +42,11 @@ class DashboardFragment : Fragment() {
         binding.loading.visible()
         binding.promptHistoryRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        analyticHelper.logEvent(
+            "Prompt_History_Viewed", mutableMapOf(
+                "email" to appPrefManager.user.email
+            )
+        )
         setObservers()
 
     }

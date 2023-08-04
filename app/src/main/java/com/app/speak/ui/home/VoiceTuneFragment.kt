@@ -1,18 +1,17 @@
 package com.app.speak.ui.home
 
-import android.app.DownloadManager
 import android.content.DialogInterface
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.activityViewModels
+import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.databinding.BottomSheetLayoutBinding
 import com.app.speak.viewmodel.MainViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -20,6 +19,9 @@ class VoiceTuneFragment : BottomSheetDialogFragment() {
     private val viewModel: MainViewModel by activityViewModels()
     private var _binding: BottomSheetLayoutBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var analyticHelper: AnalyticsHelperUtil
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

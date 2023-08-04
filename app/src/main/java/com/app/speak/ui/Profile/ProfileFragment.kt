@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.R
 import com.app.speak.databinding.FragmentNotificationsBinding
 import com.app.speak.db.AppPrefManager
@@ -17,13 +18,19 @@ import com.app.speak.ui.activity.AuthActivity
 import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
     private var _binding: FragmentNotificationsBinding? = null
-    val appPrefManager by lazy { AppPrefManager(requireActivity()) }
+    val appPrefManager by lazy { AppPrefManager(requireContext()) }
     private val binding get() = _binding!!
     lateinit var firebaeAuth: FirebaseAuth
+
+    @Inject
+    lateinit var analyticHelper: AnalyticsHelperUtil
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,6 +44,11 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         firebaeAuth = FirebaseAuth.getInstance()
+        analyticHelper.logEvent(
+            "Profile_Menu_Viewed", mutableMapOf(
+                "email" to appPrefManager.user.email
+            )
+        )
         setListeners()
         setObservers()
     }
@@ -58,7 +70,15 @@ class ProfileFragment : Fragment() {
                 when (it) {
                     0 -> findNavController().navigate(R.id.transactionsFragment)
                     1 -> startActivity(Intent(requireContext(), TokensActivity::class.java))
-                    2 -> shareText(getString(R.string.share_text))
+                    2 -> {
+                        shareText(getString(R.string.share_text))
+                        analyticHelper.logEvent(
+                            "Share_Button", mutableMapOf(
+                                "email" to appPrefManager.user.email,
+                            )
+                        )
+                    }
+
                     3 -> startActivity(
                         Intent(
                             Intent.ACTION_VIEW,
@@ -73,7 +93,15 @@ class ProfileFragment : Fragment() {
                         )
                     )
 
-                    5 -> {}
+                    5 -> {
+                        analyticHelper.logEvent(
+                            "Account_Delete", mutableMapOf(
+                                "email" to appPrefManager.user.email,
+                                "uid" to appPrefManager.user.uid
+                            )
+                        )
+                    }
+
                 }
             }
             options.isNestedScrollingEnabled = false;

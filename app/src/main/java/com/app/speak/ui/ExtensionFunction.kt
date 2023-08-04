@@ -1,3 +1,5 @@
+package com.app.speak.ui
+
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
@@ -55,7 +57,6 @@ object ExtensionFunction {
         val tm =
             context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         return tm.networkCountryIso
-
     }
 
 

@@ -1,20 +1,21 @@
 package com.app.speak.ui.fragments.tokensFragment
 
-import ExtensionFunction.getLocale
-import ExtensionFunction.gone
-import ExtensionFunction.showToast
-import ExtensionFunction.visible
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.R
 import com.app.speak.databinding.FragmentAddTokenBinding
 import com.app.speak.db.AppPrefManager
+import com.app.speak.ui.ExtensionFunction.getLocale
+import com.app.speak.ui.ExtensionFunction.gone
+import com.app.speak.ui.ExtensionFunction.showToast
+import com.app.speak.ui.ExtensionFunction.visible
 import com.app.speak.ui.utils.GridItemDecoration
 import com.app.speak.viewmodel.TokensViewModel
 import com.google.android.gms.ads.AdError
@@ -29,8 +30,10 @@ import com.google.firebase.ktx.Firebase
 import com.stripe.android.PaymentConfiguration
 import com.stripe.android.paymentsheet.PaymentSheet
 import com.stripe.android.paymentsheet.PaymentSheetResult
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class AddTokenFragment : Fragment() {
     private var _binding: FragmentAddTokenBinding? = null
     private val binding get() = _binding!!
@@ -45,6 +48,9 @@ class AddTokenFragment : Fragment() {
     lateinit var appPrefManager: AppPrefManager
     private lateinit var customerId: String
     private lateinit var ephemeralKeySecret: String
+
+    @Inject
+    lateinit var analyticHelper: AnalyticsHelperUtil
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -69,6 +75,11 @@ class AddTokenFragment : Fragment() {
         appPrefManager = AppPrefManager(requireContext())
         viewModel.getUserData(appPrefManager.user.uid)
         paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
+        analyticHelper.logEvent(
+            "Add_Token_Viewed", mutableMapOf(
+                "email" to appPrefManager.user.email
+            )
+        )
         viewModel.getPrices()
         binding.background.gone()
         binding.loading.visible()
@@ -84,6 +95,12 @@ class AddTokenFragment : Fragment() {
     private fun setListeners() {
         binding.apply {
             watchAd.setOnClickListener {
+                analyticHelper.logEvent(
+                    "Ad_button_clicked", mutableMapOf(
+                        "email" to appPrefManager.user.email,
+                        "uid" to appPrefManager.user.uid,
+                    )
+                )
                 showInterstitialAd()
             }
             checkoutBtn.setOnClickListener {
@@ -163,15 +180,37 @@ class AddTokenFragment : Fragment() {
     private fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
         when (paymentSheetResult) {
             is PaymentSheetResult.Canceled -> {
+                analyticHelper.logEvent(
+                    "Payment_Sheet_Cancelled", mutableMapOf(
+                        "email" to appPrefManager.user.email,
+                        "plan" to viewModel.selectedPlan
+                    )
+                )
                 showToast("Canceled")
             }
 
             is PaymentSheetResult.Failed -> {
+                analyticHelper.logEvent(
+                    "Token_Purchase_Failed", mutableMapOf(
+                        "email" to appPrefManager.user.email,
+                        "plan" to viewModel.selectedPlan,
+                        "uid" to appPrefManager.user.uid,
+                        "currency" to getLocale()
+                    )
+                )
                 showToast("Error: ${paymentSheetResult.error}")
             }
 
             is PaymentSheetResult.Completed -> {
                 // Display for example, an order confirmation screen
+                analyticHelper.logEvent(
+                    "Token_purchased", mutableMapOf(
+                        "email" to appPrefManager.user.email,
+                        "plan" to viewModel.selectedPlan,
+                        "uid" to appPrefManager.user.uid,
+                        "currency" to getLocale()
+                    )
+                )
                 viewModel.getUserData(appPrefManager.user.uid)
                 showToast("Completed")
             }
@@ -215,6 +254,12 @@ class AddTokenFragment : Fragment() {
                 }
 
                 override fun onAdShowedFullScreenContent() {
+                    analyticHelper.logEvent(
+                        "Ad_Shown", mutableMapOf(
+                            "email" to appPrefManager.user.email,
+                            "uid" to appPrefManager.user.uid,
+                        )
+                    )
                     Log.d(TAG, "InterstitialAd was shown.")
 
                 }

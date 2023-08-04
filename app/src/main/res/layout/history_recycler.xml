@@ -1,63 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    app:cardCornerRadius="18dp"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="24dp"
+    android:background="@drawable/token_price_back"
     android:elevation="4dp"
     app:cardBackgroundColor="@color/white"
-    android:background="@drawable/token_price_back"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="wrap_content">
+    app:cardCornerRadius="18dp">
 
     <LinearLayout
-        android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
-            android:textSize="18sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/poppins_medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recent Prompt" />
+            android:fontFamily="@font/poppins_medium"
+            android:text="Recent Prompt"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/prompt"
-            android:layout_marginTop="12dp"
-            android:maxLines="4"
-            android:fontFamily="@font/poppins"
-            android:ellipsize="end"
-            android:textSize="16sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins"
+            android:maxLines="4"
             android:text="To preserve the context of a file that was split into segments, you can prompt the model with the transcript of the preceding segment. This will make the transcript more accurate, as the model will use the relevant information from the previous audioThe model will only consider the final 224 tokens of the prompt and ignore anything earlier"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
         <LinearLayout
-            android:id="@+id/generate_voice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="50dp"
             android:layout_marginTop="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/inspiration">
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="match_parent"
+            <!-- LinearLayout with TextView on the left -->
+            <LinearLayout
+                android:id="@+id/generate_voice"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/global_button"
-                android:backgroundTint="@color/black"
-                android:fontFamily="@font/poppins_medium"
-                android:gravity="center"
-                android:paddingVertical="12dp"
-                android:paddingHorizontal="12dp"
-                android:text="Re-Generate"
-                android:textColor="@color/white" />
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/global_button"
+                    android:backgroundTint="@color/black"
+                    android:fontFamily="@font/poppins_medium"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="12dp"
+                    android:text="Re-Generate"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <!-- Gap between the two LinearLayouts -->
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <!-- LinearLayout with TextView on the right -->
+            <LinearLayout
+                android:id="@+id/download_voice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/global_button"
+                    android:backgroundTint="@color/black"
+                    android:fontFamily="@font/poppins_medium"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="12dp"
+                    android:text="Download Audio"
+                    android:textColor="@color/white" />
+            </LinearLayout>
         </LinearLayout>
+
+
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

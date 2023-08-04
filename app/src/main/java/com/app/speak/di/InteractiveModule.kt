@@ -1,20 +1,16 @@
 package com.app.speak.di
 
 import com.app.speak.Speak
-import com.app.speak.api.ApiService
 import com.app.speak.db.AppPrefManager
 import com.app.speak.repository.dataSource.MainRepositoryInterface
 import com.app.speak.repository.dataSourceImpl.MainRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
-import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -26,25 +22,17 @@ object InteractiveModule {
     @Singleton
     fun provideMainRepository(
         context: Speak,
-        api: Retrofit,
         appPrefManager: AppPrefManager,
-        @Named("device_id")
-        deviceId: String,
         firebaseAuth: FirebaseAuth,
         fireStore: FirebaseFirestore,
         functions: FirebaseFunctions,
-        storage: FirebaseStorage,
     ): MainRepositoryInterface {
-        val apiInterface = api.create(ApiService::class.java)
         return MainRepository(
             context,
-            apiInterface,
             appPrefManager,
-            deviceId,
             fireStore,
             functions,
             firebaseAuth,
-            storage,
         )
     }
 
@@ -62,10 +50,6 @@ object InteractiveModule {
         return FirebaseFunctions.getInstance()
     }
 
-    @Provides
-    fun provideFirebaseStorage(): FirebaseStorage {
-        return FirebaseStorage.getInstance()
-    }
 
 
     @Provides

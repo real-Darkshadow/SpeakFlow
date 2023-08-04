@@ -31,8 +31,6 @@ import com.app.speak.models.CrashlyticsCustomLog
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
-import org.json.JSONObject
-import retrofit2.HttpException
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -223,7 +221,7 @@ object ExtensionFunction {
         if (mode == 0) {
             requireActivity().window.decorView.systemUiVisibility = 0
             requireActivity().window.statusBarColor =
-                resources.getColor(R.color.green_dark)
+                resources.getColor(R.color.white)
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -231,7 +229,7 @@ object ExtensionFunction {
                 requireActivity().window.decorView.systemUiVisibility =
                     View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                 requireActivity().window.statusBarColor =
-                    resources.getColor(R.color.green_dark)
+                    resources.getColor(R.color.white)
             }
         }
     }
@@ -244,7 +242,7 @@ object ExtensionFunction {
         if (mode == 0) {
             requireActivity().window.decorView.systemUiVisibility = 0
             requireActivity().window.statusBarColor =
-                resources.getColor(R.color.green_dark)
+                resources.getColor(R.color.white)
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -316,24 +314,7 @@ object ExtensionFunction {
         }
     }
 
-    fun Exception.parseErrorMessage(): String {
-        var errorMessage = message
-        return when (this) {
-            is HttpException -> {
-                errorMessage = response()?.errorBody()?.string()
-                try {
-                    JSONObject(errorMessage ?: "").getString("message")
-                } catch (e: Exception) {
-                    errorMessage.toString()
-                }
-            }
 
-            else -> {
-                errorMessage.toString()
-            }
-        }
-
-    }
 
     fun View.toggleVisibility(visible: Boolean? = null) {
         if (visible != null) {

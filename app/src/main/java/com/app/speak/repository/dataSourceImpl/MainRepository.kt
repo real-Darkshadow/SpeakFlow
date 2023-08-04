@@ -1,9 +1,7 @@
 package com.app.speak.repository.dataSourceImpl
 
-import android.os.Environment
 import android.util.Log
 import com.app.speak.Speak
-import com.app.speak.api.ApiService
 import com.app.speak.db.AppPrefManager
 import com.app.speak.repository.dataSource.MainRepositoryInterface
 import com.google.android.gms.tasks.Task
@@ -18,24 +16,17 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.HttpsCallableResult
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
-import javax.inject.Named
 
 
 class MainRepository @Inject constructor(
     val context: Speak,
-    val apiService: ApiService,
     val appPrefManager: AppPrefManager,
-    @Named("device_id")
-    deviceId: String,
     private val firestore: FirebaseFirestore,
     private val functions: FirebaseFunctions,
-    private val firebaseAuth: FirebaseAuth,
-    private val storage: FirebaseStorage,
+    firebaseAuth: FirebaseAuth,
 
     ) : MainRepositoryInterface {
     private var mAuth: FirebaseAuth = firebaseAuth

@@ -55,7 +55,7 @@ class VoiceTuneFragment : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-
+        _binding = null
     }
 
 }

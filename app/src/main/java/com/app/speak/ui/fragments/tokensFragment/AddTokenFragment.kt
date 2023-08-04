@@ -24,9 +24,6 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.functions.ktx.functions
-import com.google.firebase.ktx.Firebase
 import com.stripe.android.PaymentConfiguration
 import com.stripe.android.paymentsheet.PaymentSheet
 import com.stripe.android.paymentsheet.PaymentSheetResult
@@ -39,8 +36,6 @@ class AddTokenFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: TokensViewModel by activityViewModels()
     private val TAG = "AddToken"
-    val db = Firebase.firestore
-    val functions = Firebase.functions
     private var interstitialAd: InterstitialAd? = null
     lateinit var paymentSheet: PaymentSheet
     lateinit var paymentIntentClientSecret: String
@@ -140,18 +135,17 @@ class AddTokenFragment : Fragment() {
             }
         }
         viewModel.stripeCheckoutResult.observe(viewLifecycleOwner) {
-            binding.loading.gone()
             binding.background.isClickable = true
             it?.let { stripe ->
                 customerId = stripe.customer
                 paymentIntentClientSecret = stripe.paymentIntent
                 ephemeralKeySecret = stripe.ephemeralKey
-//                viewModel.transactionId = stripe.orderId
                 customerConfig = PaymentSheet.CustomerConfiguration(customerId, ephemeralKeySecret)
                 PaymentConfiguration.init(
                     requireContext(),
                     stripe.publishableKey
                 )
+                binding.loading.gone()
                 presentPaymentSheet()
             }
         }
@@ -269,5 +263,10 @@ class AddTokenFragment : Fragment() {
             Log.d(TAG, "The InterstitialAd wasn't ready yet.")
             loadInterstitialAd()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

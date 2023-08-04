@@ -23,6 +23,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: MainRepository,
 ) : ViewModel() {
+    val regeneratePrompt = MutableLiveData<String?>()
     var stabilityPercentage = 50
     var clarityPercentage = 75
     var audioLink = ""
@@ -77,7 +78,8 @@ class MainViewModel @Inject constructor(
                 val promptList = mutableListOf<PromptModel>()
                 for (document in querySnapshot) {
                     val promptText = document.getString("prompt") ?: ""
-                    val prompt = PromptModel(promptText)
+                    val audioUrl = document.getString("signedUrl") ?: ""
+                    val prompt = PromptModel(promptText, audioUrl)
                     promptList.add(prompt)
                 }
                 prompts.postValue(promptList)

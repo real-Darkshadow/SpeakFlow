@@ -27,7 +27,7 @@
                 android:id="@+id/imageView"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/user"
+                android:src="@drawable/profile_icon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -61,11 +61,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:id="@+id/options"
-            android:layout_marginTop="24dp"
             android:paddingHorizontal="16dp"
             tools:itemCount="8"
             tools:listitem="@layout/profile_options"
-
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -89,7 +87,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:src="@drawable/logout" />
+                android:src="@drawable/logout_white" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"

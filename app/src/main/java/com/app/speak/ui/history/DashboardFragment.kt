@@ -66,7 +66,7 @@ class DashboardFragment : Fragment() {
                         when (bool) {
                             false -> {
                                 viewModel.regeneratePrompt.value = string
-                                findNavController().clearBackStack(R.id.navigation_home)
+                                findNavController().navigate(R.id.navigation_home)
                             }
 
                             true -> {

@@ -1,6 +1,9 @@
 package com.app.speak.viewmodel
 
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -192,6 +195,57 @@ class MainViewModel @Inject constructor(
 
             }
         }
+    }
+
+
+    private var player: MediaPlayer? = null
+    private val _isPlaying = MutableLiveData<Boolean>()
+    val isPlaying: LiveData<Boolean> = _isPlaying
+
+    private val _currentProgress = MutableLiveData<Int>()
+    val currentProgress: LiveData<Int> = _currentProgress
+
+    fun initializeMediaPlayer(audioLink: String) {
+        if (player == null) {
+            player = MediaPlayer()
+            player?.setAudioStreamType(AudioManager.STREAM_MUSIC)
+
+            player?.setDataSource(audioLink)
+            player?.prepare()
+            player?.setOnCompletionListener {
+                _isPlaying.value = false
+                _currentProgress.value = 0
+            }
+        }
+    }
+
+    fun togglePlayback() {
+        player?.let { mediaPlayer ->
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.pause()
+            } else {
+                mediaPlayer.start()
+            }
+            _isPlaying.value = mediaPlayer.isPlaying
+        }
+    }
+
+    fun seekTo(progress: Int) {
+        player?.seekTo(progress)
+    }
+
+    fun getCurrentPosition(): Int {
+        return player?.currentPosition ?: 0
+    }
+
+    fun getDuration(): Int {
+        return player?.duration ?: 0
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        player?.release()
+        player = null
     }
 
 }

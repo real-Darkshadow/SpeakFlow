@@ -39,7 +39,7 @@
                         android:gravity="center"
                         android:text="Transactions"
                         android:textColor="@color/black"
-                        android:textSize="18dp" />
+                        android:textSize="18sp" />
                 </LinearLayout>
 
             </androidx.appcompat.widget.Toolbar>
@@ -49,7 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tokensLinear" />
+                app:layout_constraintTop_toBottomOf="@id/toolbar" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout

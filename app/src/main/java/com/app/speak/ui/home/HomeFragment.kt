@@ -17,7 +17,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.AudioDownloader
-import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.databinding.TokensWarningBinding
 import com.app.speak.db.AppPrefManager
@@ -36,14 +35,13 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-//dont use global cope for audio
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
@@ -54,7 +52,7 @@ class HomeFragment : Fragment() {
     private var TAG = "MainFrag"
     private var handler = Handler()
     private lateinit var uid: String
-    private lateinit var AudioDownloader: AudioDownloader
+    private lateinit var audioDownloader: AudioDownloader
 
     private var interstitialAd: InterstitialAd? = null
 
@@ -87,7 +85,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         uid = auth.currentUser?.uid.toString()
         MobileAds.initialize(requireContext()) {}
-        AudioDownloader = AudioDownloader(requireContext())
+        audioDownloader = AudioDownloader(requireContext())
         binding.background.gone()
         binding.loading.visible()
         viewModel.getVoices()
@@ -200,7 +198,7 @@ class HomeFragment : Fragment() {
                     showInterstitialAd()
                 }
 
-                AudioDownloader.downloadFile(viewModel.audioLink)
+                audioDownloader.downloadFile(viewModel.audioLink)
             }
 
         }
@@ -217,6 +215,48 @@ class HomeFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
+
+        viewModel.isPlaying.observe(viewLifecycleOwner) {
+        }
+
+        viewModel.currentProgress.observe(viewLifecycleOwner) { progress ->
+            binding.seekbar.progress = progress
+        }
+
+        // Set click listener for the play button
+        binding.play.setOnClickListener {
+            viewModel.togglePlayback()
+        }
+
+        // Set the initial audio link and start playback
+
+        // Set SeekBar listener
+        binding.seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    viewModel.seekTo(progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
+
+        // Update SeekBar progress periodically
+        lifecycleScope.launch {
+            while (true) {
+                viewModel.getCurrentPosition().let { position ->
+                    viewModel.getDuration().let { duration ->
+                        binding.seekbar.max = duration
+                        binding.seekbar.progress = position
+                    }
+                }
+                delay(100)
+            }
+        }
         viewModel.regeneratePrompt.observe(viewLifecycleOwner) {
             if (it.isNotNullOrBlank()) {
                 binding.userPrompt.setText(it)
@@ -234,11 +274,11 @@ class HomeFragment : Fragment() {
                     viewModel.getUserData(uid)
                     viewModel.audioLink = data?.get("signedUrl").toString()
                     if (viewModel.audioLink.isNotNullOrBlank()) {
-                        startPlayer()
                         val layoutParams =
                             binding.uploadPhoto.layoutParams as CoordinatorLayout.LayoutParams
                         layoutParams.anchorId = binding.playerLayout.id
                         binding.uploadPhoto.layoutParams = layoutParams
+                        viewModel.initializeMediaPlayer(viewModel.audioLink)
                         binding.playerLayout.visible()
                     } else showToast("An Error Occurred\n Please Contact Support")
                     binding.loading.gone()
@@ -309,7 +349,6 @@ class HomeFragment : Fragment() {
     }
 
 
-
     private fun pick() {
         ImagePicker.with(this).galleryOnly()
             .compress(1024)         //Final image size will be less than 1 MB(Optional)
@@ -346,59 +385,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-    fun startPlayer() {
-        binding.apply {
-            seekbar.progress = 0
 
-            val player = MediaPlayer()
-            player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-
-            lifecycleScope.launch(Dispatchers.IO) {
-                player.setDataSource(viewModel.audioLink)
-                player.prepare()
-            }
-
-            seekbar.max = player.duration
-            play.setOnClickListener {
-                if (!player.isPlaying) {
-                    player.start()
-                    binding.play.setImageResource(R.drawable.baseline_pause_24)
-                } else {
-                    player.pause()
-                    binding.play.setImageResource(R.drawable.baseline_play_arrow_24)
-                }
-            }
-            seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
-                ) {
-                    if (fromUser) {
-                        player.seekTo(progress)
-                    }
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                }
-
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                }
-
-            })
-            runnable = Runnable {
-                seekbar.progress = player.currentPosition
-                handler.postDelayed(runnable, 1000)
-            }
-            handler.postDelayed(runnable, 1000)
-
-            player.setOnCompletionListener {
-                play.setImageResource(R.drawable.baseline_play_arrow_24)
-                seekbar.progress = 0
-            }
-        }
-    }
 
     private fun showCustomDialog(context: Context) {
         // Inflate the dialog layout using ViewBinding

@@ -34,6 +34,6 @@ class TransactionAdapter(private val transactionHistories: List<TransactionHisto
         holder.name.text = data.transactionName
         holder.id.text = data.transactionId
         holder.status.text = data.transactionStatus
-        holder.amount.text = data.amount.toString()
+        holder.amount.text = if (data.currency == "inr") "₹" else "$" + "data.amount.toString()"
     }
 }

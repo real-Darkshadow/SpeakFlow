@@ -127,13 +127,15 @@ class MainViewModel @Inject constructor(
                     val transactionStatus = document.getString("paymentStatus") ?: ""
                     val transactionId = document.getString("checkoutSessionId") ?: ""
                     val amount = document.getLong("amount") ?: 0
+                    val currency = document.getString("currency") ?: "inr"
 
                     val trans = TransactionHistory(
                         transactionName,
                         transactionDate,
                         transactionStatus,
                         transactionId,
-                        amount
+                        amount,
+                        currency
                     )
                     transactionHistoryList.add(trans)
                 }

@@ -64,12 +64,13 @@
             android:id="@+id/user_name_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:hintEnabled="false"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="@+id/passwordTextInputLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView37">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <EditText
                 android:id="@+id/user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -99,13 +100,14 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/user_email_layout"
             android:layout_width="match_parent"
+            app:hintEnabled="false"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="@+id/passwordTextInputLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <EditText
                 android:id="@+id/user_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -114,7 +116,7 @@
                 android:fontFamily="@font/poppins"
                 android:inputType="textEmailAddress"
                 android:paddingHorizontal="16dp"
-                android:paddingVertical="14dp"/>
+                android:paddingVertical="14dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -134,6 +136,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/passwordTextInputLayout"
+            app:hintEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -142,7 +145,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView6"
             app:passwordToggleEnabled="true">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <EditText
                 android:id="@+id/user_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -228,7 +231,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="You an account?"
+                android:text="You already have an account?"
                 android:textColor="@color/black"
                 app:fontFamily="@font/poppins_medium" />
 
@@ -257,7 +260,7 @@
             android:layout_height="200dp"
             android:layout_gravity="center"
             app:lottie_autoPlay="true"
-            app:lottie_loop="false"
+            app:lottie_loop="true"
             app:lottie_rawRes="@raw/loading" />
     </LinearLayout>
 </FrameLayout>

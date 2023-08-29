@@ -41,6 +41,7 @@ class TransactionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         appPrefManager = AppPrefManager(requireContext())
         binding.loading.visible()
+        binding.loadAnimation.playAnimation()
         viewModel.getTransactions()
         analyticHelper.logEvent(
             "Transaction_History_Viewed", mutableMapOf(
@@ -62,7 +63,11 @@ class TransactionsFragment : Fragment() {
     private fun setObservers() {
         viewModel.transactionHistory.observe(viewLifecycleOwner, Observer {
             binding.loading.gone()
-            binding.transactionsRecycler.adapter = TransactionAdapter(it)
+            binding.loadAnimation.cancelAnimation()
+            if (!it.isEmpty()) {
+                binding.errorImage.gone()
+                binding.transactionsRecycler.adapter = TransactionAdapter(it)
+            } else binding.errorImage.visible()
         })
     }
 

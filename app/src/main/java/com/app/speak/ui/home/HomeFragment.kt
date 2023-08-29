@@ -17,6 +17,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.AudioDownloader
+import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.databinding.TokensWarningBinding
 import com.app.speak.db.AppPrefManager
@@ -88,6 +89,7 @@ class HomeFragment : Fragment() {
         audioDownloader = AudioDownloader(requireContext())
         binding.background.gone()
         binding.loading.visible()
+        binding.loadAnimation.playAnimation()
         viewModel.getVoices()
 
         analyticHelper.logEvent(
@@ -100,46 +102,7 @@ class HomeFragment : Fragment() {
         setListeners()
     }
 
-    private fun loadInterstitialAd() {
-        val adRequest = AdRequest.Builder().build()
-        InterstitialAd.load(
-            requireContext(),
-            "ca-app-pub-2526931847493583/6336229825",
-            adRequest,
-            object : InterstitialAdLoadCallback() {
-                override fun onAdLoaded(ad: InterstitialAd) {
-                    interstitialAd = ad
-                    Log.d(TAG, "InterstitialAd was loaded.")
-                }
 
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    adError.message.let { Log.d(TAG, it) }
-                    interstitialAd = null
-                }
-            }
-        )
-    }
-
-    private fun showInterstitialAd() {
-        if (interstitialAd != null) {
-            interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    loadInterstitialAd()
-                }
-
-                override fun onAdFailedToShowFullScreenContent(p0: AdError) {
-                    loadInterstitialAd()
-                }
-
-                override fun onAdShowedFullScreenContent() {
-                    loadInterstitialAd()
-                }
-            }
-            interstitialAd?.show(requireActivity())
-        } else {
-            Log.d(TAG, "The InterstitialAd wasn't ready yet.")
-        }
-    }
 
     private fun setListeners() {
         binding.apply {
@@ -169,6 +132,7 @@ class HomeFragment : Fragment() {
                         if (tokens < 60) {
                             showInterstitialAd()
                         }
+                        binding.loadAnimation.playAnimation()
                         binding.loading.visible()
                         generateVoice.isClickable = false
                         viewModel.createNewProcess(data)
@@ -210,25 +174,11 @@ class HomeFragment : Fragment() {
             val bottomSheetFragment = VoiceTuneFragment()
             bottomSheetFragment.show(requireActivity().supportFragmentManager, "myBottomSheet")
         }
-    }
-
-
-    @SuppressLint("SetTextI18n")
-    private fun setObservers() {
-
-        viewModel.isPlaying.observe(viewLifecycleOwner) {
-        }
-
-        viewModel.currentProgress.observe(viewLifecycleOwner) { progress ->
-            binding.seekbar.progress = progress
-        }
-
         // Set click listener for the play button
-        binding.play.setOnClickListener {
+        binding.playButton.setOnClickListener {
             viewModel.togglePlayback()
         }
 
-        // Set the initial audio link and start playback
 
         // Set SeekBar listener
         binding.seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -244,8 +194,21 @@ class HomeFragment : Fragment() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
         })
+    }
 
-        // Update SeekBar progress periodically
+
+    @SuppressLint("SetTextI18n")
+    private fun setObservers() {
+        viewModel.isPlaying.observe(viewLifecycleOwner) { isPlaying ->
+            if (!isPlaying) {
+                binding.loading.gone()
+                binding.loadAnimation.cancelAnimation()
+            }
+            binding.playButton.setImageResource(
+                if (isPlaying) R.drawable.baseline_pause_24
+                else R.drawable.baseline_play_arrow_24
+            )
+        }
         lifecycleScope.launch {
             while (true) {
                 viewModel.getCurrentPosition().let { position ->
@@ -257,6 +220,10 @@ class HomeFragment : Fragment() {
                 delay(100)
             }
         }
+        viewModel.currentProgress.observe(viewLifecycleOwner) { progress ->
+            binding.seekbar.progress = progress
+        }
+
         viewModel.regeneratePrompt.observe(viewLifecycleOwner) {
             if (it.isNotNullOrBlank()) {
                 binding.userPrompt.setText(it)
@@ -266,12 +233,14 @@ class HomeFragment : Fragment() {
         viewModel.taskResult.observe(viewLifecycleOwner) { data ->
             when (data?.get("status").toString()) {
                 "success" -> {
+                    viewModel.taskListenerDocRef.remove()
                     analyticHelper.logEvent(
                         "Voice_Generate_Success", mutableMapOf(
                             "uid" to uid,
                         )
                     )
                     viewModel.getUserData(uid)
+                    viewModel.audioName = data?.get("prompt").toString()
                     viewModel.audioLink = data?.get("signedUrl").toString()
                     if (viewModel.audioLink.isNotNullOrBlank()) {
                         val layoutParams =
@@ -279,13 +248,15 @@ class HomeFragment : Fragment() {
                         layoutParams.anchorId = binding.playerLayout.id
                         binding.uploadPhoto.layoutParams = layoutParams
                         viewModel.initializeMediaPlayer(viewModel.audioLink)
+                        binding.audioName.text = viewModel.audioName
                         binding.playerLayout.visible()
                     } else showToast("An Error Occurred\n Please Contact Support")
-                    binding.loading.gone()
+                    viewModel.taskResult.value = null
                     binding.generateVoice.isClickable = true
                 }
 
                 "error" -> {
+                    viewModel.taskListenerDocRef.remove()
                     analyticHelper.logEvent(
                         "Voice_Generate_Error", mutableMapOf(
                             "uid" to uid,
@@ -293,16 +264,18 @@ class HomeFragment : Fragment() {
                     )
                     viewModel.getUserData(uid)
                     binding.loading.gone()
+                    binding.loadAnimation.cancelAnimation()
+                    viewModel.taskResult.value = null
                     binding.generateVoice.isClickable = true
                     showToast("An Error Occurred\n Please Try Again")
                 }
             }
-
         }
 
         val user = auth.currentUser
         viewModel.userData.observe(viewLifecycleOwner) { document ->
             binding.loading.gone()
+            binding.loadAnimation.cancelAnimation()
             binding.background.visible()
             tokens = document?.get("tokens") as? Long ?: 0L
             val name = document?.get("name") as? String ?: user?.displayName
@@ -408,6 +381,47 @@ class HomeFragment : Fragment() {
 
         val dialog = builder.create()
         dialog.show()
+    }
+
+    private fun loadInterstitialAd() {
+        val adRequest = AdRequest.Builder().build()
+        InterstitialAd.load(
+            requireContext(),
+            "ca-app-pub-2526931847493583/6336229825",
+            adRequest,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdLoaded(ad: InterstitialAd) {
+                    interstitialAd = ad
+                    Log.d(TAG, "InterstitialAd was loaded.")
+                }
+
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    adError.message.let { Log.d(TAG, it) }
+                    interstitialAd = null
+                }
+            }
+        )
+    }
+
+    private fun showInterstitialAd() {
+        if (interstitialAd != null) {
+            interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    loadInterstitialAd()
+                }
+
+                override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                    loadInterstitialAd()
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    loadInterstitialAd()
+                }
+            }
+            interstitialAd?.show(requireActivity())
+        } else {
+            Log.d(TAG, "The InterstitialAd wasn't ready yet.")
+        }
     }
 
     override fun onDestroy() {

@@ -90,6 +90,12 @@ class MainRepository @Inject constructor(
         }
     }
 
+    suspend fun deleteUser(): Task<Void> {
+        return withContext(Dispatchers.IO) {
+            mAuth.currentUser!!.delete()
+        }
+    }
+
     fun storeDetailsInFirebase(name: String, uid: String, email: String) {
         val userMap = hashMapOf(
             "userId" to uid,

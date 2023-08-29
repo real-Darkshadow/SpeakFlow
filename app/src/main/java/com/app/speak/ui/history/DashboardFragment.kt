@@ -45,6 +45,7 @@ class DashboardFragment : Fragment() {
         appPrefManager = AppPrefManager(requireContext())
         viewModel.fetchPrompts(appPrefManager.user.uid)
         binding.loading.visible()
+        binding.loadAnimation.playAnimation()
         binding.promptHistoryRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         analyticHelper.logEvent(
@@ -61,6 +62,8 @@ class DashboardFragment : Fragment() {
         viewModel.prompts.observe(viewLifecycleOwner, Observer { promptList ->
             if (!promptList.isNullOrEmpty()) {
                 binding.loading.gone()
+                binding.loadAnimation.cancelAnimation()
+                binding.errorImage.gone()
                 binding.promptHistoryRecycler.adapter =
                     PromptHistoryAdapter(promptList, requireContext()) { string, bool ->
                         when (bool) {
@@ -80,6 +83,8 @@ class DashboardFragment : Fragment() {
                     }
             } else {
                 binding.loading.gone()
+                binding.errorImage.visible()
+                binding.loadAnimation.cancelAnimation()
             }
         })
     }

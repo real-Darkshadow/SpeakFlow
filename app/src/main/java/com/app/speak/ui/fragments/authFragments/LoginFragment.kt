@@ -78,6 +78,9 @@ class LoginFragment : Fragment() {
             signinCard.setOnClickListener {
                 emailSignIn()
             }
+            forgotPassword.setOnClickListener {
+                findNavController().navigate(R.id.forgotPassword)
+            }
         }
 
     }

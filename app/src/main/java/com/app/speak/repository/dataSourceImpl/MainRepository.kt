@@ -131,6 +131,12 @@ class MainRepository @Inject constructor(
         }
     }
 
+    suspend fun userForgotPassword(email: String): Task<Void> {
+        return withContext(Dispatchers.IO) {
+            mAuth.sendPasswordResetEmail(email)
+        }
+    }
+
 
 }
 

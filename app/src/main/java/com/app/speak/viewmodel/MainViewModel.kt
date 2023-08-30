@@ -61,6 +61,7 @@ class MainViewModel @Inject constructor(
     val transactionHistory = MutableLiveData<List<TransactionHistory>>()
     val voicesList = MutableLiveData<List<LiveVoice>>()
     lateinit var taskListenerDocRef: ListenerRegistration
+    val userForgotPasswordResponse = MutableLiveData<Boolean>()
 
     fun getUserData(documentId: String) {
         viewModelScope.launch {
@@ -267,6 +268,14 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             repository.deleteUser().addOnCompleteListener {
                 userDeleteResponse.postValue(it.isSuccessful)
+            }
+        }
+    }
+
+    fun forgotPassword(email: String) {
+        viewModelScope.launch {
+            repository.userForgotPassword(email).addOnCompleteListener {
+                userForgotPasswordResponse.postValue(it.isSuccessful)
             }
         }
     }

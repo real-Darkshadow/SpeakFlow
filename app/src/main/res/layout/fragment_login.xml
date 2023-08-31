@@ -62,6 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            app:hintEnabled="false"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="@+id/passwordTextInputLayout"
             app:layout_constraintStart_toStartOf="parent"
@@ -98,6 +99,7 @@
             android:id="@+id/passwordTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:hintEnabled="false"
             android:layout_marginTop="8dp"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="@+id/user_email_layout"
@@ -235,7 +237,7 @@
             android:layout_height="200dp"
             android:layout_gravity="center"
             app:lottie_autoPlay="true"
-            app:lottie_loop="false"
+            app:lottie_loop="true"
             app:lottie_rawRes="@raw/loading" />
     </LinearLayout>
 </FrameLayout>

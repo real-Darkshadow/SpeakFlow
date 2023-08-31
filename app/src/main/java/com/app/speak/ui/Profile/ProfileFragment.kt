@@ -14,6 +14,7 @@ import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.R
 import com.app.speak.databinding.FragmentNotificationsBinding
 import com.app.speak.db.AppPrefManager
+import com.app.speak.ui.ExtensionFunction.showToast
 import com.app.speak.ui.activity.AuthActivity
 import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel
@@ -60,6 +61,12 @@ class ProfileFragment : Fragment() {
             binding.userName.text = name
             binding.userEmail.text = email
         }
+        viewModel.userDeleteResponse.observe(viewLifecycleOwner) {
+            if (it) {
+                requireActivity().finish()
+                startActivity(Intent(requireActivity(), AuthActivity::class.java))
+            } else showToast("Something went wrong \n please contact support.")
+        }
     }
 
     private fun setListeners() {
@@ -94,6 +101,7 @@ class ProfileFragment : Fragment() {
                     )
 
                     5 -> {
+                        viewModel.deleteUser()
                         analyticHelper.logEvent(
                             "Account_Delete", mutableMapOf(
                                 "email" to appPrefManager.user.email,
@@ -106,14 +114,14 @@ class ProfileFragment : Fragment() {
             }
             options.isNestedScrollingEnabled = false;
             logoutUser.setOnClickListener {
-                viewModel.uerLogout()
+                viewModel.userLogout()
                 requireActivity().finish()
                 startActivity(Intent(requireActivity(), AuthActivity::class.java))
             }
         }
     }
 
-    fun shareText(text: String) {
+    private fun shareText(text: String) {
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.type = "text/plain"
         shareIntent.putExtra(Intent.EXTRA_TEXT, text)

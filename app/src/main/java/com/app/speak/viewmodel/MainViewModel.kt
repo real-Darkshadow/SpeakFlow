@@ -3,7 +3,6 @@ package com.app.speak.viewmodel
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +10,7 @@ import com.app.speak.models.LiveVoice
 import com.app.speak.models.PromptModel
 import com.app.speak.models.TransactionHistory
 import com.app.speak.repository.dataSourceImpl.MainRepository
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.common.InputImage
@@ -26,6 +26,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: MainRepository,
 ) : ViewModel() {
+    var audioName: String = ""
     val regeneratePrompt = MutableLiveData<String?>()
     var stabilityPercentage = 50
     var clarityPercentage = 75
@@ -39,6 +40,13 @@ class MainViewModel @Inject constructor(
     val error: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
+    val userDeleteResponse = MutableLiveData<Boolean>()
+
+    private var player: MediaPlayer? = null
+
+    val isPlaying = MutableLiveData<Boolean>()
+
+    val currentProgress = MutableLiveData<Int>()
     val taskResult = MutableLiveData<Map<String, Any>?>()
     val profileOptionList = mapOf(
         0 to Pair("Your Transactions", "View and manage your transaction history."),
@@ -52,7 +60,8 @@ class MainViewModel @Inject constructor(
     val lastTaskId = MutableLiveData<String>()
     val transactionHistory = MutableLiveData<List<TransactionHistory>>()
     val voicesList = MutableLiveData<List<LiveVoice>>()
-
+    lateinit var taskListenerDocRef: ListenerRegistration
+    val userForgotPasswordResponse = MutableLiveData<Boolean>()
 
     fun getUserData(documentId: String) {
         viewModelScope.launch {
@@ -94,7 +103,7 @@ class MainViewModel @Inject constructor(
 
     fun taskListener() {
         val docRef = db.collection("prompts").document(lastTaskId.value.toString())
-        docRef.addSnapshotListener { snapshot, e ->
+        taskListenerDocRef = docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 Log.d("tag", "Listen failed.", e)
                 return@addSnapshotListener
@@ -110,7 +119,7 @@ class MainViewModel @Inject constructor(
     }
 
 
-    fun uerLogout() {
+    fun userLogout() {
         viewModelScope.launch {
             repository.userLogout()
         }
@@ -200,25 +209,30 @@ class MainViewModel @Inject constructor(
     }
 
 
-    private var player: MediaPlayer? = null
-    private val _isPlaying = MutableLiveData<Boolean>()
-    val isPlaying: LiveData<Boolean> = _isPlaying
-
-    private val _currentProgress = MutableLiveData<Int>()
-    val currentProgress: LiveData<Int> = _currentProgress
-
     fun initializeMediaPlayer(audioLink: String) {
-        if (player == null) {
-            player = MediaPlayer()
-            player?.setAudioStreamType(AudioManager.STREAM_MUSIC)
+        releaseMediaPlayer() // Release the old MediaPlayer if it exists
 
-            player?.setDataSource(audioLink)
-            player?.prepare()
-            player?.setOnCompletionListener {
-                _isPlaying.value = false
-                _currentProgress.value = 0
-            }
+        player = MediaPlayer()
+        player?.setAudioStreamType(AudioManager.STREAM_MUSIC)
+        player?.setDataSource(audioLink)
+
+        player?.setOnPreparedListener { mediaPlayer ->
+            isPlaying.value = false // Set the initial playback state to false
+            currentProgress.value = 0 // Set the initial progress to 0
+            // You may choose to start playback immediately after preparation if desired.
         }
+
+        player?.setOnCompletionListener {
+            isPlaying.value = false
+            currentProgress.value = 0
+        }
+
+        player?.prepareAsync() // Use prepareAsync to prepare the MediaPlayer in the background
+    }
+
+    private fun releaseMediaPlayer() {
+        player?.release()
+        player = null
     }
 
     fun togglePlayback() {
@@ -228,7 +242,7 @@ class MainViewModel @Inject constructor(
             } else {
                 mediaPlayer.start()
             }
-            _isPlaying.value = mediaPlayer.isPlaying
+            isPlaying.value = mediaPlayer.isPlaying
         }
     }
 
@@ -248,6 +262,22 @@ class MainViewModel @Inject constructor(
         super.onCleared()
         player?.release()
         player = null
+    }
+
+    fun deleteUser() {
+        viewModelScope.launch {
+            repository.deleteUser().addOnCompleteListener {
+                userDeleteResponse.postValue(it.isSuccessful)
+            }
+        }
+    }
+
+    fun forgotPassword(email: String) {
+        viewModelScope.launch {
+            repository.userForgotPassword(email).addOnCompleteListener {
+                userForgotPasswordResponse.postValue(it.isSuccessful)
+            }
+        }
     }
 
 }

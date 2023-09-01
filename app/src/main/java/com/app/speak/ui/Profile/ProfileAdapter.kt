@@ -42,6 +42,7 @@ class ProfileAdapter(
             3 -> holder.option_image.setBackgroundResource(R.drawable.terms_condition)
             4 -> holder.option_image.setBackgroundResource(R.drawable.privacy_policy)
             5 -> holder.option_image.setBackgroundResource(R.drawable.delete_acc)
+
         }
     }
 }

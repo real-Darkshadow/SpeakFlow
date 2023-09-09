@@ -181,6 +181,8 @@ class RegisterFragment : Fragment() {
                         val name = user?.displayName.toString()
                         val email = user?.email.toString()
                         val uid = user?.uid.toString()
+                        val isNew=task.result.additionalUserInfo!!.isNewUser
+                        if (isNew) viewModel.storeDetailFireBase(name, uid, email)
                         analyticHelper.logEvent(
                             "Google_Registration", mutableMapOf(
                                 "email" to email,
@@ -188,7 +190,6 @@ class RegisterFragment : Fragment() {
                                 "name" to name
                             )
                         )
-                        viewModel.storeDetailFireBase(name, uid, email)
                         startActivity(Intent(requireActivity(), MainActivity::class.java))
                         requireActivity().finish()
                     } else {

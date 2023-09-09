@@ -9,5 +9,9 @@
     <string name="prompt_hint">Type or paste text here. The model works best on longer fragments.</string>
     <string name="noInternet">No Internet</string>
     <string name="backOnline">"Connected "</string>
+    <string name="high_stablity">Increasing stability will make the voice more consistent between re-generations.</string>
+    <string name="low_stablity">Increasing variability can make speech more expressive with output varying between re-generations.</string>
+    <string name="high_clarity">High enhancement boosts overall voice clarity and target speaker similarity. Very high values can cause artifacts.</string>
+    <string name="low_clarity">Low values are recommended if background artifacts are present in generated speech.</string>
 
 </resources>

@@ -114,7 +114,7 @@
                             android:fontFamily="@font/poppins_medium"
                             android:paddingHorizontal="12dp"
                             android:paddingVertical="8dp"
-                            android:text="Watch Ad"
+                            android:text="Free Tokens"
                             android:textColor="@color/black"
                             android:textSize="12sp" />
                     </LinearLayout>

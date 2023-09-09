@@ -189,7 +189,7 @@ class AddTokenFragment : Fragment() {
                         "email" to appPrefManager.user.email,
                         "plan" to viewModel.selectedPlan,
                         "uid" to appPrefManager.user.uid,
-                        "currency" to getLocale()
+                        "currency" to if(getLocale()=="in") "inr" else "usd"
                     )
                 )
                 showToast("Error: ${paymentSheetResult.error}")
@@ -202,7 +202,7 @@ class AddTokenFragment : Fragment() {
                         "email" to appPrefManager.user.email,
                         "plan" to viewModel.selectedPlan,
                         "uid" to appPrefManager.user.uid,
-                        "currency" to getLocale()
+                        "currency" to if(getLocale()=="in") "inr" else "usd"
                     )
                 )
                 viewModel.getUserData(appPrefManager.user.uid)

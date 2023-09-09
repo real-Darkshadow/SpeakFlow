@@ -31,6 +31,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
@@ -174,6 +175,8 @@ class LoginFragment : Fragment() {
                         val name = user?.displayName.toString()
                         val email = user?.email.toString()
                         val uid = user?.uid.toString()
+                        val isNew=task.getResult().additionalUserInfo!!.isNewUser
+                        if (isNew) viewModel.storeDetailFireBase(name, uid, email)
                         analyticHelper.logEvent(
                             "Google_Login", mutableMapOf(
                                 "email" to email,
@@ -182,7 +185,6 @@ class LoginFragment : Fragment() {
                             )
                         )
                         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
-                        viewModel.storeDetailFireBase(name, uid, email)
                         startActivity(Intent(requireActivity(), MainActivity::class.java))
                         requireActivity().finish()
                     } else {

@@ -43,9 +43,9 @@ class TokensPriceAdapter(
             val priceAfterMultiplication =
                 (planPrices[adapterPosition].planPrice.toInt() * 82.2).roundToInt()
             if (locale == "in") {
-                binding.pricing.text = "₹$priceAfterMultiplication"
+                binding.pricing.text = "₹${priceAfterMultiplication}"
             } else {
-                binding.pricing.text = "$$priceAfterMultiplication"
+                binding.pricing.text = "$${planPrices[adapterPosition].planPrice.toInt()}"
             }
             binding.planName.text = planPrices[adapterPosition].planName
             binding.characterPerMont.text =

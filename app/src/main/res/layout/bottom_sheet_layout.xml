@@ -82,6 +82,7 @@
             android:textSize="14sp" />
 
         <ImageView
+            android:tooltipText="@string/low_stablity"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="4dp"
@@ -107,6 +108,7 @@
             android:textSize="14sp" />
 
         <ImageView
+            android:tooltipText="@string/high_stablity"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="4dp"
@@ -155,6 +157,7 @@
             android:textSize="14sp" />
 
         <ImageView
+            android:tooltipText="@string/low_clarity"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="4dp"
@@ -181,6 +184,7 @@
             android:textSize="14sp" />
 
         <ImageView
+            android:tooltipText="@string/high_clarity"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="4dp"

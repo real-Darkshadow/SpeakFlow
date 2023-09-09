@@ -21,10 +21,10 @@ import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.databinding.TokensWarningBinding
 import com.app.speak.db.AppPrefManager
-import com.app.speak.ui.ExtensionFunction.gone
-import com.app.speak.ui.ExtensionFunction.isNotNullOrBlank
-import com.app.speak.ui.ExtensionFunction.showToast
-import com.app.speak.ui.ExtensionFunction.visible
+import com.app.speak.ui.utils.ExtensionFunction.gone
+import com.app.speak.ui.utils.ExtensionFunction.isNotNullOrBlank
+import com.app.speak.ui.utils.ExtensionFunction.showToast
+import com.app.speak.ui.utils.ExtensionFunction.visible
 import com.app.speak.viewmodel.MainViewModel
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.ads.*

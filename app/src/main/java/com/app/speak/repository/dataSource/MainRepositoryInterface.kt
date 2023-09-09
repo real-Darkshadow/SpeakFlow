@@ -7,5 +7,6 @@ import com.google.firebase.functions.HttpsCallableResult
 
 interface MainRepositoryInterface {
     suspend fun createNewProcess(data: HashMap<String, String>): Task<DocumentReference>
-    suspend fun createStripeCheckout(data: HashMap<String, String>): Task<HttpsCallableResult>
+    suspend fun createStripeCheckout(data: HashMap<String, Any>): Task<HttpsCallableResult>
+
 }

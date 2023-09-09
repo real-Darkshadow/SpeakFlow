@@ -14,7 +14,7 @@ import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.R
 import com.app.speak.databinding.FragmentNotificationsBinding
 import com.app.speak.db.AppPrefManager
-import com.app.speak.ui.ExtensionFunction.showToast
+import com.app.speak.ui.utils.ExtensionFunction.showToast
 import com.app.speak.ui.activity.AuthActivity
 import com.app.speak.ui.activity.TokensActivity
 import com.app.speak.viewmodel.MainViewModel

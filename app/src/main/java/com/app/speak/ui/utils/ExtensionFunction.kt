@@ -1,4 +1,4 @@
-package com.app.speak.ui
+package com.app.speak.ui.utils
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter

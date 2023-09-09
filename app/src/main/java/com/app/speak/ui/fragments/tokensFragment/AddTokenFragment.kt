@@ -196,7 +196,7 @@ class AddTokenFragment : Fragment() {
                 defaultBillingDetails = PaymentSheet.BillingDetails(
                     address = PaymentSheet.Address(
                         city = addressStripe?.city,
-                        country = addressStripe?.country,
+                        country = if (getLocale() == "in") "IN" else addressStripe?.country,
                         line1 = addressStripe?.line1,
                         postalCode = addressStripe?.postal_code,
                         state = addressStripe?.state

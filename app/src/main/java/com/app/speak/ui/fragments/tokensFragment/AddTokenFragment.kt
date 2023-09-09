@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.app.speak.AnalyticsHelperUtil
+import com.app.speak.BuildConfig
 import com.app.speak.R
 import com.app.speak.databinding.FragmentAddTokenBinding
 import com.app.speak.databinding.FragmentStripeAdressBinding
@@ -253,7 +254,7 @@ class AddTokenFragment : Fragment() {
         val adRequest = AdRequest.Builder().build()
         InterstitialAd.load(
             requireContext(),
-            "ca-app-pub-2526931847493583/6336229825",
+            BuildConfig.mob_id,
             adRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: InterstitialAd) {

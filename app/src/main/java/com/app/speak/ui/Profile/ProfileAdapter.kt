@@ -36,12 +36,12 @@ class ProfileAdapter(
         holder.field.setOnClickListener { onclick(position) }
         holder.des.text = profileOption?.second
         when (position) {
-            0 -> holder.option_image.setBackgroundResource(R.drawable.tranaction_logo)
+            0 -> holder.option_image.setBackgroundResource(R.drawable.transaction)
             1 -> holder.option_image.setBackgroundResource(R.drawable.token_black)
             2 -> holder.option_image.setBackgroundResource(R.drawable.share_bl)
             3 -> holder.option_image.setBackgroundResource(R.drawable.terms_condition)
             4 -> holder.option_image.setBackgroundResource(R.drawable.privacy_policy)
-            5 -> holder.option_image.setBackgroundResource(R.drawable.delete_acc)
+            5 -> holder.option_image.setBackgroundResource(R.drawable.delete)
 
         }
     }

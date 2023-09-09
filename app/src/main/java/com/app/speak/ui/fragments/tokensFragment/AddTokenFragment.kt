@@ -135,6 +135,7 @@ class AddTokenFragment : Fragment() {
             }
         }
         viewModel.stripeCheckoutResult.observe(viewLifecycleOwner) {
+            binding.loading.gone()
             binding.background.isClickable = true
             it?.let { stripe ->
                 customerId = stripe.customer
@@ -145,7 +146,6 @@ class AddTokenFragment : Fragment() {
                     requireContext(),
                     stripe.publishableKey
                 )
-                binding.loading.gone()
                 presentPaymentSheet()
             }
         }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:windowIsFloating">false</item>
+
+    </style>
+</resources>

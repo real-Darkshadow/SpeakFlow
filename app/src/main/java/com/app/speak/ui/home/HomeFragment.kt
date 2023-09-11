@@ -17,14 +17,15 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.AudioDownloader
+import com.app.speak.BuildConfig
 import com.app.speak.R
 import com.app.speak.databinding.FragmentHomeBinding
 import com.app.speak.databinding.TokensWarningBinding
 import com.app.speak.db.AppPrefManager
-import com.app.speak.ui.ExtensionFunction.gone
-import com.app.speak.ui.ExtensionFunction.isNotNullOrBlank
-import com.app.speak.ui.ExtensionFunction.showToast
-import com.app.speak.ui.ExtensionFunction.visible
+import com.app.speak.ui.utils.ExtensionFunction.gone
+import com.app.speak.ui.utils.ExtensionFunction.isNotNullOrBlank
+import com.app.speak.ui.utils.ExtensionFunction.showToast
+import com.app.speak.ui.utils.ExtensionFunction.visible
 import com.app.speak.viewmodel.MainViewModel
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.ads.*
@@ -387,7 +388,7 @@ class HomeFragment : Fragment() {
         val adRequest = AdRequest.Builder().build()
         InterstitialAd.load(
             requireContext(),
-            "ca-app-pub-2526931847493583/6336229825",
+            BuildConfig.mob_id,
             adRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: InterstitialAd) {

@@ -15,11 +15,11 @@ import com.app.speak.AnalyticsHelperUtil
 import com.app.speak.BuildConfig
 import com.app.speak.R
 import com.app.speak.databinding.FragmentLoginBinding
-import com.app.speak.ui.ExtensionFunction.gone
-import com.app.speak.ui.ExtensionFunction.hideKeyboard
-import com.app.speak.ui.ExtensionFunction.isValidEmail
-import com.app.speak.ui.ExtensionFunction.logError
-import com.app.speak.ui.ExtensionFunction.visible
+import com.app.speak.ui.utils.ExtensionFunction.gone
+import com.app.speak.ui.utils.ExtensionFunction.hideKeyboard
+import com.app.speak.ui.utils.ExtensionFunction.isValidEmail
+import com.app.speak.ui.utils.ExtensionFunction.logError
+import com.app.speak.ui.utils.ExtensionFunction.visible
 import com.app.speak.ui.activity.MainActivity
 import com.app.speak.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -174,6 +174,8 @@ class LoginFragment : Fragment() {
                         val name = user?.displayName.toString()
                         val email = user?.email.toString()
                         val uid = user?.uid.toString()
+                        val isNew=task.getResult().additionalUserInfo!!.isNewUser
+                        if (isNew) viewModel.storeDetailFireBase(name, uid, email)
                         analyticHelper.logEvent(
                             "Google_Login", mutableMapOf(
                                 "email" to email,
@@ -182,7 +184,6 @@ class LoginFragment : Fragment() {
                             )
                         )
                         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {}
-                        viewModel.storeDetailFireBase(name, uid, email)
                         startActivity(Intent(requireActivity(), MainActivity::class.java))
                         requireActivity().finish()
                     } else {

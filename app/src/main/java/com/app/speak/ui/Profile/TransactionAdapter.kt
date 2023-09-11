@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.app.speak.databinding.TransactionRecyclerBinding
 import com.app.speak.models.TransactionHistory
-import com.app.speak.ui.ExtensionFunction.timestampToDate
+import com.app.speak.ui.utils.ExtensionFunction.timestampToDate
 
 class TransactionAdapter(private val transactionHistories: List<TransactionHistory>) :
     RecyclerView.Adapter<TransactionAdapter.ViewHolder>() {
@@ -29,7 +29,7 @@ class TransactionAdapter(private val transactionHistories: List<TransactionHisto
             binding.orderName.text = data.transactionName
             binding.description.text = data.transactionId
             binding.status.text = data.transactionStatus
-            binding.amount.text = "${if (data.currency == "inr") "₹ " else "$ "}${data.amount}"
+            binding.amount.text = "${if (data.currency == "inr") "₹" else "$"}${data.amount}"
         }
     }
 }

@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.speak.databinding.FragmentForgotPasswordBinding
-import com.app.speak.ui.ExtensionFunction.showToast
+import com.app.speak.ui.utils.ExtensionFunction.showToast
 import com.app.speak.viewmodel.MainViewModel
 
 class ForgotPassword : Fragment() {

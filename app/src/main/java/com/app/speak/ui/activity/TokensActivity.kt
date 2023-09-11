@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.app.speak.R
 import com.app.speak.databinding.ActivityTokensBinding
 import com.app.speak.services.NetworkStateReceiver
-import com.app.speak.ui.ExtensionFunction.changeStatusBarColor
+import com.app.speak.ui.utils.ExtensionFunction.changeStatusBarColor
 import com.app.speak.viewmodel.TokensViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

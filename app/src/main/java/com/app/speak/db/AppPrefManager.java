@@ -3,7 +3,9 @@ package com.app.speak.db;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.app.speak.models.AddressStripe;
 import com.app.speak.models.User;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NonNls;
 
@@ -18,6 +20,7 @@ public class  AppPrefManager {
     private static final String PREF_IS_USER_LOGGED_ID = "bookingapp-is_use_logged_in";
     @NonNls
 
+    private static final String PREF_ADDRESS = "address";
 
     private static final String PREF_IS_ONBOARDED = "user_onboarded";
     private static final String PREF_REVIEWED = "reviewed";
@@ -56,7 +59,18 @@ public class  AppPrefManager {
     public boolean getSubscriptionIsActive() {
         return pref.getBoolean(PREF_SUBSCRIPTION_IS_ACTIVE, false);
     }
+    public void setPrefAddress(AddressStripe address) {
+        Gson gson = new Gson();
+        String addressJson = gson.toJson(address);
+        editor.putString(PREF_ADDRESS, addressJson);
+        editor.commit();
+    }
 
+    public AddressStripe getAddress() {
+        String data = pref.getString(PREF_ADDRESS, null);
+        Gson gson = new Gson();
+        return gson.fromJson(data, AddressStripe.class);
+    }
     public boolean isUserReviewed() {
         return pref.getBoolean(PREF_REVIEWED, false);
     }

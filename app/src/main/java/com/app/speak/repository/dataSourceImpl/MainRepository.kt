@@ -124,7 +124,7 @@ class MainRepository @Inject constructor(
 
     }
 
-    override suspend fun createStripeCheckout(data: HashMap<String, String>): Task<HttpsCallableResult> {
+    override suspend fun createStripeCheckout(data: HashMap<String, Any>): Task<HttpsCallableResult> {
         return withContext(Dispatchers.IO) {
             functions.getHttpsCallable("createStripeCheckout").call(data)
 

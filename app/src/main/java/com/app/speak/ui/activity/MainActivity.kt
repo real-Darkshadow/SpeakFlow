@@ -8,7 +8,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.app.speak.R
 import com.app.speak.databinding.ActivityMainBinding
 import com.app.speak.services.NetworkStateReceiver
-import com.app.speak.ui.ExtensionFunction.changeStatusBarColor
+import com.app.speak.ui.utils.ExtensionFunction.changeStatusBarColor
 import com.app.speak.viewmodel.MainViewModel
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView

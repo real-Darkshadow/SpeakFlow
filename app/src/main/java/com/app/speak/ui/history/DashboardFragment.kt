@@ -14,10 +14,10 @@ import com.app.speak.AudioDownloader
 import com.app.speak.R
 import com.app.speak.databinding.FragmentDashboardBinding
 import com.app.speak.db.AppPrefManager
-import com.app.speak.ui.ExtensionFunction.gone
-import com.app.speak.ui.ExtensionFunction.isNotNullOrBlank
-import com.app.speak.ui.ExtensionFunction.showToast
-import com.app.speak.ui.ExtensionFunction.visible
+import com.app.speak.ui.utils.ExtensionFunction.gone
+import com.app.speak.ui.utils.ExtensionFunction.isNotNullOrBlank
+import com.app.speak.ui.utils.ExtensionFunction.showToast
+import com.app.speak.ui.utils.ExtensionFunction.visible
 import com.app.speak.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

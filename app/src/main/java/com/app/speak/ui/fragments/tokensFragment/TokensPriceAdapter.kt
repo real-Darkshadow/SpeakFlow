@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.speak.R
 import com.app.speak.databinding.TokenPriceOptionsBinding
 import com.app.speak.models.PlanPrices
-import com.app.speak.ui.ExtensionFunction.gone
-import com.app.speak.ui.ExtensionFunction.visible
+import com.app.speak.ui.utils.ExtensionFunction.gone
+import com.app.speak.ui.utils.ExtensionFunction.visible
 import kotlin.math.roundToInt
 
 class TokensPriceAdapter(
@@ -43,9 +43,9 @@ class TokensPriceAdapter(
             val priceAfterMultiplication =
                 (planPrices[adapterPosition].planPrice.toInt() * 82.2).roundToInt()
             if (locale == "in") {
-                binding.pricing.text = "₹$priceAfterMultiplication"
+                binding.pricing.text = "₹${priceAfterMultiplication}"
             } else {
-                binding.pricing.text = "$$priceAfterMultiplication"
+                binding.pricing.text = "$${planPrices[adapterPosition].planPrice.toInt()}"
             }
             binding.planName.text = planPrices[adapterPosition].planName
             binding.characterPerMont.text =

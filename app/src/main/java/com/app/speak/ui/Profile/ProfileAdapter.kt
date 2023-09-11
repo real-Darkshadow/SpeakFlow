@@ -40,7 +40,7 @@ class ProfileAdapter(
             1 -> holder.option_image.setBackgroundResource(R.drawable.token_black)
             2 -> holder.option_image.setBackgroundResource(R.drawable.share_bl)
             3 -> holder.option_image.setBackgroundResource(R.drawable.terms_condition)
-            4 -> holder.option_image.setBackgroundResource(R.drawable.privacy_policy)
+            4 -> holder.option_image.setBackgroundResource(R.drawable.contact_icon)
             5 -> holder.option_image.setBackgroundResource(R.drawable.delete)
 
         }

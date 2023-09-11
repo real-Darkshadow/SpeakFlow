@@ -9,11 +9,12 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animation_view"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         app:lottie_autoPlay="true"
+        android:clickable="false"
         app:lottie_loop="false"
-        app:lottie_rawRes="@raw/splash" />
+        app:lottie_rawRes="@raw/splash_screen" />
 
 </RelativeLayout>

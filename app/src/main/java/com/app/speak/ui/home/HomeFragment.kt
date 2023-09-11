@@ -69,15 +69,6 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
-
-    override fun onStart() {
-        super.onStart()
-        val currentUser = auth.currentUser
-        if (currentUser == null) {
-            Log.d("tag", "notSignin")
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         loadInterstitialAd()
@@ -424,6 +415,7 @@ class HomeFragment : Fragment() {
             Log.d(TAG, "The InterstitialAd wasn't ready yet.")
         }
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

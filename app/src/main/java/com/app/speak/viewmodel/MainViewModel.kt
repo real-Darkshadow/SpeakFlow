@@ -53,7 +53,7 @@ class MainViewModel @Inject constructor(
         1 to Pair("Tokens", "Explore and track your token balances."),
         2 to Pair("Spread the word", "Share our app with others and earn rewards."),
         3 to Pair("Terms of Use", "Read and understand our terms and conditions."),
-        4 to Pair("Privacy Policy", "Review our privacy policy to learn how we handle your data."),
+        4 to Pair("Contact Us", "Please contact if you face any issues."),
         5 to Pair("Delete Account", "Permanently delete your account and all associated data."),
 
         )

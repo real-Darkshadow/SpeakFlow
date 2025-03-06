@@ -1,7 +1,7 @@
 
 ## Screenshots
 
-![App Screenshot](https://paste.pics/5be048437d0b152d2b0d8834bb61dee9)
+![App Screenshot](https://paste.pics/SXHQA)
 
 
 # SpeakFlow

@@ -1,7 +1,7 @@
 
 ## Screenshots
 
-![App Screenshot](https://paste.pics/SXHQA)
+![speakflow](https://github.com/user-attachments/assets/e0929cab-f627-4abb-a182-fd7a861245a0)
 
 
 # SpeakFlow
